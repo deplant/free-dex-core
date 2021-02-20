@@ -1,0 +1,49 @@
+{
+	"ABI version": 2,
+	"header": ["time"],
+	"functions": [
+		{
+			"name": "constructor",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "addToken",
+			"inputs": [
+				{"name":"name","type":"bytes"},
+				{"name":"symbol","type":"bytes"},
+				{"name":"decimals","type":"uint8"},
+				{"name":"rootAddr","type":"address"},
+				{"name":"rootKey","type":"uint256"},
+				{"name":"ttwCode","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "getTokens",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"tokenAddress","type":"address[]"},
+				{"name":"symbol","type":"bytes[]"},
+				{"name":"name","type":"bytes[]"}
+			]
+		}
+	],
+	"data": [
+	],
+	"events": [
+		{
+			"name": "log",
+			"inputs": [
+				{"name":"sig","type":"uint32"},
+				{"name":"caller","type":"address"}
+			],
+			"outputs": [
+			]
+		}
+	]
+}
