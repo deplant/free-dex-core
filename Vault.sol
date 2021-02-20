@@ -55,7 +55,7 @@ contract Vault is IDexData {
     // with contract owner's public key.
     modifier requireKey {
 
-		    require(tvm.pubkey() != 0, ERROR_NOT_AUTHORIZED);      
+		    require(msg.pubkey() != 0, ERROR_NOT_AUTHORIZED);      
         // Check that inbound message was signed with owner's public key.
         // Runtime function that obtains sender's public key.
         require(msg.pubkey() == tvm.pubkey(), ERROR_NOT_AUTHORIZED);
@@ -69,10 +69,9 @@ contract Vault is IDexData {
 
     // Modifier for checking owner or governance
     modifier governorOnly {
-
-		    require(tvm.pubkey() != 0, ERROR_NOT_AUTHORIZED);       
+    
         require(
-        msg.pubkey() == tvm.pubkey() || 
+        (msg.pubkey() != 0 && msg.pubkey() == tvm.pubkey()) || 
         (msg.sender != address(0) && msg.sender == governanceAddr)
         , ERROR_NOT_AUTHORIZED);
 
