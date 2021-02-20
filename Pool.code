@@ -113,35 +113,25 @@ SWAP
 ENDS
 ;; param: _tokenA
 ;; param: _tokenB
-; modifier requireKey
-GETGLOB 5
-DUP
-ISNULL
-PUSHCONT {
-	DROP
-	PUSHINT 0
-}
-IF
-GETGLOB 2
-;; ==
-EQUAL
-THROWIFNOT 100
-ACCEPT
-; modifier contractOnly
+; modifier vaultOnly
 ;; get member sender
 GETGLOB 9
 PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
 SDEQ
 NOT
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; get member sender
+	GETGLOB 9
+	;; push identifier vaultAddr
+	GETGLOB 12
+	SDEQ
+}
+IF
 THROWIFNOT 100
 ; constructor Pool
-; expValue
-; end expValue
-;; get member sender
-GETGLOB 9
-; colValue
-SETGLOB 12
-; end colValue
 ; expValue
 ; end expValue
 ;; push identifier _tokenA
@@ -157,9 +147,8 @@ DUP
 SETGLOB 11
 ; end colValue
 ; end constructor Pool
-; end modifier contractOnly
 DROP2
-; end modifier requireKey
+; end modifier vaultOnly
 CALL $c7_to_c4$
 TRUE
 SETGLOB 7
@@ -450,8 +439,15 @@ PUSHCONT {
 	PUSHINT 0
 	TUPLE 7
 	SETGLOB 11
-	; init factory
-	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	; init vaultAddr
+	PUSHINT 1
+	PUSH S1
+	PUSHINT 64
+	DICTUGET
+	PUSHCONT {
+		PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	}
+	IFNOT
 	SETGLOB 12
 	; init closed
 	PUSHINT 0
@@ -575,9 +571,9 @@ PUSHCONT {
 }
 IF
 
-.globl	factory
-.public	factory
-.type	factory, @function
+.globl	vaultAddr
+.public	vaultAddr
+.type	vaultAddr, @function
 CALL $c4_to_c7$
 GETGLOB 12
 NEWC
@@ -585,7 +581,7 @@ PUSHSLICE xc0000000000000000000000002_
 STSLICER
 STSLICECONST 0
 STSLICECONST 0
-STSLICECONST xb9769fb2
+STSLICECONST xdba74b48
 PUSH S1
 STSLICER
 ENDC

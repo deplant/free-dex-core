@@ -19,15 +19,16 @@
 			]
 		},
 		{
-			"name": "factory",
+			"name": "vaultAddr",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"factory","type":"address"}
+				{"name":"vaultAddr","type":"address"}
 			]
 		}
 	],
 	"data": [
+		{"key":1,"name":"vaultAddr","type":"address"}
 	],
 	"events": [
 	]

@@ -12,14 +12,23 @@
 		{
 			"name": "addToken",
 			"inputs": [
-				{"name":"name","type":"bytes"},
-				{"name":"symbol","type":"bytes"},
-				{"name":"decimals","type":"uint8"},
-				{"name":"rootAddr","type":"address"},
-				{"name":"rootKey","type":"uint256"},
-				{"name":"ttwCode","type":"cell"}
+				{"name":"_name","type":"bytes"},
+				{"name":"_symbol","type":"bytes"},
+				{"name":"_decimals","type":"uint8"},
+				{"name":"_rootAddr","type":"address"},
+				{"name":"_rootKey","type":"uint256"},
+				{"name":"_ttwCode","type":"cell"}
 			],
 			"outputs": [
+			]
+		},
+		{
+			"name": "getToken",
+			"inputs": [
+				{"name":"_token","type":"address"}
+			],
+			"outputs": [
+				{"components":[{"name":"name","type":"bytes"},{"name":"symbol","type":"bytes"},{"name":"decimals","type":"uint8"},{"name":"rootAddr","type":"address"},{"name":"rootKey","type":"uint256"},{"name":"ttwCode","type":"cell"},{"name":"balance","type":"uint128"}],"name":"tokenInfo","type":"tuple"}
 			]
 		},
 		{
@@ -30,6 +39,40 @@
 				{"name":"tokenAddress","type":"address[]"},
 				{"name":"symbol","type":"bytes[]"},
 				{"name":"name","type":"bytes[]"}
+			]
+		},
+		{
+			"name": "addPoolCode",
+			"inputs": [
+				{"name":"_cell","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "deploy",
+			"inputs": [
+				{"name":"_tokenA","type":"address"},
+				{"name":"_tokenB","type":"address"}
+			],
+			"outputs": [
+				{"name":"outPool","type":"address"}
+			]
+		},
+		{
+			"name": "getPool",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"getPool","type":"map(address,map(address,address))"}
+			]
+		},
+		{
+			"name": "pools",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"pools","type":"address[]"}
 			]
 		}
 	],

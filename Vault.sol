@@ -23,9 +23,13 @@ contract Vault is IDexData {
      */
 
     /*    Exception codes:   */
-    uint16 constant ERROR_NOT_AUTHORIZED    = 101; // Not authorized    
-    uint16 constant ERROR_NOT_A_CONTRACT    = 102; // Not internal  
-    uint16 constant ERROR_PAIR_NOT_SPECIFIED = 103; // Not enough tokens to process operation         
+    uint16 constant ERROR_NOT_AUTHORIZED        = 101; // Not authorized    
+    uint16 constant ERROR_NOT_A_CONTRACT        = 102; // Not internal  
+    uint16 constant ERROR_PAIR_NOT_SPECIFIED    = 103; // No pair specified        
+    uint16 constant ERROR_ZERO_ADDRESS          = 104; // Empty address
+    uint16 constant ERROR_IDENTICAL_TOKENS      = 105; // Both tokens in pair are identical   
+    uint16 constant ERROR_UNKNOWN_TOKEN         = 106; // This token is not imported to DEX
+    uint16 constant ERROR_PAIR_EXISTS           = 107; // This pair already deployed                  
 
     /// Constants
     uint64 constant DEX_QUERY_FEE = 0.02 ton;    
@@ -50,6 +54,8 @@ contract Vault is IDexData {
     // Modifier that allows function to accept external call only if it was signed
     // with contract owner's public key.
     modifier requireKey {
+
+		    require(tvm.pubkey() != 0, ERROR_NOT_AUTHORIZED);      
         // Check that inbound message was signed with owner's public key.
         // Runtime function that obtains sender's public key.
         require(msg.pubkey() == tvm.pubkey(), ERROR_NOT_AUTHORIZED);
@@ -63,6 +69,8 @@ contract Vault is IDexData {
 
     // Modifier for checking owner or governance
     modifier governorOnly {
+
+		    require(tvm.pubkey() != 0, ERROR_NOT_AUTHORIZED);       
         require(
         msg.pubkey() == tvm.pubkey() || 
         (msg.sender != address(0) && msg.sender == governanceAddr)
@@ -155,50 +163,56 @@ contract Vault is IDexData {
  
    /// Function for deployment of pair pools
    // Can be created by usual users via UserDebot
-   function deployPool(address _tokenA, address _tokenB) public requireKey {
+   function deploy(address _tokenA, address _tokenB) public requireKey returns(address outPool) {
 
         // token addresses can't be empty
-        require(_tokenA != address(0) && _tokenB != address(0), 104 /*'ERROR_ZERO_ADDRESS'*/);
+        require(_tokenA != address(0) && _tokenB != address(0), ERROR_ZERO_ADDRESS);
 
         // tokens can't be the same token
-        require(_tokenA != _tokenB, 104 /*'ERROR_IDENTICAL_TOKENS'*/);
+        require(_tokenA != _tokenB, ERROR_IDENTICAL_TOKENS);
 
         // tokens should be added previously to create pair on them
-        require(tokens[_tokenA].hasValue() && tokens[_tokenB].hasValue(), 105 /*'ERROR_UNKNOWN_TOKEN'*/);
+        require(tokens.exists(_tokenA) && tokens.exists(_tokenB), ERROR_UNKNOWN_TOKEN);
 
         // reorder pair, so impossible to create reverse pair pool
         (address tokenA, address tokenB) = _tokenA < _tokenB ? (_tokenA, _tokenB) : (_tokenB, _tokenA);
 
-        // Use tokenA, tokenB from this point, as they are already reordered
+        // IMPORTANT!
+        //Use tokenA, tokenB from this point, not underscored, as they are already reordered
 
         // this pair pool shouldn't exist
-        require(getPool[tokenA][tokenB] == address(0), 106 /*'ERROR_PAIR_EXISTS'*/);     
+        require(getPool[tokenA][tokenB] == address(0), ERROR_PAIR_EXISTS);     
         
         // тащим структуру Tip3 для использования в Pool
         Tip3 tokA = tokens[tokenA];
         Tip3 tokB = tokens[tokenB];
 
         // засовываем ключи
-        TvmCell signedCode = tvm.insertPubkey(poolCode, tvm.pubkey());
-        TvmCell stateInit1 = tvm.buildStateInit({contr: Pool, varInit: {tokenA: tokA, tokenB: tokB}, pubkey: tvm.pubkey(), code: poolCode});
+        //TvmCell signedCode = tvm.insertPubkey(poolCode, tvm.pubkey());
+        //TvmCell stateInit1 = tvm.buildStateInit({contr: Pool, varInit: {_tokenA: tokA, _tokenB: tokB}, pubkey: tvm.pubkey(), code: poolCode});
 
-        // TODO Payload is wrong
-        address poolAddr  = tvm.deploy(stateInit1, stateInit1 /*payload */, DEX_POOL_DEPLOY_FEE, 0);  
+        address poolAddr  = new PairPool {
+          code: poolCode,
+          value: DEX_POOL_DEPLOY_FEE,
+          pubkey: tvm.pubkey(),
+          varInit: {vaultAddr: address(this)}
+          } (tokA, tokB); // constructor params
+
         getPool[tokenA][tokenB] = poolAddr;
         pools.push(poolAddr);
+
         // проверки
         // запись в мапу
         // tvm.accept
 
+        return poolAddr;
+        //return address(0);
 
         // emit tokenAdded // event
 
    }
-
-
+   
    // getPools
-
-
 
    // getPairPrice
    // getPairLiquidity
@@ -210,13 +224,33 @@ contract Vault is IDexData {
    // authors: Mabroukah Amarif,  Ibtusam Alashoury
    // February, 2019
    // TODO: NFT Support
-   // function swap (from, to) external requireKey { 
+/**
+* @param src address of the source token to exchange
+* @param dst token address that will received
+* @param amount amount to exchange
+* @param minReturn minimal amount of the dst token that will receive (if result < minReturn then transaction fails)
+* @param referral 1/20 from LP fees will be minted to referral wallet address (in liquidity token) (in case of address(0) no mints) 
+* @return result received amount
+*/
+  // function swap(address src, address dst, uint256 amount, uint256 minReturn, address referral) external requireKey returns(uint256 result) {}
 
+/**
+* @dev provide liquidity to the pool and earn on trading fees
+* @param amounts [amount0, amount1] for liquidity provision (each amount sorted by token0 and token1) 
+* @param minAmounts minimal amounts that will be charged from sender address to liquidity pool (each amount sorted by token0 and token1) 
+* @return fairSupply received liquidity token amount
+*/
+// function deposit(uint256[] calldata amounts, uint256[] calldata minAmounts) external requireKey returns(uint256 fairSupply) {}
 
-   //}
+/**
+* @dev withdraw liquidity from the pool
+* @param amount amount to burn in exchange for underlying tokens
+* @param minReturns minimal amounts that will be transferred to sender address in underlying tokens  (each amount sorted by token0 and token1) 
+*/
+// function withdraw(uint256 amount, uint256[] memory minReturns) external {}
 
     /// Function for collecting Dex income
-    // withdraw //requires owner or governance decision
+    // collect //requires owner or governance decision
 
     // deploy SMV Governance system
     // adds governance address as root

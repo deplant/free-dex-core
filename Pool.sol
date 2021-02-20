@@ -16,7 +16,7 @@ import "ITokenWallet.sol";
 /// 5. Sufficient token or gram balance (if applicable)
 /// 6. Replay attacks (if applicable)
 
-contract Pool is IDexData /*, ITokenWallet */ {
+contract PairPool is IDexData /*, ITokenWallet */ {
     using MathUint for uint;
 
     /*
@@ -32,7 +32,7 @@ contract Pool is IDexData /*, ITokenWallet */ {
     Tip3 tokenA;
     Tip3 tokenB;
 
-    address public factory; // Factory that created Trinity
+    address static public vaultAddr; // Factory that created Trinity
 
     bool closed; // is pool closed? Closed Pool doesn't accept trades on its pair
 
@@ -58,8 +58,8 @@ contract Pool is IDexData /*, ITokenWallet */ {
     }
 
     // Modifier that requires sender to have contract
-    modifier contractOnly() {
-        require(msg.sender != address(0));
+    modifier vaultOnly() {
+        require(msg.sender != address(0) && msg.sender == vaultAddr);
         _;
     }    
 
@@ -93,10 +93,9 @@ contract Pool is IDexData /*, ITokenWallet */ {
      */
 
     /// @dev Contract constructor.
-    constructor(Tip3 _tokenA, Tip3 _tokenB) public requireKey contractOnly {
+    constructor(Tip3 _tokenA, Tip3 _tokenB) public vaultOnly {
         // REQUIRE creator IS factory
         // REQUIRE permitted creator
-        factory = msg.sender; // accept creator's address as factory
         tokenA = _tokenA;
         tokenB = _tokenB;
 
