@@ -10,6 +10,14 @@
 			]
 		},
 		{
+			"name": "setFee",
+			"inputs": [
+				{"name":"newFee","type":"uint16"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "addToken",
 			"inputs": [
 				{"name":"_name","type":"bytes"},
@@ -50,10 +58,12 @@
 			]
 		},
 		{
-			"name": "deploy",
+			"name": "deployPair",
 			"inputs": [
 				{"name":"_tokenA","type":"address"},
-				{"name":"_tokenB","type":"address"}
+				{"name":"_tokenB","type":"address"},
+				{"name":"_amountA","type":"uint128"},
+				{"name":"_amountB","type":"uint128"}
 			],
 			"outputs": [
 				{"name":"outPool","type":"address"}
@@ -84,6 +94,16 @@
 			"inputs": [
 				{"name":"sig","type":"uint32"},
 				{"name":"caller","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "Deployed",
+			"inputs": [
+				{"name":"pool","type":"address"},
+				{"name":"tokenA","type":"address"},
+				{"name":"tokenB","type":"address"}
 			],
 			"outputs": [
 			]

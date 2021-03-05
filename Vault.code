@@ -16,7 +16,14 @@ SETGLOB 6
 ; Decode input parameters
 ENDS
 ; modifier requireKey
-GETGLOB 2
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
 NEQINT 0
 THROWIFNOT 101
 GETGLOB 5
@@ -38,6 +45,178 @@ ACCEPT
 CALL $c7_to_c4$
 TRUE
 SETGLOB 7
+
+.globl	setFee
+.public	setFee
+.type	setFee, @function
+GETGLOB 1
+ISNULL
+PUSHCONT {
+	CALL $c4_to_c7$
+}
+IF
+; Decode input parameters
+; Decode newFee
+LDU 16
+ENDS
+;; param: newFee
+; modifier governorOnly
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
+NEQINT 0
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	GETGLOB 5
+	DUP
+	ISNULL
+	PUSHCONT {
+		DROP
+		PUSHINT 0
+	}
+	IF
+	GETGLOB 2
+	;; ==
+	EQUAL
+}
+IF
+;; short-circuiting ||
+DUP
+PUSHCONT {
+	DROP
+	;; get member sender
+	GETGLOB 9
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	SDEQ
+	NOT
+	;; short-circuiting &&
+	DUP
+	PUSHCONT {
+		DROP
+		;; get member sender
+		GETGLOB 9
+		;; push identifier governanceAddr
+		GETGLOB 10
+		SDEQ
+	}
+	IF
+}
+IFNOT
+THROWIFNOT 101
+;; if
+;; get member sender
+GETGLOB 9
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SDEQ
+PUSHCONT {
+	ACCEPT
+}
+IF
+;; end if
+; function setFee
+;; push identifier newFee
+DUP
+GTINT 0
+THROWIFNOT 108
+; expValue
+; end expValue
+;; push identifier newFee
+DUP
+; colValue
+SETGLOB 12
+; end colValue
+; end function setFee
+DROP
+; end modifier governorOnly
+CALL $c7_to_c4$
+TRUE
+SETGLOB 7
+
+.globl	setFee_internal
+.type	setFee_internal, @function
+;; param: newFee
+; modifier governorOnly
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
+NEQINT 0
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	GETGLOB 5
+	DUP
+	ISNULL
+	PUSHCONT {
+		DROP
+		PUSHINT 0
+	}
+	IF
+	GETGLOB 2
+	;; ==
+	EQUAL
+}
+IF
+;; short-circuiting ||
+DUP
+PUSHCONT {
+	DROP
+	;; get member sender
+	GETGLOB 9
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	SDEQ
+	NOT
+	;; short-circuiting &&
+	DUP
+	PUSHCONT {
+		DROP
+		;; get member sender
+		GETGLOB 9
+		;; push identifier governanceAddr
+		GETGLOB 10
+		SDEQ
+	}
+	IF
+}
+IFNOT
+THROWIFNOT 101
+;; if
+;; get member sender
+GETGLOB 9
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SDEQ
+PUSHCONT {
+	ACCEPT
+}
+IF
+;; end if
+; function setFee
+;; push identifier newFee
+DUP
+GTINT 0
+THROWIFNOT 108
+; expValue
+; end expValue
+;; push identifier newFee
+DUP
+; colValue
+SETGLOB 12
+; end colValue
+; end function setFee
+DROP
+; end modifier governorOnly
 
 .globl	addToken
 .public	addToken
@@ -78,9 +257,6 @@ ENDS
 ;; param: _rootKey
 ;; param: _ttwCode
 ; modifier governorOnly
-GETGLOB 2
-NEQINT 0
-THROWIFNOT 101
 GETGLOB 5
 DUP
 ISNULL
@@ -89,9 +265,24 @@ PUSHCONT {
 	PUSHINT 0
 }
 IF
-GETGLOB 2
-;; ==
-EQUAL
+NEQINT 0
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	GETGLOB 5
+	DUP
+	ISNULL
+	PUSHCONT {
+		DROP
+		PUSHINT 0
+	}
+	IF
+	GETGLOB 2
+	;; ==
+	EQUAL
+}
+IF
 ;; short-circuiting ||
 DUP
 PUSHCONT {
@@ -126,23 +317,25 @@ PUSHCONT {
 IF
 ;; end if
 ; function addToken
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+;; decl: dexWallet
 ;; map.add
 ; expValue
 ;; fetch tokens
-GETGLOB 12
+GETGLOB 13
 ; end expValue
 ;; push identifier _name
-PUSH S6
+PUSH S7
 ;; push identifier _symbol
-PUSH S6
+PUSH S7
 ;; push identifier _decimals
-PUSH S6
-;; push identifier _rootAddr
-PUSH S6
+PUSH S7
+;; push identifier dexWallet
+PUSH S4
 ;; push identifier _rootKey
-PUSH S6
+PUSH S7
 ;; push identifier _ttwCode
-PUSH S6
+PUSH S7
 PUSHINT 0
 TUPLE 7
 UNTUPLE 7
@@ -164,14 +357,15 @@ STUR 128
 XCHG s7
 BLKDROP 7
 ;; push identifier _rootAddr
-PUSH S4
+PUSH S5
 ROT
 PUSHINT 267
 DICTADDB
 SWAP
 ; colValue
-SETGLOB 12
+SETGLOB 13
 ; end colValue
+DROP
 DROP
 ; end function addToken
 BLKDROP 6
@@ -189,9 +383,6 @@ SETGLOB 7
 ;; param: _rootKey
 ;; param: _ttwCode
 ; modifier governorOnly
-GETGLOB 2
-NEQINT 0
-THROWIFNOT 101
 GETGLOB 5
 DUP
 ISNULL
@@ -200,9 +391,24 @@ PUSHCONT {
 	PUSHINT 0
 }
 IF
-GETGLOB 2
-;; ==
-EQUAL
+NEQINT 0
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	GETGLOB 5
+	DUP
+	ISNULL
+	PUSHCONT {
+		DROP
+		PUSHINT 0
+	}
+	IF
+	GETGLOB 2
+	;; ==
+	EQUAL
+}
+IF
 ;; short-circuiting ||
 DUP
 PUSHCONT {
@@ -237,23 +443,25 @@ PUSHCONT {
 IF
 ;; end if
 ; function addToken
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+;; decl: dexWallet
 ;; map.add
 ; expValue
 ;; fetch tokens
-GETGLOB 12
+GETGLOB 13
 ; end expValue
 ;; push identifier _name
-PUSH S6
+PUSH S7
 ;; push identifier _symbol
-PUSH S6
+PUSH S7
 ;; push identifier _decimals
-PUSH S6
-;; push identifier _rootAddr
-PUSH S6
+PUSH S7
+;; push identifier dexWallet
+PUSH S4
 ;; push identifier _rootKey
-PUSH S6
+PUSH S7
 ;; push identifier _ttwCode
-PUSH S6
+PUSH S7
 PUSHINT 0
 TUPLE 7
 UNTUPLE 7
@@ -275,14 +483,15 @@ STUR 128
 XCHG s7
 BLKDROP 7
 ;; push identifier _rootAddr
-PUSH S4
+PUSH S5
 ROT
 PUSHINT 267
 DICTADDB
 SWAP
 ; colValue
-SETGLOB 12
+SETGLOB 13
 ; end colValue
+DROP
 DROP
 ; end function addToken
 BLKDROP 6
@@ -330,7 +539,7 @@ TUPLE 7
 ;; push identifier _token
 PUSH S1
 ;; push identifier tokens
-GETGLOB 12
+GETGLOB 13
 PUSHINT 267
 DICTGET
 PUSHCONT {
@@ -490,7 +699,7 @@ TUPLE 7
 ;; push identifier _token
 PUSH S1
 ;; push identifier tokens
-GETGLOB 12
+GETGLOB 13
 PUSHINT 267
 DICTGET
 PUSHCONT {
@@ -560,7 +769,7 @@ NEWDICT
 PAIR
 ;; map.min
 ;; push identifier tokens
-GETGLOB 12
+GETGLOB 13
 PUSHINT 267
 DICTMIN
 NULLSWAPIFNOT
@@ -666,7 +875,7 @@ PUSHCONT {
 		;; push identifier key
 		PUSH S2
 		;; push identifier tokens
-		GETGLOB 12
+		GETGLOB 13
 		PUSHINT 267
 		DICTGETNEXT
 		NULLSWAPIFNOT
@@ -898,7 +1107,7 @@ NEWDICT
 PAIR
 ;; map.min
 ;; push identifier tokens
-GETGLOB 12
+GETGLOB 13
 PUSHINT 267
 DICTMIN
 NULLSWAPIFNOT
@@ -1004,7 +1213,7 @@ PUSHCONT {
 		;; push identifier key
 		PUSH S2
 		;; push identifier tokens
-		GETGLOB 12
+		GETGLOB 13
 		PUSHINT 267
 		DICTGETNEXT
 		NULLSWAPIFNOT
@@ -1144,9 +1353,6 @@ LDREF
 ENDS
 ;; param: _cell
 ; modifier governorOnly
-GETGLOB 2
-NEQINT 0
-THROWIFNOT 101
 GETGLOB 5
 DUP
 ISNULL
@@ -1155,9 +1361,24 @@ PUSHCONT {
 	PUSHINT 0
 }
 IF
-GETGLOB 2
-;; ==
-EQUAL
+NEQINT 0
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	GETGLOB 5
+	DUP
+	ISNULL
+	PUSHCONT {
+		DROP
+		PUSHINT 0
+	}
+	IF
+	GETGLOB 2
+	;; ==
+	EQUAL
+}
+IF
 ;; short-circuiting ||
 DUP
 PUSHCONT {
@@ -1206,9 +1427,9 @@ CALL $c7_to_c4$
 TRUE
 SETGLOB 7
 
-.globl	deploy
-.public	deploy
-.type	deploy, @function
+.globl	deployPair
+.public	deployPair
+.type	deployPair, @function
 GETGLOB 1
 ISNULL
 PUSHCONT {
@@ -1237,11 +1458,40 @@ PUSHCONT {
 	LDMSGADDR
 }
 IFNOT
+; Decode _amountA
+LDUQ 128
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 128
+}
+IFNOT
+; Decode _amountB
+LDUQ 128
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 128
+}
+IFNOT
 ENDS
 ;; param: _tokenA
 ;; param: _tokenB
+;; param: _amountA
+;; param: _amountB
 ; modifier requireKey
-GETGLOB 2
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
 NEQINT 0
 THROWIFNOT 101
 GETGLOB 5
@@ -1257,11 +1507,54 @@ GETGLOB 2
 EQUAL
 THROWIFNOT 101
 ACCEPT
-; function deploy
+; function deployPair
 ;; ret param: outPool
 PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-;; push identifier _tokenA
+;; get member value
+CALL $message_balance_macro$
+;; push identifier POOL_DEPLOY_FEE
+;; push identifier TOKEN_IMPORT_FEE
+PUSHINT 1000000000
+PUSHINT 20000000
+;; +
+ADD
+UFITS 64
+;; push identifier TOKEN_IMPORT_FEE
+PUSHINT 1000000000
+PUSHINT 20000000
+;; +
+ADD
+UFITS 64
+;; +
+ADD
+UFITS 64
+;; push identifier POOL_CONTRACT_FEE
+PUSHINT 1000000000
+PUSHINT 20000000
+;; +
+ADD
+UFITS 64
+;; +
+ADD
+UFITS 64
+;; >=
+GEQ
+THROWIFNOT 109
+;; push identifier _amountA
 PUSH S2
+GTINT 0
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; push identifier _amountB
+	PUSH S1
+	GTINT 0
+}
+IF
+THROWIFNOT 110
+;; push identifier _tokenA
+PUSH S4
 PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
 SDEQ
 NOT
@@ -1270,7 +1563,7 @@ DUP
 PUSHCONT {
 	DROP
 	;; push identifier _tokenB
-	PUSH S1
+	PUSH S3
 	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
 	SDEQ
 	NOT
@@ -1278,17 +1571,17 @@ PUSHCONT {
 IF
 THROWIFNOT 104
 ;; push identifier _tokenA
-PUSH S2
+PUSH S4
 ;; push identifier _tokenB
-PUSH S2
+PUSH S4
 SDEQ
 NOT
 THROWIFNOT 105
 ;; map.exists
 ;; push identifier _tokenA
-PUSH S2
+PUSH S4
 ;; push identifier tokens
-GETGLOB 12
+GETGLOB 13
 PUSHINT 267
 DICTGET
 DUP
@@ -1302,9 +1595,9 @@ PUSHCONT {
 	DROP
 	;; map.exists
 	;; push identifier _tokenB
-	PUSH S1
+	PUSH S3
 	;; push identifier tokens
-	GETGLOB 12
+	GETGLOB 13
 	PUSHINT 267
 	DICTGET
 	DUP
@@ -1316,34 +1609,55 @@ PUSHCONT {
 IF
 THROWIFNOT 106
 ;; push identifier _tokenA
-PUSH S2
+PUSH S4
 ;; push identifier _tokenB
-PUSH S2
+PUSH S4
 SDLEXCMP
 ISNEG
 PUSHCONT {
 	;; push identifier _tokenA
-	PUSH S2
+	PUSH S4
 	;; push identifier _tokenB
-	PUSH S2
+	PUSH S4
 }
 PUSHCONT {
 	;; push identifier _tokenB
-	PUSH S1
-	;; push identifier _tokenA
 	PUSH S3
+	;; push identifier _tokenA
+	PUSH S5
 }
 IFELSE
 ;; decl: tokenA
 ;; decl: tokenB
+;; push identifier _tokenA
+PUSH S6
+;; push identifier _tokenB
+PUSH S6
+SDLEXCMP
+ISNEG
+PUSHCONT {
+	;; push identifier _amountA
+	PUSH S4
+	;; push identifier _amountB
+	PUSH S4
+}
+PUSHCONT {
+	;; push identifier _amountB
+	PUSH S3
+	;; push identifier _amountA
+	PUSH S5
+}
+IFELSE
+;; decl: amountA
+;; decl: amountB
 ;; index
 ;; push identifier tokenB
-DUP
+PUSH S2
 ;; index
 ;; push identifier tokenA
-PUSH S2
+PUSH S4
 ;; push identifier getPool
-GETGLOB 13
+GETGLOB 14
 PUSHINT 267
 DICTGET
 PUSHCONT {
@@ -1364,9 +1678,9 @@ SDEQ
 THROWIFNOT 107
 ;; index
 ;; push identifier tokenA
-PUSH S1
+PUSH S3
 ;; push identifier tokens
-GETGLOB 12
+GETGLOB 13
 PUSHINT 267
 DICTGET
 PUSHCONT {
@@ -1396,9 +1710,9 @@ IFELSE
 ;; decl: tokA
 ;; index
 ;; push identifier tokenB
-PUSH S1
+PUSH S3
 ;; push identifier tokens
-GETGLOB 12
+GETGLOB 13
 PUSHINT 267
 DICTGET
 PUSHCONT {
@@ -1426,6 +1740,45 @@ PUSHCONT {
 }
 IFELSE
 ;; decl: tokB
+;; push identifier tokenA
+PUSH S5
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
+;; get member ttwCode
+;; push identifier tokA
+PUSH S3
+INDEX 5
+CALL $expectedAddress_internal$
+SDEQ
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; push identifier tokenB
+	PUSH S4
+	GETGLOB 5
+	DUP
+	ISNULL
+	PUSHCONT {
+		DROP
+		PUSHINT 0
+	}
+	IF
+	;; get member ttwCode
+	;; push identifier tokB
+	PUSH S2
+	INDEX 5
+	CALL $expectedAddress_internal$
+	SDEQ
+}
+IF
+THROWIFNOT 111
 NEWDICT
 GETGLOB 2
 NEWC
@@ -1457,7 +1810,7 @@ STSLICECONST x801_
 STU 256
 ENDC
 CTOS
-;; push identifier DEX_POOL_DEPLOY_FEE
+;; push identifier POOL_CONTRACT_FEE
 PUSHINT 1000000000
 PUSHINT 20000000
 ;; +
@@ -1529,9 +1882,9 @@ NIP
 ;; decl: poolAddr
 ; expValue
 ;; fetch getPool
-GETGLOB 13
+GETGLOB 14
 ;; push identifier tokenA
-PUSH S5
+PUSH S7
 SWAP
 PUSH2 S1, S0
 PUSHINT 267
@@ -1544,7 +1897,7 @@ PUSHCONT {
 }
 IFELSE
 ;; push identifier tokenB
-PUSH S6
+PUSH S8
 SWAP
 ; end expValue
 ;; push identifier poolAddr
@@ -1558,11 +1911,11 @@ STDICT
 ROTREV
 PUSHINT 267
 DICTSETB
-SETGLOB 13
+SETGLOB 14
 ; end colValue
 ; expValue
 ;; fetch pools
-GETGLOB 14
+GETGLOB 15
 ; end expValue
 ;; push identifier poolAddr
 PUSH S1
@@ -1577,16 +1930,40 @@ PUSHINT 32
 DICTUSET
 PAIR
 ; colValue
-SETGLOB 14
+SETGLOB 15
 ; end colValue
+;; emit Deployed
+NEWC
+PUSHSLICE xc0000000000000000000000002_
+STSLICER
+STSLICECONST 0
+STSLICECONST 1
+NEWC
+STSLICECONST x3e48eb36
+;; pool
+;; push identifier poolAddr
+PUSH S2
+STSLICER
+;; tokenA
+;; push identifier tokenA
+PUSH S8
+STSLICER
+;; tokenB
+;; push identifier tokenB
+PUSH S7
+STSLICER
+STBREFR
+ENDC
+PUSHINT 1
+SENDRAWMSG
 ;; return
-XCHG s5
-BLKDROP 5
+XCHG s7
+BLKDROP 7
 ;; emitting 1 value(s)
-PUSH S3
+PUSH S5
 EQINT -1
 PUSHCONT {
-	PUSH S5
+	PUSH S7
 	CTOS
 	LDU 2
 	LDMSGADDR
@@ -1599,7 +1976,7 @@ PUSHCONT {
 	STZEROES
 	STSLICECONST 0
 	STSLICECONST 0
-	STSLICECONST xe2d8a974
+	STSLICECONST x9d380a55
 	PUSH S1
 	STSLICER
 	ENDC
@@ -1641,19 +2018,28 @@ PUSHCONT {
 }
 IFELSE
 DROP
-; end function deploy
-DROP2
+; end function deployPair
+BLKDROP 4
 ; end modifier requireKey
 CALL $c7_to_c4$
 TRUE
 SETGLOB 7
 
-.globl	deploy_internal
-.type	deploy_internal, @function
+.globl	deployPair_internal
+.type	deployPair_internal, @function
 ;; param: _tokenA
 ;; param: _tokenB
+;; param: _amountA
+;; param: _amountB
 ; modifier requireKey
-GETGLOB 2
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
 NEQINT 0
 THROWIFNOT 101
 GETGLOB 5
@@ -1669,11 +2055,54 @@ GETGLOB 2
 EQUAL
 THROWIFNOT 101
 ACCEPT
-; function deploy
+; function deployPair
 ;; ret param: outPool
 PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-;; push identifier _tokenA
+;; get member value
+CALL $message_balance_macro$
+;; push identifier POOL_DEPLOY_FEE
+;; push identifier TOKEN_IMPORT_FEE
+PUSHINT 1000000000
+PUSHINT 20000000
+;; +
+ADD
+UFITS 64
+;; push identifier TOKEN_IMPORT_FEE
+PUSHINT 1000000000
+PUSHINT 20000000
+;; +
+ADD
+UFITS 64
+;; +
+ADD
+UFITS 64
+;; push identifier POOL_CONTRACT_FEE
+PUSHINT 1000000000
+PUSHINT 20000000
+;; +
+ADD
+UFITS 64
+;; +
+ADD
+UFITS 64
+;; >=
+GEQ
+THROWIFNOT 109
+;; push identifier _amountA
 PUSH S2
+GTINT 0
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; push identifier _amountB
+	PUSH S1
+	GTINT 0
+}
+IF
+THROWIFNOT 110
+;; push identifier _tokenA
+PUSH S4
 PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
 SDEQ
 NOT
@@ -1682,7 +2111,7 @@ DUP
 PUSHCONT {
 	DROP
 	;; push identifier _tokenB
-	PUSH S1
+	PUSH S3
 	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
 	SDEQ
 	NOT
@@ -1690,17 +2119,17 @@ PUSHCONT {
 IF
 THROWIFNOT 104
 ;; push identifier _tokenA
-PUSH S2
+PUSH S4
 ;; push identifier _tokenB
-PUSH S2
+PUSH S4
 SDEQ
 NOT
 THROWIFNOT 105
 ;; map.exists
 ;; push identifier _tokenA
-PUSH S2
+PUSH S4
 ;; push identifier tokens
-GETGLOB 12
+GETGLOB 13
 PUSHINT 267
 DICTGET
 DUP
@@ -1714,9 +2143,9 @@ PUSHCONT {
 	DROP
 	;; map.exists
 	;; push identifier _tokenB
-	PUSH S1
+	PUSH S3
 	;; push identifier tokens
-	GETGLOB 12
+	GETGLOB 13
 	PUSHINT 267
 	DICTGET
 	DUP
@@ -1728,34 +2157,55 @@ PUSHCONT {
 IF
 THROWIFNOT 106
 ;; push identifier _tokenA
-PUSH S2
+PUSH S4
 ;; push identifier _tokenB
-PUSH S2
+PUSH S4
 SDLEXCMP
 ISNEG
 PUSHCONT {
 	;; push identifier _tokenA
-	PUSH S2
+	PUSH S4
 	;; push identifier _tokenB
-	PUSH S2
+	PUSH S4
 }
 PUSHCONT {
 	;; push identifier _tokenB
-	PUSH S1
-	;; push identifier _tokenA
 	PUSH S3
+	;; push identifier _tokenA
+	PUSH S5
 }
 IFELSE
 ;; decl: tokenA
 ;; decl: tokenB
+;; push identifier _tokenA
+PUSH S6
+;; push identifier _tokenB
+PUSH S6
+SDLEXCMP
+ISNEG
+PUSHCONT {
+	;; push identifier _amountA
+	PUSH S4
+	;; push identifier _amountB
+	PUSH S4
+}
+PUSHCONT {
+	;; push identifier _amountB
+	PUSH S3
+	;; push identifier _amountA
+	PUSH S5
+}
+IFELSE
+;; decl: amountA
+;; decl: amountB
 ;; index
 ;; push identifier tokenB
-DUP
+PUSH S2
 ;; index
 ;; push identifier tokenA
-PUSH S2
+PUSH S4
 ;; push identifier getPool
-GETGLOB 13
+GETGLOB 14
 PUSHINT 267
 DICTGET
 PUSHCONT {
@@ -1776,9 +2226,9 @@ SDEQ
 THROWIFNOT 107
 ;; index
 ;; push identifier tokenA
-PUSH S1
+PUSH S3
 ;; push identifier tokens
-GETGLOB 12
+GETGLOB 13
 PUSHINT 267
 DICTGET
 PUSHCONT {
@@ -1808,9 +2258,9 @@ IFELSE
 ;; decl: tokA
 ;; index
 ;; push identifier tokenB
-PUSH S1
+PUSH S3
 ;; push identifier tokens
-GETGLOB 12
+GETGLOB 13
 PUSHINT 267
 DICTGET
 PUSHCONT {
@@ -1838,6 +2288,45 @@ PUSHCONT {
 }
 IFELSE
 ;; decl: tokB
+;; push identifier tokenA
+PUSH S5
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
+;; get member ttwCode
+;; push identifier tokA
+PUSH S3
+INDEX 5
+CALL $expectedAddress_internal$
+SDEQ
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; push identifier tokenB
+	PUSH S4
+	GETGLOB 5
+	DUP
+	ISNULL
+	PUSHCONT {
+		DROP
+		PUSHINT 0
+	}
+	IF
+	;; get member ttwCode
+	;; push identifier tokB
+	PUSH S2
+	INDEX 5
+	CALL $expectedAddress_internal$
+	SDEQ
+}
+IF
+THROWIFNOT 111
 NEWDICT
 GETGLOB 2
 NEWC
@@ -1869,7 +2358,7 @@ STSLICECONST x801_
 STU 256
 ENDC
 CTOS
-;; push identifier DEX_POOL_DEPLOY_FEE
+;; push identifier POOL_CONTRACT_FEE
 PUSHINT 1000000000
 PUSHINT 20000000
 ;; +
@@ -1941,9 +2430,9 @@ NIP
 ;; decl: poolAddr
 ; expValue
 ;; fetch getPool
-GETGLOB 13
+GETGLOB 14
 ;; push identifier tokenA
-PUSH S5
+PUSH S7
 SWAP
 PUSH2 S1, S0
 PUSHINT 267
@@ -1956,7 +2445,7 @@ PUSHCONT {
 }
 IFELSE
 ;; push identifier tokenB
-PUSH S6
+PUSH S8
 SWAP
 ; end expValue
 ;; push identifier poolAddr
@@ -1970,11 +2459,11 @@ STDICT
 ROTREV
 PUSHINT 267
 DICTSETB
-SETGLOB 13
+SETGLOB 14
 ; end colValue
 ; expValue
 ;; fetch pools
-GETGLOB 14
+GETGLOB 15
 ; end expValue
 ;; push identifier poolAddr
 PUSH S1
@@ -1989,18 +2478,81 @@ PUSHINT 32
 DICTUSET
 PAIR
 ; colValue
-SETGLOB 14
+SETGLOB 15
 ; end colValue
+;; emit Deployed
+NEWC
+PUSHSLICE xc0000000000000000000000002_
+STSLICER
+STSLICECONST 0
+STSLICECONST 1
+NEWC
+STSLICECONST x3e48eb36
+;; pool
+;; push identifier poolAddr
+PUSH S2
+STSLICER
+;; tokenA
+;; push identifier tokenA
+PUSH S8
+STSLICER
+;; tokenB
+;; push identifier tokenB
+PUSH S7
+STSLICER
+STBREFR
+ENDC
+PUSHINT 1
+SENDRAWMSG
 ;; return
-XCHG s5
-BLKDROP 5
+XCHG s7
+BLKDROP 7
 TUPLE 1
 SETGLOB 8
-; end function deploy
-DROP2
+; end function deployPair
+BLKDROP 4
 ; end modifier requireKey
 GETGLOB 8
 UNTUPLE 1
+
+.globl	expectedAddress_internal
+.type	expectedAddress_internal, @function
+;; param: _pubkey
+;; param: _code
+; function expectedAddress
+NEWDICT
+;; push identifier _pubkey
+PUSH S2
+NEWC
+STU 256
+PUSHINT 0
+ROT
+PUSHINT 64
+DICTUSETB
+NEWC
+STDICT
+ENDC
+;; push identifier _code
+PUSH S1
+NEWC
+STSLICECONST x2_
+STOPTREF
+STOPTREF
+STZERO
+ENDC
+;; decl: stateInit
+;; return
+;; push identifier stateInit
+DUP
+HASHCU
+NEWC
+STSLICECONST x801_
+STU 256
+ENDC
+CTOS
+XCHG s3
+BLKDROP 3
+; end function expectedAddress
 
 .globl	c7_to_c4
 .type	c7_to_c4, @function
@@ -2016,10 +2568,12 @@ GETGLOB 11
 GETGLOB 12
 GETGLOB 13
 GETGLOB 14
+GETGLOB 15
 UNTUPLE 2
-REVERSE 7, 0
+REVERSE 8, 0
 STSLICE
 STREF
+STU 16
 STDICT
 STDICT
 STU 32
@@ -2036,11 +2590,13 @@ LDU 64      ; pubkey timestamp c4
 LDU 1       ; pubkey [timestamp] constructor_flag memory
 LDMSGADDR
 LDREF
+LDU 16
 LDDICT
 LDDICT
 LDU 32
 PLDDICT
 PAIR
+SETGLOB 15
 SETGLOB 14
 SETGLOB 13
 SETGLOB 12
@@ -2064,11 +2620,13 @@ PUSHCONT {
 	LDU 1       ; pubkey [timestamp] constructor_flag memory
 	LDMSGADDR
 	LDREF
+	LDU 16
 	LDDICT
 	LDDICT
 	LDU 32
 	PLDDICT
 	PAIR
+	SETGLOB 15
 	SETGLOB 14
 	SETGLOB 13
 	SETGLOB 12
@@ -2089,17 +2647,20 @@ PUSHCONT {
 	NEWC
 	ENDC
 	SETGLOB 11
+	; init fee
+	PUSHINT 0
+	SETGLOB 12
 	; init tokens
 	NEWDICT
-	SETGLOB 12
+	SETGLOB 13
 	; init getPool
 	NEWDICT
-	SETGLOB 13
+	SETGLOB 14
 	; init pools
 	PUSHINT 0
 	NEWDICT
 	PAIR
-	SETGLOB 14
+	SETGLOB 15
 	; set contract pubkey
 	PUSHINT 0
 	SWAP
@@ -2114,6 +2675,9 @@ PUSHCONT {
 	SETGLOB 6
 	TRUE
 	SETGLOB 1
+	;; init state var: fee
+	PUSHINT 1000
+	SETGLOB 12
 }
 IFELSE
 
@@ -2223,7 +2787,7 @@ IF
 .public	getPool
 .type	getPool, @function
 CALL $c4_to_c7$
-GETGLOB 13
+GETGLOB 14
 NEWC
 PUSHSLICE xc0000000000000000000000002_
 STSLICER
@@ -2243,7 +2807,7 @@ SETGLOB 7
 .public	pools
 .type	pools, @function
 CALL $c4_to_c7$
-GETGLOB 14
+GETGLOB 15
 NEWC
 PUSHSLICE xc0000000000000000000000002_
 STSLICER
