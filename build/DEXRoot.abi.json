@@ -1,0 +1,82 @@
+{
+	"ABI version": 2,
+	"header": ["pubkey", "time", "expire"],
+	"functions": [
+		{
+			"name": "constructor",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "getTokenExists",
+			"inputs": [
+				{"name":"rootAddress","type":"address"}
+			],
+			"outputs": [
+				{"name":"value0","type":"bool"}
+			]
+		},
+		{
+			"name": "getPoolAddress",
+			"inputs": [
+				{"name":"_tokenA","type":"address"},
+				{"name":"_tokenB","type":"address"}
+			],
+			"outputs": [
+				{"name":"poolAddress","type":"address"}
+			]
+		},
+		{
+			"name": "importToken",
+			"inputs": [
+				{"name":"_rootAddr","type":"address"},
+				{"name":"symbol","type":"bytes"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "deployPool",
+			"inputs": [
+				{"name":"_tokenA","type":"address"},
+				{"name":"_tokenB","type":"address"},
+				{"name":"_walletA","type":"address"},
+				{"name":"_walletB","type":"address"}
+			],
+			"outputs": [
+				{"name":"poolAddress","type":"address"}
+			]
+		},
+		{
+			"name": "updatePoolCode",
+			"inputs": [
+				{"name":"_cell","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "updateLiqWalletCode",
+			"inputs": [
+				{"name":"_cell","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "deployGovernance",
+			"inputs": [
+				{"name":"_govAddress","type":"address"}
+			],
+			"outputs": [
+			]
+		}
+	],
+	"data": [
+		{"key":1,"name":"iteration","type":"uint8"}
+	],
+	"events": [
+	]
+}

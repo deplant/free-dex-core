@@ -1,0 +1,1903 @@
+.globl	constructor
+.public	constructor
+.type	constructor, @function
+GETGLOB 1
+ISNULL
+IFREF {
+	CALL $c4_to_c7_with_init_storage$
+}
+;; constructor protection
+GETGLOB 6
+THROWIF 51
+PUSHINT 1
+SETGLOB 6
+;; end constructor protection
+; Decode input parameters
+ENDS
+; constructor DEXRoot
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
+;; ==
+GETGLOB 2
+EQUAL
+THROWIFNOT 501
+ACCEPT
+; end constructor DEXRoot
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	getTokenExists
+.public	getTokenExists
+.type	getTokenExists, @function
+GETGLOB 1
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+; Decode input parameters
+; Decode rootAddress
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
+ENDS
+;; param: rootAddress
+; function getTokenExists
+;; return
+;; map.exists
+;; push identifier rootAddress
+DUP
+;; push identifier tokens_
+GETGLOB 11
+PUSHINT 267
+DICTGET
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+NIP
+;; emitting 1 value(s)
+PUSH S1
+EQINT -1
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 96
+	STZEROES
+	STSLICECONST 0
+	STSLICECONST 0
+	STSLICECONST xe205451a
+	PUSH S1
+	STIR 1
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+IF
+DROP
+; end function getTokenExists
+IFREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	getPoolAddress
+.public	getPoolAddress
+.type	getPoolAddress, @function
+GETGLOB 1
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+; Decode input parameters
+; Decode _tokenA
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
+; Decode _tokenB
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
+ENDS
+;; param: _tokenA
+;; param: _tokenB
+; function getPoolAddress
+;; ret param: poolAddress
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+;; push identifier _tokenA
+PUSH S2
+;; push identifier _tokenB
+PUSH S2
+;; param: _tokenA
+;; param: _tokenB
+; function _pairRoutine
+;; ret param: tokenX
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+;; ret param: tokenY
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+;; push identifier _tokenA
+PUSH S3
+;; param: _token
+; function _checkToken
+;; return
+;; map.exists
+;; push identifier _token
+DUP
+;; push identifier tokens_
+GETGLOB 11
+PUSHINT 267
+DICTGET
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; map.fetch
+	;; push identifier _token
+	DUP
+	;; push identifier tokens_
+	GETGLOB 11
+	PUSHINT 267
+	DICTGETREF
+	NULLSWAPIFNOT
+	PUSHCONT {
+	}
+	IF
+	ISNULL
+	NOT
+}
+IF
+NIP
+; end function _checkToken
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; push identifier _tokenB
+	PUSH S2
+	;; param: _token
+	; function _checkToken
+	;; return
+	;; map.exists
+	;; push identifier _token
+	DUP
+	;; push identifier tokens_
+	GETGLOB 11
+	PUSHINT 267
+	DICTGET
+	DUP
+	PUSHCONT {
+		NIP
+	}
+	IF
+	;; short-circuiting &&
+	DUP
+	PUSHCONT {
+		DROP
+		;; map.fetch
+		;; push identifier _token
+		DUP
+		;; push identifier tokens_
+		GETGLOB 11
+		PUSHINT 267
+		DICTGETREF
+		NULLSWAPIFNOT
+		PUSHCONT {
+		}
+		IF
+		ISNULL
+		NOT
+	}
+	IF
+	NIP
+	; end function _checkToken
+}
+IF
+THROWIFNOT 506
+;; push identifier _tokenA
+PUSH S3
+;; push identifier _tokenB
+PUSH S3
+SDEQ
+NOT
+THROWIFNOT 505
+;; push identifier _tokenA
+PUSH S3
+;; push identifier _tokenB
+PUSH S3
+SDLEXCMP
+ISNEG
+PUSHCONT {
+	;; push identifier _tokenA
+	PUSH S3
+	;; push identifier _tokenB
+	PUSH S3
+}
+PUSHCONT {
+	;; push identifier _tokenB
+	PUSH S2
+	;; push identifier _tokenA
+	PUSH S4
+}
+IFELSE
+SWAP
+; expValue
+; end expValue
+; colValue
+POP S3
+; end colValue
+; expValue
+; end expValue
+; colValue
+NIP
+; end colValue
+;; returning named params
+SWAP2
+DROP2
+; end function _pairRoutine
+SWAP
+SWAP
+;; decl: tokenX
+;; decl: tokenY
+;; push identifier tokenX
+PUSH S1
+;; push identifier tokenY
+PUSH S1
+;; param: _tokenX
+;; param: _tokenY
+; function _expectedAddress
+NEWDICT
+PUSHINT 0
+NEWC
+STU 256
+PUSHINT 0
+ROT
+PUSHINT 64
+DICTUSETB
+MYADDR
+PUSHINT 1
+ROT
+PUSHINT 64
+DICTUSET
+PUSHSLICE x4c4951534f523a474c443a504c54
+NEWC
+STSLICE
+ENDC
+PUSHINT 2
+ROT
+PUSHINT 64
+DICTUSETREF
+PUSHSLICE x4c4951534f523a474c443a504c54
+NEWC
+STSLICE
+ENDC
+PUSHINT 3
+ROT
+PUSHINT 64
+DICTUSETREF
+;; push identifier liqWalletCode_
+GETGLOB 12
+PUSHINT 4
+ROT
+PUSHINT 64
+DICTUSETREF
+;; push identifier _tokenX
+PUSH S2
+PUSHINT 5
+ROT
+PUSHINT 64
+DICTUSET
+;; push identifier _tokenY
+PUSH S1
+PUSHINT 6
+ROT
+PUSHINT 64
+DICTUSET
+NEWC
+STDICT
+ENDC
+;; push identifier poolCode_
+GETGLOB 13
+NEWC
+STSLICECONST x2_
+STOPTREF
+STOPTREF
+STZERO
+ENDC
+;; decl: stateInit
+;; return
+;; address.makeAddrStd()
+;; push identifier stateInit
+DUP
+HASHCU
+PUSHINT 0
+NEWC
+STSLICECONST x9_
+STI 8
+STU 256
+ENDC
+CTOS
+XCHG s3
+BLKDROP 3
+; end function _expectedAddress
+; expValue
+; end expValue
+; colValue
+POP S3
+; end colValue
+;; returning named params
+BLKSWAP 2, 3
+BLKDROP 4
+;; emitting 1 value(s)
+PUSH S1
+EQINT -1
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 96
+	STZEROES
+	STSLICECONST 0
+	STSLICECONST 0
+	STSLICECONST xef7cbcff
+	PUSH S1
+	STSLICER
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+IF
+DROP
+; end function getPoolAddress
+IFREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	importToken
+.public	importToken
+.type	importToken, @function
+GETGLOB 1
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+; Decode input parameters
+; Decode _rootAddr
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
+; Decode symbol
+LDREF
+ENDS
+;; param: _rootAddr
+;; param: symbol
+; modifier onlyOwnerAcceptOrPay
+; function _isOwner
+;; return
+;; push identifier governance_
+GETGLOB 14
+;; push identifier ZERO_ADDRESS
+;; address.makeAddrStd()
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SDEQ
+NOT
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; get member sender
+	GETGLOB 9
+	;; push identifier governance_
+	GETGLOB 14
+	SDEQ
+}
+IF
+;; short-circuiting ||
+DUP
+PUSHCONT {
+	DROP
+	;; push identifier governance_
+	GETGLOB 14
+	;; push identifier ZERO_ADDRESS
+	;; address.makeAddrStd()
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	SDEQ
+	;; short-circuiting &&
+	DUP
+	PUSHCONT {
+		DROP
+		GETGLOB 5
+		DUP
+		ISNULL
+		PUSHCONT {
+			DROP
+			PUSHINT 0
+		}
+		IF
+		;; ==
+		GETGLOB 2
+		EQUAL
+	}
+	IF
+}
+IFNOT
+; end function _isOwner
+THROWIFNOT 501
+;; if
+;; get member sender
+GETGLOB 9
+;; push identifier ZERO_ADDRESS
+;; address.makeAddrStd()
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SDEQ
+NOT
+PUSHCONT {
+	;; get member value
+	CALLREF {
+		CALL $message_balance_macro$
+	}
+	;; >=
+	PUSHINT 100000000
+	GEQ
+	THROWIFNOT 509
+	; function _reserveGas
+	PUSHINT 500000000
+	;; get member balance
+	GETPARAM 7
+	INDEX 0
+	;; -
+	;; get member value
+	CALLREF {
+		CALL $message_balance_macro$
+	}
+	SUB
+	UFITS 128
+	MAX
+	PUSHINT 2
+	RAWRESERVE
+	;; ret param: retParam@0
+	PUSHINT 0
+	; end function _reserveGas
+	DROP
+}
+PUSHCONT {
+	ACCEPT
+}
+IFELSE
+;; end if
+; function importToken
+;; map.add
+; expValue
+;; fetch tokens_
+GETGLOB 11
+; end expValue
+;; push identifier symbol
+PUSH S1
+;; push identifier _rootAddr
+PUSH S3
+ROT
+PUSHINT 267
+DICTADDREF
+SWAP
+; colValue
+SETGLOB 11
+; end colValue
+DROP
+; end function importToken
+;; if
+;; get member sender
+GETGLOB 9
+;; push identifier ZERO_ADDRESS
+;; address.makeAddrStd()
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SDEQ
+PUSHCONT {
+	;; transfer()
+	;; get member sender
+	GETGLOB 9
+	NEWC
+	STSLICECONST x62_
+	STSLICE
+	PUSHINT 109
+	STZEROES
+	STSLICECONST 0
+	STSLICECONST 0
+	ENDC
+	PUSHINT 128
+	SENDRAWMSG
+}
+IFNOT
+;; end if
+DROP2
+; end modifier onlyOwnerAcceptOrPay
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	deployPool
+.public	deployPool
+.type	deployPool, @function
+GETGLOB 1
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+; Decode input parameters
+; Decode _tokenA
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
+; Decode _tokenB
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
+; Decode _walletA
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
+; Decode _walletB
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
+ENDS
+;; param: _tokenA
+;; param: _tokenB
+;; param: _walletA
+;; param: _walletB
+; modifier onlyOwnerAcceptOrPay
+; function _isOwner
+;; return
+;; push identifier governance_
+GETGLOB 14
+;; push identifier ZERO_ADDRESS
+;; address.makeAddrStd()
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SDEQ
+NOT
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; get member sender
+	GETGLOB 9
+	;; push identifier governance_
+	GETGLOB 14
+	SDEQ
+}
+IF
+;; short-circuiting ||
+DUP
+PUSHCONT {
+	DROP
+	;; push identifier governance_
+	GETGLOB 14
+	;; push identifier ZERO_ADDRESS
+	;; address.makeAddrStd()
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	SDEQ
+	;; short-circuiting &&
+	DUP
+	PUSHCONT {
+		DROP
+		GETGLOB 5
+		DUP
+		ISNULL
+		PUSHCONT {
+			DROP
+			PUSHINT 0
+		}
+		IF
+		;; ==
+		GETGLOB 2
+		EQUAL
+	}
+	IF
+}
+IFNOT
+; end function _isOwner
+THROWIFNOT 501
+;; if
+;; get member sender
+GETGLOB 9
+;; push identifier ZERO_ADDRESS
+;; address.makeAddrStd()
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SDEQ
+NOT
+PUSHCONT {
+	;; get member value
+	CALLREF {
+		CALL $message_balance_macro$
+	}
+	;; >=
+	PUSHINT 100000000
+	GEQ
+	THROWIFNOT 509
+	; function _reserveGas
+	PUSHINT 500000000
+	;; get member balance
+	GETPARAM 7
+	INDEX 0
+	;; -
+	;; get member value
+	CALLREF {
+		CALL $message_balance_macro$
+	}
+	SUB
+	UFITS 128
+	MAX
+	PUSHINT 2
+	RAWRESERVE
+	;; ret param: retParam@0
+	PUSHINT 0
+	; end function _reserveGas
+	DROP
+}
+PUSHCONT {
+	ACCEPT
+}
+IFELSE
+;; end if
+; function deployPool
+;; ret param: poolAddress
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+;; push identifier _tokenA
+PUSH S4
+;; push identifier _tokenB
+PUSH S4
+;; param: _tokenA
+;; param: _tokenB
+; function _pairRoutine
+;; ret param: tokenX
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+;; ret param: tokenY
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+;; push identifier _tokenA
+PUSH S3
+;; param: _token
+; function _checkToken
+;; return
+;; map.exists
+;; push identifier _token
+DUP
+;; push identifier tokens_
+GETGLOB 11
+PUSHINT 267
+DICTGET
+DUP
+PUSHCONT {
+	NIP
+}
+IF
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; map.fetch
+	;; push identifier _token
+	DUP
+	;; push identifier tokens_
+	GETGLOB 11
+	PUSHINT 267
+	DICTGETREF
+	NULLSWAPIFNOT
+	PUSHCONT {
+	}
+	IF
+	ISNULL
+	NOT
+}
+IF
+NIP
+; end function _checkToken
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; push identifier _tokenB
+	PUSH S2
+	;; param: _token
+	; function _checkToken
+	;; return
+	;; map.exists
+	;; push identifier _token
+	DUP
+	;; push identifier tokens_
+	GETGLOB 11
+	PUSHINT 267
+	DICTGET
+	DUP
+	PUSHCONT {
+		NIP
+	}
+	IF
+	;; short-circuiting &&
+	DUP
+	PUSHCONT {
+		DROP
+		;; map.fetch
+		;; push identifier _token
+		DUP
+		;; push identifier tokens_
+		GETGLOB 11
+		PUSHINT 267
+		DICTGETREF
+		NULLSWAPIFNOT
+		PUSHCONT {
+		}
+		IF
+		ISNULL
+		NOT
+	}
+	IF
+	NIP
+	; end function _checkToken
+}
+IF
+THROWIFNOT 506
+;; push identifier _tokenA
+PUSH S3
+;; push identifier _tokenB
+PUSH S3
+SDEQ
+NOT
+THROWIFNOT 505
+;; push identifier _tokenA
+PUSH S3
+;; push identifier _tokenB
+PUSH S3
+SDLEXCMP
+ISNEG
+PUSHCONT {
+	;; push identifier _tokenA
+	PUSH S3
+	;; push identifier _tokenB
+	PUSH S3
+}
+PUSHCONT {
+	;; push identifier _tokenB
+	PUSH S2
+	;; push identifier _tokenA
+	PUSH S4
+}
+IFELSE
+SWAP
+; expValue
+; end expValue
+; colValue
+POP S3
+; end colValue
+; expValue
+; end expValue
+; colValue
+NIP
+; end colValue
+;; returning named params
+SWAP2
+DROP2
+; end function _pairRoutine
+SWAP
+SWAP
+;; decl: tokenX
+;; decl: tokenY
+;; push identifier _tokenA
+PUSH S6
+;; push identifier _tokenB
+PUSH S6
+SDLEXCMP
+ISNEG
+PUSHCONT {
+	;; push identifier _walletA
+	PUSH S4
+	;; push identifier _walletB
+	PUSH S4
+}
+PUSHCONT {
+	;; push identifier _walletB
+	PUSH S3
+	;; push identifier _walletA
+	PUSH S5
+}
+IFELSE
+SWAP
+SWAP
+;; decl: walletX
+;; decl: walletY
+NEWDICT
+PUSHINT 0
+NEWC
+STU 256
+PUSHINT 0
+ROT
+PUSHINT 64
+DICTUSETB
+MYADDR
+PUSHINT 1
+ROT
+PUSHINT 64
+DICTUSET
+PUSHSLICE x4c4951534f523a474c443a504c54
+NEWC
+STSLICE
+ENDC
+PUSHINT 2
+ROT
+PUSHINT 64
+DICTUSETREF
+PUSHSLICE x4c4951534f523a474c443a504c54
+NEWC
+STSLICE
+ENDC
+PUSHINT 3
+ROT
+PUSHINT 64
+DICTUSETREF
+;; push identifier liqWalletCode_
+GETGLOB 12
+PUSHINT 4
+ROT
+PUSHINT 64
+DICTUSETREF
+;; push identifier tokenX
+PUSH S4
+PUSHINT 5
+ROT
+PUSHINT 64
+DICTUSET
+;; push identifier tokenY
+PUSH S3
+PUSHINT 6
+ROT
+PUSHINT 64
+DICTUSET
+NEWC
+STDICT
+ENDC
+;; push identifier poolCode_
+GETGLOB 13
+NEWC
+STSLICECONST x2_
+STOPTREF
+STOPTREF
+STZERO
+ENDC
+DUP
+HASHCU
+NEWC
+STSLICECONST x801_
+STU 256
+ENDC
+CTOS
+PUSHINT 1500000000
+PUSH S1
+NEWC
+STSLICECONST x62_
+STSLICE
+SWAP
+STGRAMS
+PUSHINT 105
+STZEROES
+STSLICECONST xc_
+STSLICECONST 1
+PUSH S2
+STREFR
+STSLICECONST 1
+NEWC
+STSLICECONST x49fa7cdf
+;; walletX
+;; push identifier walletX
+PUSH S5
+STSLICER
+;; walletY
+;; push identifier walletY
+PUSH S4
+STSLICER
+STBREFR
+ENDC
+PUSHINT 0
+SENDRAWMSG
+NIP
+; expValue
+; end expValue
+; colValue
+POP S5
+; end colValue
+;; return
+;; push identifier poolAddress
+PUSH S4
+XCHG s5
+BLKDROP 5
+;; emitting 1 value(s)
+PUSH S5
+EQINT -1
+PUSHCONT {
+	PUSH S7
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 96
+	STZEROES
+	STSLICECONST 0
+	STSLICECONST 0
+	STSLICECONST xd76ffcf3
+	PUSH S1
+	STSLICER
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+IF
+DROP
+; end function deployPool
+;; if
+;; get member sender
+GETGLOB 9
+;; push identifier ZERO_ADDRESS
+;; address.makeAddrStd()
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SDEQ
+PUSHCONT {
+	;; transfer()
+	;; get member sender
+	GETGLOB 9
+	NEWC
+	STSLICECONST x62_
+	STSLICE
+	PUSHINT 109
+	STZEROES
+	STSLICECONST 0
+	STSLICECONST 0
+	ENDC
+	PUSHINT 128
+	SENDRAWMSG
+}
+IFNOT
+;; end if
+BLKDROP 4
+; end modifier onlyOwnerAcceptOrPay
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	updatePoolCode
+.public	updatePoolCode
+.type	updatePoolCode, @function
+GETGLOB 1
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+; Decode input parameters
+; Decode _cell
+;; decode TvmCell
+LDREF
+ENDS
+;; param: _cell
+; modifier onlyOwnerAcceptOrPay
+; function _isOwner
+;; return
+;; push identifier governance_
+GETGLOB 14
+;; push identifier ZERO_ADDRESS
+;; address.makeAddrStd()
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SDEQ
+NOT
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; get member sender
+	GETGLOB 9
+	;; push identifier governance_
+	GETGLOB 14
+	SDEQ
+}
+IF
+;; short-circuiting ||
+DUP
+PUSHCONT {
+	DROP
+	;; push identifier governance_
+	GETGLOB 14
+	;; push identifier ZERO_ADDRESS
+	;; address.makeAddrStd()
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	SDEQ
+	;; short-circuiting &&
+	DUP
+	PUSHCONT {
+		DROP
+		GETGLOB 5
+		DUP
+		ISNULL
+		PUSHCONT {
+			DROP
+			PUSHINT 0
+		}
+		IF
+		;; ==
+		GETGLOB 2
+		EQUAL
+	}
+	IF
+}
+IFNOT
+; end function _isOwner
+THROWIFNOT 501
+;; if
+;; get member sender
+GETGLOB 9
+;; push identifier ZERO_ADDRESS
+;; address.makeAddrStd()
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SDEQ
+NOT
+PUSHCONT {
+	;; get member value
+	CALLREF {
+		CALL $message_balance_macro$
+	}
+	;; >=
+	PUSHINT 100000000
+	GEQ
+	THROWIFNOT 509
+	; function _reserveGas
+	PUSHINT 500000000
+	;; get member balance
+	GETPARAM 7
+	INDEX 0
+	;; -
+	;; get member value
+	CALLREF {
+		CALL $message_balance_macro$
+	}
+	SUB
+	UFITS 128
+	MAX
+	PUSHINT 2
+	RAWRESERVE
+	;; ret param: retParam@0
+	PUSHINT 0
+	; end function _reserveGas
+	DROP
+}
+PUSHCONT {
+	ACCEPT
+}
+IFELSE
+;; end if
+; function updatePoolCode
+; expValue
+; end expValue
+;; push identifier _cell
+DUP
+; colValue
+SETGLOB 13
+; end colValue
+; end function updatePoolCode
+;; if
+;; get member sender
+GETGLOB 9
+;; push identifier ZERO_ADDRESS
+;; address.makeAddrStd()
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SDEQ
+PUSHCONT {
+	;; transfer()
+	;; get member sender
+	GETGLOB 9
+	NEWC
+	STSLICECONST x62_
+	STSLICE
+	PUSHINT 109
+	STZEROES
+	STSLICECONST 0
+	STSLICECONST 0
+	ENDC
+	PUSHINT 128
+	SENDRAWMSG
+}
+IFNOT
+;; end if
+DROP
+; end modifier onlyOwnerAcceptOrPay
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	updateLiqWalletCode
+.public	updateLiqWalletCode
+.type	updateLiqWalletCode, @function
+GETGLOB 1
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+; Decode input parameters
+; Decode _cell
+;; decode TvmCell
+LDREF
+ENDS
+;; param: _cell
+; modifier onlyOwnerAcceptOrPay
+; function _isOwner
+;; return
+;; push identifier governance_
+GETGLOB 14
+;; push identifier ZERO_ADDRESS
+;; address.makeAddrStd()
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SDEQ
+NOT
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; get member sender
+	GETGLOB 9
+	;; push identifier governance_
+	GETGLOB 14
+	SDEQ
+}
+IF
+;; short-circuiting ||
+DUP
+PUSHCONT {
+	DROP
+	;; push identifier governance_
+	GETGLOB 14
+	;; push identifier ZERO_ADDRESS
+	;; address.makeAddrStd()
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	SDEQ
+	;; short-circuiting &&
+	DUP
+	PUSHCONT {
+		DROP
+		GETGLOB 5
+		DUP
+		ISNULL
+		PUSHCONT {
+			DROP
+			PUSHINT 0
+		}
+		IF
+		;; ==
+		GETGLOB 2
+		EQUAL
+	}
+	IF
+}
+IFNOT
+; end function _isOwner
+THROWIFNOT 501
+;; if
+;; get member sender
+GETGLOB 9
+;; push identifier ZERO_ADDRESS
+;; address.makeAddrStd()
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SDEQ
+NOT
+PUSHCONT {
+	;; get member value
+	CALLREF {
+		CALL $message_balance_macro$
+	}
+	;; >=
+	PUSHINT 100000000
+	GEQ
+	THROWIFNOT 509
+	; function _reserveGas
+	PUSHINT 500000000
+	;; get member balance
+	GETPARAM 7
+	INDEX 0
+	;; -
+	;; get member value
+	CALLREF {
+		CALL $message_balance_macro$
+	}
+	SUB
+	UFITS 128
+	MAX
+	PUSHINT 2
+	RAWRESERVE
+	;; ret param: retParam@0
+	PUSHINT 0
+	; end function _reserveGas
+	DROP
+}
+PUSHCONT {
+	ACCEPT
+}
+IFELSE
+;; end if
+; function updateLiqWalletCode
+; expValue
+; end expValue
+;; push identifier _cell
+DUP
+; colValue
+SETGLOB 12
+; end colValue
+; end function updateLiqWalletCode
+;; if
+;; get member sender
+GETGLOB 9
+;; push identifier ZERO_ADDRESS
+;; address.makeAddrStd()
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SDEQ
+PUSHCONT {
+	;; transfer()
+	;; get member sender
+	GETGLOB 9
+	NEWC
+	STSLICECONST x62_
+	STSLICE
+	PUSHINT 109
+	STZEROES
+	STSLICECONST 0
+	STSLICECONST 0
+	ENDC
+	PUSHINT 128
+	SENDRAWMSG
+}
+IFNOT
+;; end if
+DROP
+; end modifier onlyOwnerAcceptOrPay
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	deployGovernance
+.public	deployGovernance
+.type	deployGovernance, @function
+GETGLOB 1
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+; Decode input parameters
+; Decode _govAddress
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
+ENDS
+;; param: _govAddress
+; modifier onlyOwnerAcceptOrPay
+; function _isOwner
+;; return
+;; push identifier governance_
+GETGLOB 14
+;; push identifier ZERO_ADDRESS
+;; address.makeAddrStd()
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SDEQ
+NOT
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; get member sender
+	GETGLOB 9
+	;; push identifier governance_
+	GETGLOB 14
+	SDEQ
+}
+IF
+;; short-circuiting ||
+DUP
+PUSHCONT {
+	DROP
+	;; push identifier governance_
+	GETGLOB 14
+	;; push identifier ZERO_ADDRESS
+	;; address.makeAddrStd()
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	SDEQ
+	;; short-circuiting &&
+	DUP
+	PUSHCONT {
+		DROP
+		GETGLOB 5
+		DUP
+		ISNULL
+		PUSHCONT {
+			DROP
+			PUSHINT 0
+		}
+		IF
+		;; ==
+		GETGLOB 2
+		EQUAL
+	}
+	IF
+}
+IFNOT
+; end function _isOwner
+THROWIFNOT 501
+;; if
+;; get member sender
+GETGLOB 9
+;; push identifier ZERO_ADDRESS
+;; address.makeAddrStd()
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SDEQ
+NOT
+PUSHCONT {
+	;; get member value
+	CALLREF {
+		CALL $message_balance_macro$
+	}
+	;; >=
+	PUSHINT 100000000
+	GEQ
+	THROWIFNOT 509
+	; function _reserveGas
+	PUSHINT 500000000
+	;; get member balance
+	GETPARAM 7
+	INDEX 0
+	;; -
+	;; get member value
+	CALLREF {
+		CALL $message_balance_macro$
+	}
+	SUB
+	UFITS 128
+	MAX
+	PUSHINT 2
+	RAWRESERVE
+	;; ret param: retParam@0
+	PUSHINT 0
+	; end function _reserveGas
+	DROP
+}
+PUSHCONT {
+	ACCEPT
+}
+IFELSE
+;; end if
+; function deployGovernance
+;; push identifier _govAddress
+DUP
+;; push identifier ZERO_ADDRESS
+;; address.makeAddrStd()
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SDEQ
+NOT
+THROWIFNOT 508
+; expValue
+; end expValue
+;; push identifier _govAddress
+DUP
+; colValue
+SETGLOB 14
+; end colValue
+; end function deployGovernance
+;; if
+;; get member sender
+GETGLOB 9
+;; push identifier ZERO_ADDRESS
+;; address.makeAddrStd()
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SDEQ
+PUSHCONT {
+	;; transfer()
+	;; get member sender
+	GETGLOB 9
+	NEWC
+	STSLICECONST x62_
+	STSLICE
+	PUSHINT 109
+	STZEROES
+	STSLICECONST 0
+	STSLICECONST 0
+	ENDC
+	PUSHINT 128
+	SENDRAWMSG
+}
+IFNOT
+;; end if
+DROP
+; end modifier onlyOwnerAcceptOrPay
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	_pairName_internal
+.type	_pairName_internal, @function
+;; param: _tokenX
+;; param: _tokenY
+; function _pairName
+PUSHSLICE x346336393731373536393533346635323230353036663666366332303762
+NEWC
+STSLICE
+ENDC
+;; decl: str
+; expValue
+DUP
+; end expValue
+;; map.fetch
+;; push identifier _tokenX
+PUSH S3
+;; push identifier tokens_
+GETGLOB 11
+PUSHINT 267
+DICTGETREF
+NULLSWAPIFNOT
+PUSHCONT {
+}
+IF
+DUP
+ISNULL
+THROWIF 63
+CALLREF {
+	CALL $concatenateStrings_macro$
+}
+; colValue
+NIP
+; end colValue
+; expValue
+DUP
+; end expValue
+PUSHSLICE x3264
+NEWC
+STSLICE
+ENDC
+CALLREF {
+	CALL $concatenateStrings_macro$
+}
+; colValue
+NIP
+; end colValue
+; expValue
+DUP
+; end expValue
+;; map.fetch
+;; push identifier _tokenY
+PUSH S2
+;; push identifier tokens_
+GETGLOB 11
+PUSHINT 267
+DICTGETREF
+NULLSWAPIFNOT
+PUSHCONT {
+}
+IF
+DUP
+ISNULL
+THROWIF 63
+CALLREF {
+	CALL $concatenateStrings_macro$
+}
+; colValue
+NIP
+; end colValue
+; expValue
+DUP
+; end expValue
+PUSHSLICE x3764
+NEWC
+STSLICE
+ENDC
+CALLREF {
+	CALL $concatenateStrings_macro$
+}
+; colValue
+NIP
+; end colValue
+;; return
+;; push identifier str
+DUP
+;; bytes
+XCHG s3
+BLKDROP 3
+; end function _pairName
+
+.globl	_pairSymbol_internal
+.type	_pairSymbol_internal, @function
+;; param: _tokenX
+;; param: _tokenY
+; function _pairSymbol
+PUSHSLICE x346335313533346635323361
+NEWC
+STSLICE
+ENDC
+;; decl: str
+; expValue
+DUP
+; end expValue
+;; map.fetch
+;; push identifier _tokenX
+PUSH S3
+;; push identifier tokens_
+GETGLOB 11
+PUSHINT 267
+DICTGETREF
+NULLSWAPIFNOT
+PUSHCONT {
+}
+IF
+DUP
+ISNULL
+THROWIF 63
+CALLREF {
+	CALL $concatenateStrings_macro$
+}
+; colValue
+NIP
+; end colValue
+; expValue
+DUP
+; end expValue
+PUSHSLICE x3361
+NEWC
+STSLICE
+ENDC
+CALLREF {
+	CALL $concatenateStrings_macro$
+}
+; colValue
+NIP
+; end colValue
+; expValue
+DUP
+; end expValue
+;; map.fetch
+;; push identifier _tokenY
+PUSH S2
+;; push identifier tokens_
+GETGLOB 11
+PUSHINT 267
+DICTGETREF
+NULLSWAPIFNOT
+PUSHCONT {
+}
+IF
+DUP
+ISNULL
+THROWIF 63
+CALLREF {
+	CALL $concatenateStrings_macro$
+}
+; colValue
+NIP
+; end colValue
+;; return
+;; push identifier str
+DUP
+;; bytes
+XCHG s3
+BLKDROP 3
+; end function _pairSymbol
+
+.macro c7_to_c4
+GETGLOB 2
+NEWC
+STU 256
+GETGLOB 3
+STUR 64
+GETGLOB 6
+STUR 1
+GETGLOB 10
+GETGLOB 11
+GETGLOB 12
+GETGLOB 13
+GETGLOB 14
+REVERSE 6, 0
+STU 8
+STDICT
+STREF
+STREF
+STSLICE
+ENDC
+POP C4
+
+.macro c4_to_c7
+PUSHROOT
+CTOS        ; c4
+LDU 256      ; pubkey c4
+LDU 64      ; pubkey timestamp c4
+LDU 1       ; pubkey [timestamp] constructor_flag memory
+LDU 8
+LDDICT
+LDREF
+LDREF
+SETGLOB 14
+SETGLOB 13
+SETGLOB 12
+SETGLOB 11
+SETGLOB 10
+TRUE
+SETGLOB 1   ; pubkey [timestamp] constructor_flag
+SETGLOB 6   ; pubkey [timestamp]
+SETGLOB 3   ; D
+SETGLOB 2
+
+.macro c4_to_c7_with_init_storage
+PUSHROOT
+CTOS        ; c4
+DUP        ; c4 c4
+SBITS      ; c4 bits
+GTINT 1    ; c4 bits>1
+PUSHCONT {
+	LDU 256      ; pubkey c4
+	LDU 64      ; pubkey timestamp c4
+	LDU 1       ; pubkey [timestamp] constructor_flag memory
+	LDU 8
+	LDDICT
+	LDREF
+	LDREF
+	SETGLOB 14
+	SETGLOB 13
+	SETGLOB 12
+	SETGLOB 11
+	SETGLOB 10
+	TRUE
+	SETGLOB 1   ; pubkey [timestamp] constructor_flag
+	SETGLOB 6   ; pubkey [timestamp]
+	SETGLOB 3   ; D
+	SETGLOB 2
+}
+PUSHCONT {
+	PLDDICT   ; D
+	; init iteration
+	PUSHINT 1
+	PUSH S1
+	PUSHINT 64
+	DICTUGET
+	PUSHCONT {
+		PLDU 8
+	}
+	PUSHCONT {
+		PUSHINT 0
+	}
+	IFELSE
+	SETGLOB 10
+	; init tokens_
+	NEWDICT
+	SETGLOB 11
+	; init liqWalletCode_
+	NEWC
+	ENDC
+	SETGLOB 12
+	; init poolCode_
+	NEWC
+	ENDC
+	SETGLOB 13
+	; init governance_
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	SETGLOB 14
+	; set contract pubkey
+	PUSHINT 0
+	SWAP
+	PUSHINT 64
+	DICTUGET
+	THROWIFNOT 61
+	PLDU 256
+	SETGLOB 2
+	PUSHINT 0 ; timestamp
+	SETGLOB 3
+	PUSHINT 0 ; constructor_flag
+	SETGLOB 6
+	TRUE
+	SETGLOB 1
+}
+IFELSE
+
+.internal-alias :main_internal,        0
+.internal	:main_internal
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Function: main_internal
+;; param: contract_balance
+;; param: msg_balance
+;; param: int_msg_info
+;; param: msg_body_slice
+PUSHINT 0  ; main_external trans id
+PUSH S2
+CTOS
+LDU 4       ; bounced tail
+LDMSGADDR   ; bounced src tail
+DROP
+SETGLOB 9
+MODPOW2 1
+IFRET
+PUSH S1    ; body
+SEMPTY     ; isEmpty
+IFRET
+PUSH S1 ; body
+LDU 32  ; funcId body'
+PUSH S1 ; funcId body' funcId
+IFNOTRET
+PUSH S1 ; funcId body' funcId
+LESSINT 3            ; funcId body' funcId<3
+PUSH S2              ; funcId body' funcId<3 funcId
+PUSHINT 4294967293   ; funcId body' funcId<3 funcId 4294967293
+GREATER              ; funcId body' funcId<3 funcId>4294967293
+OR                   ; funcId body' funcId<3||funcId>4294967293
+PUSHCONT {
+	DROP2
+	THROW 60
+}
+IFJMP
+SWAP    ; body funcId
+CALL 1
+GETGLOB 7
+ISNULL
+PUSHCONT {
+	DROP
+	THROW 60
+}
+IF
+
+.internal-alias :main_external,        -1
+.internal	:main_external
+PUSHINT -1 ; main_external trans id
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SETGLOB 9
+PUSH S1
+CALL $c4_to_c7_with_init_storage$
+LDU 1 ; haveSign msgSlice
+SWAP
+PUSHCONT {
+	PUSHINT 512
+	LDSLICEX ; signatureSlice msgSlice
+	DUP      ; signatureSlice msgSlice msgSlice
+	HASHSU   ; signatureSlice msgSlice hashMsgSlice
+	SWAP  ; signatureSlice hashMsgSlice msgSlice
+	LDU 1 ; signatureSlice hashMsgSlice havePubkey msgSlice
+	SWAP  ; signatureSlice hashMsgSlice msgSlice havePubkey
+	PUSHCONT {
+		LDU 256       ; signatureSlice hashMsgSlice pubkey msgSlice
+		XCHG s3
+		SWAP
+	}
+	PUSHCONT {
+		XCHG s2
+		GETGLOB 2
+	}
+	IFELSE
+	DUP
+	SETGLOB 5
+	CHKSIGNU      ; msgSlice isSigned
+	THROWIFNOT 40 ; msgSlice
+}
+PUSHCONT {
+	LDU 1      ; havePubkey msgSlice
+	SWAP       ; msgSlice havePubkey
+	THROWIF 58 ; msgSlice
+}
+IFELSE
+LDU 64                         ; timestamp msgSlice
+SWAP                           ; msgSlice timestamp
+CALL $replay_protection_macro$ ; msgSlice
+LDU 32  ; expireAt msgSlice
+SWAP    ; msgSlice expireAt
+NOW     ; msgSlice expireAt now
+GREATER ; msgSlice expireAt>now
+THROWIFNOT 57
+LDU  32 ; funcId body
+PUSH S1 ; funcId body funcId
+LESSINT 3            ; funcId body' funcId<3
+PUSH S2              ; funcId body' funcId<3 funcId
+PUSHINT 4294967293   ; funcId body' funcId<3 funcId 4294967293
+GREATER              ; funcId body' funcId<3 funcId>4294967293
+OR                   ; funcId body' funcId<3||funcId>4294967293
+PUSHCONT {
+	DROP2
+	THROW 60
+}
+IFJMP
+SWAP    ; body funcId
+CALL 1
+GETGLOB 7
+ISNULL
+PUSHCONT {
+	DROP
+	THROW 60
+}
+IF
+

@@ -1,0 +1,208 @@
+{
+	"ABI version": 2,
+	"header": ["pubkey", "time", "expire"],
+	"functions": [
+		{
+			"name": "constructor",
+			"inputs": [
+				{"name":"walletX","type":"address"},
+				{"name":"walletY","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "getName",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"name","type":"bytes"}
+			]
+		},
+		{
+			"name": "getSymbol",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"symbol","type":"bytes"}
+			]
+		},
+		{
+			"name": "getDecimals",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"decimals","type":"uint8"}
+			]
+		},
+		{
+			"name": "getRootKey",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"rootKey","type":"uint256"}
+			]
+		},
+		{
+			"name": "getRootOwner",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"rootOwner","type":"address"}
+			]
+		},
+		{
+			"name": "getTotalSupply",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"totalSupply","type":"uint128"}
+			]
+		},
+		{
+			"name": "getTotalGranted",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"totalGranted","type":"uint128"}
+			]
+		},
+		{
+			"name": "getWalletCode",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"walletCode","type":"cell"}
+			]
+		},
+		{
+			"name": "getWalletAddress",
+			"inputs": [
+				{"name":"workchainId","type":"int8"},
+				{"name":"walletPubkey","type":"uint256"},
+				{"name":"walletOwner","type":"address"}
+			],
+			"outputs": [
+				{"name":"walletAddress","type":"address"}
+			]
+		},
+		{
+			"name": "deployEmptyWallet",
+			"inputs": [
+				{"name":"workchainId","type":"int8"},
+				{"name":"walletPubkey","type":"uint256"},
+				{"name":"walletOwner","type":"address"},
+				{"name":"grams","type":"uint128"}
+			],
+			"outputs": [
+				{"name":"walletAddress","type":"address"},
+				{"name":"walletCode","type":"cell"}
+			]
+		},
+		{
+			"name": "getPoolDetails",
+			"inputs": [
+			],
+			"outputs": [
+				{"components":[{"name":"rootX","type":"address"},{"name":"walletX","type":"address"},{"name":"balanceX","type":"uint128"},{"name":"rootY","type":"address"},{"name":"walletY","type":"address"},{"name":"balanceY","type":"uint128"},{"name":"providerFee","type":"uint128"},{"name":"balanceLiq","type":"uint128"}],"name":"details","type":"tuple"}
+			]
+		},
+		{
+			"name": "getSwapDetails",
+			"inputs": [
+				{"name":"_tokenAddress","type":"address"},
+				{"name":"_tokens","type":"uint128"}
+			],
+			"outputs": [
+				{"components":[{"name":"firstParam","type":"uint128"},{"name":"secondParam","type":"uint128"}],"name":"details","type":"tuple"}
+			]
+		},
+		{
+			"name": "getDepositDetails",
+			"inputs": [
+				{"name":"_tokenAddress","type":"address"},
+				{"name":"_tokens","type":"uint128"}
+			],
+			"outputs": [
+				{"components":[{"name":"firstParam","type":"uint128"},{"name":"secondParam","type":"uint128"}],"name":"details","type":"tuple"}
+			]
+		},
+		{
+			"name": "getWithdrawDetails",
+			"inputs": [
+				{"name":"_tokens","type":"uint128"}
+			],
+			"outputs": [
+				{"components":[{"name":"firstParam","type":"uint128"},{"name":"secondParam","type":"uint128"}],"name":"details","type":"tuple"}
+			]
+		},
+		{
+			"name": "swap",
+			"inputs": [
+				{"name":"_tokenAddress","type":"address"},
+				{"name":"_senderKey","type":"uint256"},
+				{"name":"_senderOwner","type":"address"},
+				{"name":"_tokens","type":"uint128"},
+				{"name":"_minReturn","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "deposit",
+			"inputs": [
+				{"name":"_tokenAddress","type":"address"},
+				{"name":"_senderKey","type":"uint256"},
+				{"name":"_senderOwner","type":"address"},
+				{"name":"_tokens","type":"uint128"},
+				{"name":"_maxSpend","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "withdraw",
+			"inputs": [
+				{"name":"_senderKey","type":"uint256"},
+				{"name":"_senderOwner","type":"address"},
+				{"name":"_tokens","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onWalletBurn",
+			"inputs": [
+				{"name":"_tokenAddress","type":"address"},
+				{"name":"_senderKey","type":"uint256"},
+				{"name":"_senderOwner","type":"address"},
+				{"name":"_tokens","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onWalletReceive",
+			"inputs": [
+				{"name":"_tokenAddress","type":"address"},
+				{"name":"_receiverKey","type":"uint256"},
+				{"name":"_receiverOwner","type":"address"},
+				{"name":"_senderKey","type":"uint256"},
+				{"name":"_senderOwner","type":"address"},
+				{"name":"_tokens","type":"uint128"}
+			],
+			"outputs": [
+			]
+		}
+	],
+	"data": [
+		{"key":1,"name":"dex_","type":"address"},
+		{"key":2,"name":"name_","type":"bytes"},
+		{"key":3,"name":"symbol_","type":"bytes"},
+		{"key":4,"name":"code_","type":"cell"},
+		{"key":5,"name":"tokenX_","type":"address"},
+		{"key":6,"name":"tokenY_","type":"address"}
+	],
+	"events": [
+	]
+}
