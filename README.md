@@ -10,12 +10,14 @@ git clone git@github.com:laugan-ton/free-dex-core.git
 cd  free-dex-core
 ./build.sh
 ```
+Put your correct paths to compiler and linker at the head of shell-script.
+It's using giver, so will work on TONOS SE.
 
 ## Debot
 
 You can use debot with this command:
 ```
-tonos-cli debot fetch 0:9b07877d09d052d3aaf2c8a0f66006bf21fea5cee607c133a4ded6bba254748c
+tonos-cli debot fetch 0:f1cedf19ba31021433955b2e34bd557da056f2d1edaced53c2f99c9e7c531f20
 ```
 
 ## Addresses of deployed contracts
@@ -28,27 +30,23 @@ Wallet Keys:
 0xadeaae3e5a47499d3209cad5c8bb532a8997748ecf8804c0830763d21deb5539
 
 DEX
-0:65bff3054f9b09ace3b2501a0b99cac31634bdacf752a1e23bdc6c00fbc2be4d
+0:eeb907c2b7c45da4ec58916278f1d5dc62ddb49341794666e6acde670ed0bfee
 Pool Root1/Root2
-0:50982ffbfe6f24ce8b9aea6a40d09b3eaaac6c39e57e24de004b7b228a486bae
+0:0bcdb337f5f0978c1c14a1a334a386cbf91140ed6eeb5298913c0994b5f672e6
 Debot
-0:9b07877d09d052d3aaf2c8a0f66006bf21fea5cee607c133a4ded6bba254748c
+0:f1cedf19ba31021433955b2e34bd557da056f2d1edaced53c2f99c9e7c531f20
 Root1
-0:b2c1b9efded0e1d5feaec85c8859f7cb3ff301190fdfdcfe1b507e75c9828b62
+0:218ff308f2590401930ba66660ef20831b4e1b6af39a98d15f5257d5f60fda2e
 Root1Wallet1
-0:3bc4f29d605284786b5a5a3db3b86f625973679d052c897464b5de424aa2d59a
+0:b823489cc9d5bdeb071e87d1a5cc75d853140952bdbad19e631c4afd951289eb
 Root1Wallet2
-0:7f2f2914b612b0f1cf82df2669fbd3cebdb2c075ed1c0f706b3bfaac2f8289c7
+0:8f74bf634cc853d855c95c3b4dddf763ee811884d8453dfd2c1333e43f5c7fd4
 Root2
-0:a1eea408c0573dcf5389fb00bbfc09d52b28427bc8c643f17f24539810a4836a
+0:679c62fd5191a52b5f47d9027d83b270c5ee38b793c169e065e055abb5a3d1fb
 Root2Wallet1
-0:478a6396994217a201f5766fa9fa4ea5862cf5e0fe1edf926ed58b2f62773707
+0:2ca6cfd7a4e1bf93d09fff12cd814ed0cef630292ba0e0ab7ad89563f87082ee
 Root2Wallet2
-0:b139b3597e4386217bb024771b938d24f95407d2274806d1dbe22b4648b90bbd
-Root1DEXWallet
-0:65cbb7ff31846b998028b5a3dac76f09a4537da6ca6ce28e77a29f0921149a37
-Root2DEXWallet
-0:f065178824dce5973f203e9489097b38b8f9a05b72c66b8a4ccce48d6533f3f3
+0:4b0b66e0c37e8d1634457d4e94a06acd4bda2deb82bbd0288c39b660f2a6f838
 ```
 
 ## Keys to use

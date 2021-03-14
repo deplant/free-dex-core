@@ -13,29 +13,72 @@ PUSHINT 1
 SETGLOB 6
 ;; end constructor protection
 ; Decode input parameters
-; Decode walletX
-LDMSGADDRQ
+; Decode valueX
+;; decode struct TokenDetails valueX
+;; decode TokenDetails.name
+LDREF
+;; decode TokenDetails.symbol
+LDREF
+;; decode TokenDetails.decimals
+LDU 8
+;; decode TokenDetails.code
+;; decode TvmCell
+LDREF
+;; decode TokenDetails.totalSupply
+LDUQ 128
 PUSHCONT {
 	;; load next cell
 	LDREF
 	ENDS
 	CTOS
-	LDMSGADDR
+	LDU 128
 }
 IFNOT
-; Decode walletY
-LDMSGADDRQ
+;; decode TokenDetails.totalGranted
+LDUQ 128
 PUSHCONT {
 	;; load next cell
 	LDREF
 	ENDS
 	CTOS
-	LDMSGADDR
+	LDU 128
 }
 IFNOT
+;; build struct TokenDetails ss:7
+BLKSWAP 6, 1
+TUPLE 6
+SWAP
+; Decode valueY
+;; decode struct TokenDetails valueY
+;; decode TokenDetails.name
+DUP
+SREFS
+EQINT 1
+PUSHCONT {
+	LDREF
+	ENDS
+	CTOS
+}
+IF
+LDREF
+;; decode TokenDetails.symbol
+LDREF
+;; decode TokenDetails.decimals
+LDU 8
+;; decode TokenDetails.code
+;; decode TvmCell
+LDREF
+;; decode TokenDetails.totalSupply
+LDU 128
+;; decode TokenDetails.totalGranted
+LDU 128
+;; build struct TokenDetails ss:8
+BLKSWAP 6, 1
+TUPLE 6
+SWAP
 ENDS
-;; param: walletX
-;; param: walletY
+;; param: valueX
+;; param: valueY
 ; constructor DEXPool
 ; expValue
 ;; fetch detailsX_
@@ -61,22 +104,99 @@ SETGLOB 17
 ;; fetch detailsX_
 GETGLOB 16
 ; end expValue
-;; push identifier walletX
+;; get member code
+;; push identifier valueX
 PUSH S2
+INDEX 3
 ; colValue
-SETINDEX 1
+SETINDEX 2
 SETGLOB 16
 ; end colValue
 ; expValue
 ;; fetch detailsY_
 GETGLOB 17
 ; end expValue
-;; push identifier walletY
+;; get member code
+;; push identifier valueY
 PUSH S1
+INDEX 3
 ; colValue
-SETINDEX 1
+SETINDEX 2
 SETGLOB 17
 ; end colValue
+; expValue
+;; fetch detailsX_
+GETGLOB 16
+; end expValue
+;; get member name
+;; push identifier valueX
+PUSH S2
+INDEX 0
+; colValue
+SETINDEX 3
+SETGLOB 16
+; end colValue
+; expValue
+;; fetch detailsY_
+GETGLOB 17
+; end expValue
+;; get member name
+;; push identifier valueY
+PUSH S1
+INDEX 0
+; colValue
+SETINDEX 3
+SETGLOB 17
+; end colValue
+; expValue
+;; fetch detailsX_
+GETGLOB 16
+; end expValue
+;; get member symbol
+;; push identifier valueX
+PUSH S2
+INDEX 1
+; colValue
+SETINDEX 4
+SETGLOB 16
+; end colValue
+; expValue
+;; fetch detailsY_
+GETGLOB 17
+; end expValue
+;; get member symbol
+;; push identifier valueY
+PUSH S1
+INDEX 1
+; colValue
+SETINDEX 4
+SETGLOB 17
+; end colValue
+; expValue
+;; fetch detailsX_
+GETGLOB 16
+; end expValue
+;; get member decimals
+;; push identifier valueX
+PUSH S2
+INDEX 2
+; colValue
+SETINDEX 5
+SETGLOB 16
+; end colValue
+; expValue
+;; fetch detailsY_
+GETGLOB 17
+; end expValue
+;; get member decimals
+;; push identifier valueY
+PUSH S1
+INDEX 2
+; colValue
+SETINDEX 5
+SETGLOB 17
+; end colValue
+CALL $_deployWallets_internal$
 DROP2
 ; end constructor DEXPool
 CALLREF {
@@ -85,9 +205,9 @@ CALLREF {
 TRUE
 SETGLOB 7
 
-.globl	getName
-.public	getName
-.type	getName, @function
+.globl	getTokenInfo
+.public	getTokenInfo
+.type	getTokenInfo, @function
 GETGLOB 1
 ISNULL
 IFREF {
@@ -95,397 +215,20 @@ IFREF {
 }
 ; Decode input parameters
 ENDS
-; function getName
-;; ret param: name
-NEWC
-ENDC
-; expValue
-; end expValue
+; function getTokenInfo
+;; return
 ;; push identifier name_
 GETGLOB 11
-; colValue
-NIP
-; end colValue
-;; returning named params
-;; emitting 1 value(s)
-PUSH S1
-EQINT -1
-PUSHCONT {
-	PUSH S3
-	CTOS
-	LDU 2
-	LDMSGADDR
-	DROP
-	NIP
-	NEWC
-	STSLICECONST xc
-	STSLICE
-	PUSHINT 96
-	STZEROES
-	STSLICECONST 0
-	STSLICECONST 0
-	STSLICECONST xcc0a1dda
-	PUSH S1
-	STREFR
-	ENDC
-	PUSHINT 0
-	SENDRAWMSG
-}
-IF
-DROP
-; end function getName
-IFREF {
-	CALL $c7_to_c4$
-}
-TRUE
-SETGLOB 7
-
-.globl	getSymbol
-.public	getSymbol
-.type	getSymbol, @function
-GETGLOB 1
-ISNULL
-IFREF {
-	CALL $c4_to_c7$
-}
-; Decode input parameters
-ENDS
-; function getSymbol
-;; ret param: symbol
-NEWC
-ENDC
-; expValue
-; end expValue
 ;; push identifier symbol_
 GETGLOB 12
-; colValue
-NIP
-; end colValue
-;; returning named params
-;; emitting 1 value(s)
-PUSH S1
-EQINT -1
-PUSHCONT {
-	PUSH S3
-	CTOS
-	LDU 2
-	LDMSGADDR
-	DROP
-	NIP
-	NEWC
-	STSLICECONST xc
-	STSLICE
-	PUSHINT 96
-	STZEROES
-	STSLICECONST 0
-	STSLICECONST 0
-	STSLICECONST xdc7fbe43
-	PUSH S1
-	STREFR
-	ENDC
-	PUSHINT 0
-	SENDRAWMSG
-}
-IF
-DROP
-; end function getSymbol
-IFREF {
-	CALL $c7_to_c4$
-}
-TRUE
-SETGLOB 7
-
-.globl	getDecimals
-.public	getDecimals
-.type	getDecimals, @function
-GETGLOB 1
-ISNULL
-IFREF {
-	CALL $c4_to_c7$
-}
-; Decode input parameters
-ENDS
-; function getDecimals
-;; ret param: decimals
-PUSHINT 0
-; expValue
-; end expValue
 PUSHINT 12
-; colValue
-NIP
-; end colValue
-;; returning named params
-;; emitting 1 value(s)
-PUSH S1
-EQINT -1
-PUSHCONT {
-	PUSH S3
-	CTOS
-	LDU 2
-	LDMSGADDR
-	DROP
-	NIP
-	NEWC
-	STSLICECONST xc
-	STSLICE
-	PUSHINT 96
-	STZEROES
-	STSLICECONST 0
-	STSLICECONST 0
-	STSLICECONST x89981cd7
-	PUSH S1
-	STUR 8
-	ENDC
-	PUSHINT 0
-	SENDRAWMSG
-}
-IF
-DROP
-; end function getDecimals
-IFREF {
-	CALL $c7_to_c4$
-}
-TRUE
-SETGLOB 7
-
-.globl	getRootKey
-.public	getRootKey
-.type	getRootKey, @function
-GETGLOB 1
-ISNULL
-IFREF {
-	CALL $c4_to_c7$
-}
-; Decode input parameters
-ENDS
-; function getRootKey
-;; ret param: rootKey
-PUSHINT 0
-PUSHINT 0
-;; uint256
-; expValue
-; end expValue
-; colValue
-NIP
-; end colValue
-;; returning named params
-;; emitting 1 value(s)
-PUSH S1
-EQINT -1
-PUSHCONT {
-	PUSH S3
-	CTOS
-	LDU 2
-	LDMSGADDR
-	DROP
-	NIP
-	NEWC
-	STSLICECONST xc
-	STSLICE
-	PUSHINT 96
-	STZEROES
-	STSLICECONST 0
-	STSLICECONST 0
-	STSLICECONST xdc65afa6
-	PUSH S1
-	STUR 256
-	ENDC
-	PUSHINT 0
-	SENDRAWMSG
-}
-IF
-DROP
-; end function getRootKey
-IFREF {
-	CALL $c7_to_c4$
-}
-TRUE
-SETGLOB 7
-
-.globl	getRootOwner
-.public	getRootOwner
-.type	getRootOwner, @function
-GETGLOB 1
-ISNULL
-IFREF {
-	CALL $c4_to_c7$
-}
-; Decode input parameters
-ENDS
-; function getRootOwner
-;; ret param: rootOwner
-PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-; expValue
-; end expValue
-;; push identifier dex_
-GETGLOB 10
-; colValue
-NIP
-; end colValue
-;; returning named params
-;; emitting 1 value(s)
-PUSH S1
-EQINT -1
-PUSHCONT {
-	PUSH S3
-	CTOS
-	LDU 2
-	LDMSGADDR
-	DROP
-	NIP
-	NEWC
-	STSLICECONST xc
-	STSLICE
-	PUSHINT 96
-	STZEROES
-	STSLICECONST 0
-	STSLICECONST 0
-	STSLICECONST xbc1595d5
-	PUSH S1
-	STSLICER
-	ENDC
-	PUSHINT 0
-	SENDRAWMSG
-}
-IF
-DROP
-; end function getRootOwner
-IFREF {
-	CALL $c7_to_c4$
-}
-TRUE
-SETGLOB 7
-
-.globl	getTotalSupply
-.public	getTotalSupply
-.type	getTotalSupply, @function
-GETGLOB 1
-ISNULL
-IFREF {
-	CALL $c4_to_c7$
-}
-; Decode input parameters
-ENDS
-; function getTotalSupply
-;; ret param: totalSupply
-PUSHINT 0
-; expValue
-; end expValue
-;; push identifier total_supply_
-GETGLOB 18
-; colValue
-NIP
-; end colValue
-;; returning named params
-;; emitting 1 value(s)
-PUSH S1
-EQINT -1
-PUSHCONT {
-	PUSH S3
-	CTOS
-	LDU 2
-	LDMSGADDR
-	DROP
-	NIP
-	NEWC
-	STSLICECONST xc
-	STSLICE
-	PUSHINT 96
-	STZEROES
-	STSLICECONST 0
-	STSLICECONST 0
-	STSLICECONST xab337f7f
-	PUSH S1
-	STUR 128
-	ENDC
-	PUSHINT 0
-	SENDRAWMSG
-}
-IF
-DROP
-; end function getTotalSupply
-IFREF {
-	CALL $c7_to_c4$
-}
-TRUE
-SETGLOB 7
-
-.globl	getTotalGranted
-.public	getTotalGranted
-.type	getTotalGranted, @function
-GETGLOB 1
-ISNULL
-IFREF {
-	CALL $c4_to_c7$
-}
-; Decode input parameters
-ENDS
-; function getTotalGranted
-;; ret param: totalGranted
-PUSHINT 0
-; expValue
-; end expValue
-;; push identifier total_supply_
-GETGLOB 18
-; colValue
-NIP
-; end colValue
-;; returning named params
-;; emitting 1 value(s)
-PUSH S1
-EQINT -1
-PUSHCONT {
-	PUSH S3
-	CTOS
-	LDU 2
-	LDMSGADDR
-	DROP
-	NIP
-	NEWC
-	STSLICECONST xc
-	STSLICE
-	PUSHINT 96
-	STZEROES
-	STSLICECONST 0
-	STSLICECONST 0
-	STSLICECONST xacd526f7
-	PUSH S1
-	STUR 128
-	ENDC
-	PUSHINT 0
-	SENDRAWMSG
-}
-IF
-DROP
-; end function getTotalGranted
-IFREF {
-	CALL $c7_to_c4$
-}
-TRUE
-SETGLOB 7
-
-.globl	getWalletCode
-.public	getWalletCode
-.type	getWalletCode, @function
-GETGLOB 1
-ISNULL
-IFREF {
-	CALL $c4_to_c7$
-}
-; Decode input parameters
-ENDS
-; function getWalletCode
-;; ret param: walletCode
-NEWC
-ENDC
-; expValue
-; end expValue
 ;; push identifier code_
 GETGLOB 13
-; colValue
-NIP
-; end colValue
-;; returning named params
+;; push identifier total_supply_
+GETGLOB 18
+;; push identifier total_supply_
+GETGLOB 18
+TUPLE 6
 ;; emitting 1 value(s)
 PUSH S1
 EQINT -1
@@ -503,16 +246,162 @@ PUSHCONT {
 	STZEROES
 	STSLICECONST 0
 	STSLICECONST 0
-	STSLICECONST xca78730f
+	STSLICECONST x9e2f4ecc
 	PUSH S1
+	UNTUPLE 6
+	BLKSWAP 1, 6
+	PUSH S6
 	STREFR
+	PUSH S5
+	STREFR
+	PUSH S4
+	STUR 8
+	PUSH S3
+	STREFR
+	PUSH S2
+	STUR 128
+	PUSH S1
+	STUR 128
+	XCHG s6
+	BLKDROP 6
 	ENDC
 	PUSHINT 0
 	SENDRAWMSG
 }
 IF
 DROP
-; end function getWalletCode
+; end function getTokenInfo
+IFREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	callTokenInfo
+.public	callTokenInfo
+.type	callTokenInfo, @function
+GETGLOB 1
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+LDU 32
+GETGLOB 4
+ROT
+SETINDEXQ 5
+SETGLOB 4
+; Decode input parameters
+ENDS
+; function callTokenInfo
+;; return
+GETGLOB 4
+PUSHINT 0
+SETINDEXQ 2
+PUSHINT 64
+SETINDEXQ 4
+SETGLOB 4
+;; push identifier name_
+GETGLOB 11
+;; push identifier symbol_
+GETGLOB 12
+PUSHINT 12
+;; push identifier code_
+GETGLOB 13
+;; push identifier total_supply_
+GETGLOB 18
+;; push identifier total_supply_
+GETGLOB 18
+TUPLE 6
+;; emitting 1 value(s)
+PUSH S1
+EQINT -1
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 96
+	STZEROES
+	STSLICECONST 0
+	STSLICECONST 0
+	STSLICECONST xe356f9c1
+	PUSH S1
+	UNTUPLE 6
+	BLKSWAP 1, 6
+	PUSH S6
+	STREFR
+	PUSH S5
+	STREFR
+	PUSH S4
+	STUR 8
+	PUSH S3
+	STREFR
+	PUSH S2
+	STUR 128
+	PUSH S1
+	STUR 128
+	XCHG s6
+	BLKDROP 6
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	GETGLOB 4
+	DUP
+	INDEX 3
+	PUSH S1
+	INDEX 2
+	GETGLOB 9
+	BLKSWAP 1, 3
+	INDEX 1
+	NEWC
+	PUSHINT 2
+	STZEROES
+	STI 1
+	PUSHINT 3
+	STZEROES
+	STSLICE
+	SWAP
+	STGRAMS
+	STDICT
+	PUSHINT 104
+	STZEROES
+	STSLICECONST 0
+	STSLICECONST 0
+	GETGLOB 4
+	INDEX 5
+	STUR 32
+	PUSH S1
+	UNTUPLE 6
+	BLKSWAP 1, 6
+	PUSH S6
+	STREFR
+	PUSH S5
+	STREFR
+	PUSH S4
+	STUR 8
+	PUSH S3
+	STREFR
+	PUSH S2
+	STUR 128
+	PUSH S1
+	STUR 128
+	XCHG s6
+	BLKDROP 6
+	ENDC
+	GETGLOB 4
+	INDEX 4
+	SENDRAWMSG
+}
+IFELSE
+DROP
+; end function callTokenInfo
 IFREF {
 	CALL $c7_to_c4$
 }
@@ -555,21 +444,14 @@ ENDS
 ;; param: walletPubkey
 ;; param: walletOwner
 ; function getWalletAddress
-;; ret param: walletAddress
-PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+;; return
 MYADDR
 ;; push identifier walletPubkey
-PUSH S3
+PUSH S2
 ;; push identifier walletOwner
-PUSH S3
+PUSH S2
 CALL $_expectedAddress_internal$
-; expValue
-; end expValue
-; colValue
-NIP
-; end colValue
-;; returning named params
-BLKSWAP 3, 1
+XCHG s3
 BLKDROP 3
 ;; emitting 1 value(s)
 PUSH S1
@@ -598,6 +480,128 @@ PUSHCONT {
 IF
 DROP
 ; end function getWalletAddress
+IFREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	callWalletAddress
+.public	callWalletAddress
+.type	callWalletAddress, @function
+GETGLOB 1
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+LDU 32
+GETGLOB 4
+ROT
+SETINDEXQ 5
+SETGLOB 4
+; Decode input parameters
+; Decode workchainId
+LDI 8
+; Decode walletPubkey
+LDUQ 256
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 256
+}
+IFNOT
+; Decode walletOwner
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
+ENDS
+;; param: workchainId
+;; param: walletPubkey
+;; param: walletOwner
+; function callWalletAddress
+;; return
+GETGLOB 4
+PUSHINT 0
+SETINDEXQ 2
+PUSHINT 64
+SETINDEXQ 4
+SETGLOB 4
+MYADDR
+;; push identifier walletPubkey
+PUSH S2
+;; push identifier walletOwner
+PUSH S2
+CALL $_expectedAddress_internal$
+XCHG s3
+BLKDROP 3
+;; emitting 1 value(s)
+PUSH S1
+EQINT -1
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 96
+	STZEROES
+	STSLICECONST 0
+	STSLICECONST 0
+	STSLICECONST xb7cbe8d6
+	PUSH S1
+	STSLICER
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	GETGLOB 4
+	DUP
+	INDEX 3
+	PUSH S1
+	INDEX 2
+	GETGLOB 9
+	BLKSWAP 1, 3
+	INDEX 1
+	NEWC
+	PUSHINT 2
+	STZEROES
+	STI 1
+	PUSHINT 3
+	STZEROES
+	STSLICE
+	SWAP
+	STGRAMS
+	STDICT
+	PUSHINT 104
+	STZEROES
+	STSLICECONST 0
+	STSLICECONST 0
+	GETGLOB 4
+	INDEX 5
+	STUR 32
+	PUSH S1
+	STSLICER
+	ENDC
+	GETGLOB 4
+	INDEX 4
+	SENDRAWMSG
+}
+IFELSE
+DROP
+; end function callWalletAddress
 IFREF {
 	CALL $c7_to_c4$
 }
@@ -944,92 +948,17 @@ ENDS
 ;; param: _tokenAddress
 ;; param: _tokens
 ; function getSwapDetails
-;; ret param: details
-PUSHINT 0
-PUSHINT 0
-TUPLE 2
 ;; push identifier _tokenAddress
-PUSH S2
-;; param: _token
-; function _checkToken
-;; return
-;; push identifier tokenX_
-GETGLOB 14
-;; push identifier _token
 PUSH S1
-SDEQ
-;; short-circuiting ||
-DUP
-PUSHCONT {
-	DROP
-	;; push identifier tokenY_
-	GETGLOB 15
-	;; push identifier _token
-	PUSH S1
-	SDEQ
-}
-IFNOT
-NIP
-; end function _checkToken
-THROWIFNOT 506
-; function _hasWallets
-;; return
-;; get member wallet
-;; push identifier detailsX_
-GETGLOB 16
-INDEX 1
-;; push identifier ZERO_ADDRESS
-;; address.makeAddrStd()
-PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-SDEQ
-NOT
-;; short-circuiting &&
-DUP
-PUSHCONT {
-	DROP
-	;; get member wallet
-	;; push identifier detailsY_
-	GETGLOB 17
-	INDEX 1
-	;; push identifier ZERO_ADDRESS
-	;; address.makeAddrStd()
-	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-	SDEQ
-	NOT
-}
-IF
-; end function _hasWallets
-THROWIFNOT 515
-;; push identifier _tokenAddress
-PUSH S2
-;; push identifier tokenX_
-GETGLOB 14
-SDEQ
-PUSHCONT {
-	;; push identifier detailsX_
-	GETGLOB 16
-	;; push identifier detailsY_
-	GETGLOB 17
-}
-PUSHCONT {
-	;; push identifier detailsY_
-	GETGLOB 17
-	;; push identifier detailsX_
-	GETGLOB 16
-}
-IFELSE
-SWAP
-SWAP
-;; decl: tokIn
-;; decl: out
-PUSHINT 0
-;; decl: spotPrice
-PUSHINT 0
-;; decl: effectivePrice
-;; if
+CALL $_processToken_internal$
+ROTREV
+ROTREV
+ROTREV
+;; decl: inToken
+;; decl: outToken
 ;; get member balance
-;; push identifier tokIn
-PUSH S3
+;; push identifier inToken
+PUSH S2
 INDEX 6
 EQINT 0
 ;; short-circuiting ||
@@ -1037,41 +966,31 @@ DUP
 PUSHCONT {
 	DROP
 	;; get member balance
-	;; push identifier out
-	PUSH S2
+	;; push identifier outToken
+	PUSH S1
 	INDEX 6
 	EQINT 0
 }
 IFNOT
 PUSHCONT {
-	; expValue
-	; end expValue
 	PUSHINT 0
-	; colValue
-	POP S2
-	; end colValue
-	; expValue
-	; end expValue
 	PUSHINT 0
-	; colValue
-	NIP
-	; end colValue
 }
 PUSHCONT {
 	;; push identifier _tokens
-	PUSH S5
+	PUSH S3
 	;; get member balance
-	;; push identifier tokIn
-	PUSH S4
+	;; push identifier inToken
+	PUSH S3
 	INDEX 6
 	;; get member balance
-	;; push identifier out
-	PUSH S4
+	;; push identifier outToken
+	PUSH S3
 	INDEX 6
 	;; param: inAmount
 	;; param: inBalance
 	;; param: outBalance
-	; function calcOtherToken
+	; function _spotAmount
 	;; return
 	;; push identifier outBalance
 	DUP
@@ -1083,45 +1002,33 @@ PUSHCONT {
 	UFITS 128
 	XCHG s3
 	BLKDROP 3
-	; end function calcOtherToken
-	; expValue
-	; end expValue
-	; colValue
-	POP S2
-	; end colValue
+	; end function _spotAmount
 	;; push identifier _tokens
-	PUSH S5
+	PUSH S4
 	;; get member balance
-	;; push identifier tokIn
+	;; push identifier inToken
 	PUSH S4
 	INDEX 6
 	;; get member balance
-	;; push identifier out
+	;; push identifier outToken
 	PUSH S4
 	INDEX 6
 	PUSHINT 300
-	CALL $priceSwap_internal$
-	; expValue
-	; end expValue
-	; colValue
-	NIP
-	; end colValue
+	CALL $_effectiveAmount_internal$
 }
 IFELSE
-;; end if
+SWAP
+SWAP
+;; decl: spotPrice
+;; decl: effectivePrice
+;; return
 ;; push identifier spotPrice
 PUSH S1
 ;; push identifier effectivePrice
 PUSH S1
 TUPLE 2
-; expValue
-; end expValue
-; colValue
-POP S5
-; end colValue
-;; returning named params
-BLKSWAP 2, 5
-BLKDROP 6
+XCHG s7
+BLKDROP 7
 ;; emitting 1 value(s)
 PUSH S1
 EQINT -1
@@ -1195,87 +1102,17 @@ ENDS
 ;; param: _tokenAddress
 ;; param: _tokens
 ; function getDepositDetails
-;; ret param: details
-PUSHINT 0
-PUSHINT 0
-TUPLE 2
 ;; push identifier _tokenAddress
-PUSH S2
-;; param: _token
-; function _checkToken
-;; return
-;; push identifier tokenX_
-GETGLOB 14
-;; push identifier _token
 PUSH S1
-SDEQ
-;; short-circuiting ||
-DUP
-PUSHCONT {
-	DROP
-	;; push identifier tokenY_
-	GETGLOB 15
-	;; push identifier _token
-	PUSH S1
-	SDEQ
-}
-IFNOT
-NIP
-; end function _checkToken
-THROWIFNOT 506
-; function _hasWallets
-;; return
-;; get member wallet
-;; push identifier detailsX_
-GETGLOB 16
-INDEX 1
-;; push identifier ZERO_ADDRESS
-;; address.makeAddrStd()
-PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-SDEQ
-NOT
-;; short-circuiting &&
-DUP
-PUSHCONT {
-	DROP
-	;; get member wallet
-	;; push identifier detailsY_
-	GETGLOB 17
-	INDEX 1
-	;; push identifier ZERO_ADDRESS
-	;; address.makeAddrStd()
-	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-	SDEQ
-	NOT
-}
-IF
-; end function _hasWallets
-THROWIFNOT 515
-;; push identifier _tokenAddress
-PUSH S2
-;; push identifier tokenX_
-GETGLOB 14
-SDEQ
-PUSHCONT {
-	;; push identifier detailsX_
-	GETGLOB 16
-	;; push identifier detailsY_
-	GETGLOB 17
-}
-PUSHCONT {
-	;; push identifier detailsY_
-	GETGLOB 17
-	;; push identifier detailsX_
-	GETGLOB 16
-}
-IFELSE
-SWAP
-SWAP
-;; decl: tokIn
-;; decl: out
+CALL $_processToken_internal$
+ROTREV
+ROTREV
+ROTREV
+;; decl: inToken
+;; decl: outToken
 ;; get member balance
-;; push identifier tokIn
-PUSH S1
+;; push identifier inToken
+PUSH S2
 INDEX 6
 EQINT 0
 ;; short-circuiting ||
@@ -1283,30 +1120,31 @@ DUP
 PUSHCONT {
 	DROP
 	;; get member balance
-	;; push identifier out
-	DUP
+	;; push identifier outToken
+	PUSH S1
 	INDEX 6
 	EQINT 0
 }
 IFNOT
 PUSHCONT {
 	PUSHINT 0
+	PUSHINT 0
 }
 PUSHCONT {
 	;; push identifier _tokens
 	PUSH S3
 	;; get member balance
-	;; push identifier tokIn
-	PUSH S2
+	;; push identifier inToken
+	PUSH S3
 	INDEX 6
 	;; get member balance
-	;; push identifier out
-	PUSH S2
+	;; push identifier outToken
+	PUSH S3
 	INDEX 6
 	;; param: inAmount
 	;; param: inBalance
 	;; param: outBalance
-	; function calcOtherToken
+	; function _spotAmount
 	;; return
 	;; push identifier outBalance
 	DUP
@@ -1318,40 +1156,67 @@ PUSHCONT {
 	UFITS 128
 	XCHG s3
 	BLKDROP 3
-	; end function calcOtherToken
+	; end function _spotAmount
+	;; push identifier _tokens
+	PUSH S4
+	;; push identifier _tokens
+	PUSH S5
+	;; get member balance
+	;; push identifier inToken
+	PUSH S5
+	INDEX 6
+	;; get member balance
+	;; push identifier outToken
+	PUSH S5
+	INDEX 6
+	;; param: inAmount
+	;; param: inBalance
+	;; param: outBalance
+	; function _spotAmount
+	;; return
+	;; push identifier outBalance
+	DUP
+	;; push identifier inAmount
+	PUSH S3
+	;; push identifier inBalance
+	PUSH S3
+	MULDIV
+	UFITS 128
+	XCHG s3
+	BLKDROP 3
+	; end function _spotAmount
+	;; param: inAmountX
+	;; param: inAmountY
+	; function _tokensToLiq
+	;; return
+	;; push identifier inAmountX
+	PUSH S1
+	;; push identifier inAmountY
+	PUSH S1
+	PUSHINT 1000
+	;; *
+	PUSHINT 1000
+	MUL
+	UFITS 128
+	MULDIVC
+	UFITS 128
+	NIP
+	NIP
+	; end function _tokensToLiq
 }
 IFELSE
+SWAP
+SWAP
 ;; decl: secondAmount
-;; push identifier _tokens
-PUSH S4
-;; push identifier secondAmount
-PUSH S1
-;; param: inAmountX
-;; param: inAmountY
-; function tokensToLiq
-;; return
-;; push identifier inAmountX
-PUSH S1
-;; push identifier inAmountY
-PUSH S1
-CALL $mul_internal$
-NIP
-NIP
-; end function tokensToLiq
 ;; decl: liqAmount
+;; return
 ;; push identifier secondAmount
 PUSH S1
 ;; push identifier liqAmount
 PUSH S1
 TUPLE 2
-; expValue
-; end expValue
-; colValue
-POP S5
-; end colValue
-;; returning named params
-BLKSWAP 2, 5
-BLKDROP 6
+XCHG s7
+BLKDROP 7
 ;; emitting 1 value(s)
 PUSH S1
 EQINT -1
@@ -1414,67 +1279,53 @@ IFNOT
 ENDS
 ;; param: _tokens
 ; function getWithdrawDetails
-;; ret param: details
-PUSHINT 0
-PUSHINT 0
-TUPLE 2
-; function _hasWallets
-;; return
-;; get member wallet
+;; get member balance
 ;; push identifier detailsX_
 GETGLOB 16
-INDEX 1
-;; push identifier ZERO_ADDRESS
-;; address.makeAddrStd()
-PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-SDEQ
-NOT
-;; short-circuiting &&
+INDEX 6
+EQINT 0
+;; short-circuiting ||
 DUP
 PUSHCONT {
 	DROP
-	;; get member wallet
+	;; get member balance
 	;; push identifier detailsY_
 	GETGLOB 17
-	INDEX 1
-	;; push identifier ZERO_ADDRESS
-	;; address.makeAddrStd()
-	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-	SDEQ
-	NOT
+	INDEX 6
+	EQINT 0
 }
-IF
-; end function _hasWallets
-THROWIFNOT 515
-;; push identifier _tokens
-PUSH S1
-;; push identifier total_supply_
-GETGLOB 18
-;; get member balance
-;; push identifier detailsX_
-GETGLOB 16
-INDEX 6
-;; get member balance
-;; push identifier detailsY_
-GETGLOB 17
-INDEX 6
-CALL $liqToTokens_internal$
+IFNOT
+PUSHCONT {
+	PUSHINT 0
+	PUSHINT 0
+}
+PUSHCONT {
+	;; push identifier _tokens
+	DUP
+	;; push identifier total_supply_
+	GETGLOB 18
+	;; get member balance
+	;; push identifier detailsX_
+	GETGLOB 16
+	INDEX 6
+	;; get member balance
+	;; push identifier detailsY_
+	GETGLOB 17
+	INDEX 6
+	CALL $_liqToTokens_internal$
+}
+IFELSE
 SWAP
 SWAP
 ;; decl: amountX
 ;; decl: amountY
+;; return
 ;; push identifier amountX
 PUSH S1
 ;; push identifier amountY
 PUSH S1
 TUPLE 2
-; expValue
-; end expValue
-; colValue
-POP S3
-; end colValue
-;; returning named params
-BLKSWAP 1, 3
+XCHG s3
 BLKDROP 3
 ;; emitting 1 value(s)
 PUSH S1
@@ -1581,7 +1432,7 @@ ENDS
 ;; param: _senderOwner
 ;; param: _tokens
 ;; param: _minReturn
-; modifier customerOnlyPay
+; modifier forCustomers
 ACCEPT
 ; function _hasWallets
 ;; return
@@ -1612,125 +1463,22 @@ IF
 ; end function _hasWallets
 THROWIFNOT 515
 ; function swap
-;; push identifier _tokenAddress
-PUSH S4
-;; param: _token
-; function _checkToken
-;; return
-;; push identifier tokenX_
-GETGLOB 14
-;; push identifier _token
-PUSH S1
-SDEQ
-;; short-circuiting ||
-DUP
-PUSHCONT {
-	DROP
-	;; push identifier tokenY_
-	GETGLOB 15
-	;; push identifier _token
-	PUSH S1
-	SDEQ
-}
-IFNOT
-NIP
-; end function _checkToken
-THROWIFNOT 506
-; function _hasWallets
-;; return
-;; get member wallet
-;; push identifier detailsX_
-GETGLOB 16
-INDEX 1
-;; push identifier ZERO_ADDRESS
-;; address.makeAddrStd()
-PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-SDEQ
-NOT
-;; short-circuiting &&
-DUP
-PUSHCONT {
-	DROP
-	;; get member wallet
-	;; push identifier detailsY_
-	GETGLOB 17
-	INDEX 1
-	;; push identifier ZERO_ADDRESS
-	;; address.makeAddrStd()
-	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-	SDEQ
-	NOT
-}
-IF
-; end function _hasWallets
-THROWIFNOT 515
-;; get member balance
-;; push identifier detailsX_
-GETGLOB 16
-INDEX 6
-GTINT 0
-;; short-circuiting &&
-DUP
-PUSHCONT {
-	DROP
-	;; get member balance
-	;; push identifier detailsY_
-	GETGLOB 17
-	INDEX 6
-	GTINT 0
-}
-IF
-THROWIFNOT 520
+CALL $_expireTransactions_internal$
 ;; push identifier _senderKey
 PUSH S3
-NEQINT 0
-;; short-circuiting &&
-DUP
-PUSHCONT {
-	DROP
-	;; push identifier _senderOwner
-	PUSH S2
-	;; push identifier ZERO_ADDRESS
-	;; address.makeAddrStd()
-	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-	SDEQ
-}
-IF
-;; short-circuiting ||
-DUP
-PUSHCONT {
-	DROP
-	;; push identifier _senderKey
-	PUSH S3
-	EQINT 0
-	;; short-circuiting &&
-	DUP
-	PUSHCONT {
-		DROP
-		;; push identifier _senderOwner
-		PUSH S2
-		;; push identifier ZERO_ADDRESS
-		;; address.makeAddrStd()
-		PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-		SDEQ
-		NOT
-	}
-	IF
-}
-IFNOT
-THROWIFNOT 501
-;; !
-;; map.exists
-;; push identifier _senderKey
-PUSH S3
-;; +
-;; get member value
 ;; push identifier _senderOwner
 PUSH S3
-PARSEMSGADDR
-INDEX 3
-PLDU 256
-ADD
+CALL $_processCustomer_internal$
+;; decl: owner
+;; !
+;; push identifier owner
+DUP
+;; param: owner
+; function _hasTransaction
+;; return
+;; map.exists
+;; push identifier owner
+DUP
 ;; push identifier transactions_
 GETGLOB 19
 PUSHINT 256
@@ -1740,119 +1488,80 @@ PUSHCONT {
 	NIP
 }
 IF
+NIP
+; end function _hasTransaction
 NOT
 THROWIFNOT 519
 ;; push identifier _tokenAddress
-PUSH S4
-;; push identifier tokenX_
-GETGLOB 14
-SDEQ
-PUSHCONT {
-	;; push identifier detailsX_
-	GETGLOB 16
-	;; push identifier detailsY_
-	GETGLOB 17
-}
-PUSHCONT {
-	;; push identifier detailsY_
-	GETGLOB 17
-	;; push identifier detailsX_
-	GETGLOB 16
-}
-IFELSE
-SWAP
-SWAP
-;; decl: tokIn
-;; decl: out
+PUSH S5
+CALL $_processToken_internal$
+ROTREV
+ROTREV
+ROTREV
+;; decl: inToken
+;; decl: outToken
+;; decl: xy
 ;; push identifier _tokens
-PUSH S3
+PUSH S5
 ;; get member balance
-;; push identifier tokIn
-PUSH S2
+;; push identifier inToken
+PUSH S3
 INDEX 6
 ;; get member balance
-;; push identifier out
-PUSH S2
+;; push identifier outToken
+PUSH S3
 INDEX 6
 PUSHINT 300
-CALL $priceSwap_internal$
+CALL $_effectiveAmount_internal$
 ;; decl: outAmount
 ;; push identifier outAmount
 DUP
 ;; >=
 ;; push identifier _minReturn
-PUSH S4
+PUSH S6
 GEQ
 THROWIFNOT 516
 ;; get member balance
-;; push identifier out
-PUSH S1
+;; push identifier outToken
+PUSH S2
 INDEX 6
-;; -
-;; push identifier outAmount
-PUSH S1
-SUB
-UFITS 128
 ;; >=
-PUSHINT 100
+PUSHINT 1000
+;; +
+;; push identifier _minReturn
+PUSH S7
+ADD
+UFITS 128
 GEQ
 THROWIFNOT 520
 ;; get member root
-;; push identifier tokIn
-PUSH S2
+;; push identifier inToken
+PUSH S3
 INDEX 0
 ;; push identifier _senderKey
-PUSH S7
+PUSH S9
 ;; push identifier _senderOwner
-PUSH S7
+PUSH S9
 CALL $_expectedAddress_internal$
 ;; decl: from
-;; push identifier _tokenAddress
-PUSH S8
-;; push identifier tokenX_
-GETGLOB 14
-SDEQ
-PUSHCONT {
-	TRUE
-	;; push identifier _tokens
-	PUSH S6
-	PUSHINT 0
-	;; uint128
-}
-PUSHCONT {
-	FALSE
-	PUSHINT 0
-	;; uint128
-	;; push identifier _tokens
-	PUSH S7
-}
-IFELSE
-ROTREV
-ROTREV
-ROTREV
-;; decl: xy
-;; decl: amountX
-;; decl: amountY
 ;; push identifier now
 NOW
 ;; push identifier _senderKey
-PUSH S11
+PUSH S10
 ;; push identifier _senderOwner
-PUSH S11
+PUSH S10
 ;; get member SWAP
 PUSHINT 0
 ;; push identifier xy
 PUSH S6
 PUSHINT 0
-;; push identifier amountX
-PUSH S7
-;; push identifier amountY
-PUSH S7
+;; push identifier _tokens
+PUSH S13
+PUSHINT 0
 PUSHINT 0
 ;; push identifier _minReturn
-PUSH S16
-PUSHINT 0
-TUPLE 11
+PUSH S15
+TUPLE 10
 ;; decl: tr
 ;; map.add
 ; expValue
@@ -1861,45 +1570,35 @@ GETGLOB 19
 ; end expValue
 ;; push identifier tr
 PUSH S1
-UNTUPLE 11
+UNTUPLE 10
 NEWC
 NEWC
-PUSH S3
-STUR 128
 PUSH S2
 STUR 128
 STBREFR
-PUSH S11
-STUR 64
 PUSH S10
-STUR 256
+STUR 64
 PUSH S9
-STSLICER
+STUR 256
 PUSH S8
-STUR 8
+STSLICER
 PUSH S7
-STIR 1
-PUSH S6
 STUR 8
+PUSH S6
+STIR 1
 PUSH S5
-STUR 128
+STUR 8
 PUSH S4
 STUR 128
 PUSH S3
 STUR 128
-XCHG s11
-BLKDROP 11
+PUSH S2
+STUR 128
+XCHG s10
+BLKDROP 10
 ENDC
-;; push identifier _senderKey
-PUSH S13
-;; +
-;; get member value
-;; push identifier _senderOwner
-PUSH S13
-PARSEMSGADDR
-INDEX 3
-PLDU 256
-ADD
+;; push identifier owner
+PUSH S8
 ROT
 PUSHINT 256
 DICTUADDREF
@@ -1910,7 +1609,7 @@ SETGLOB 19
 DROP
 ;; Remote call ITIP3WalletNotify.internalTransferFromNotify
 ;; push identifier from
-PUSH S4
+PUSH S1
 TRUE
 NEWC
 STSLICECONST x6_
@@ -1918,7 +1617,7 @@ STI 1
 PUSHINT 3
 STZEROES
 STSLICE
-PUSHSLICE x402faf080000000000000000000000000004_
+PUSHSLICE x42faf0800000000000000000000000000004_
 STSLICER
 STSLICECONST 0
 STSLICECONST 1
@@ -1926,13 +1625,13 @@ NEWC
 STSLICECONST x548968c1
 ;; to
 ;; get member wallet
-;; push identifier tokIn
-PUSH S9
+;; push identifier inToken
+PUSH S7
 INDEX 1
 STSLICER
 ;; tokens
 ;; push identifier _tokens
-PUSH S11
+PUSH S10
 STUR 128
 ;; subscriber
 MYADDR
@@ -1941,11 +1640,10 @@ STBREFR
 ENDC
 PUSHINT 0
 SENDRAWMSG
-CALL $_expireTransactions_internal$
-BLKDROP 8
+BLKDROP 7
 ; end function swap
 BLKDROP 5
-; end modifier customerOnlyPay
+; end modifier forCustomers
 CALLREF {
 	CALL $c7_to_c4$
 }
@@ -2017,7 +1715,7 @@ ENDS
 ;; param: _senderOwner
 ;; param: _tokens
 ;; param: _maxSpend
-; modifier customerOnlyPay
+; modifier forCustomers
 ACCEPT
 ; function _hasWallets
 ;; return
@@ -2048,108 +1746,22 @@ IF
 ; end function _hasWallets
 THROWIFNOT 515
 ; function deposit
-;; push identifier _tokenAddress
-PUSH S4
-;; param: _token
-; function _checkToken
-;; return
-;; push identifier tokenX_
-GETGLOB 14
-;; push identifier _token
-PUSH S1
-SDEQ
-;; short-circuiting ||
-DUP
-PUSHCONT {
-	DROP
-	;; push identifier tokenY_
-	GETGLOB 15
-	;; push identifier _token
-	PUSH S1
-	SDEQ
-}
-IFNOT
-NIP
-; end function _checkToken
-THROWIFNOT 506
-; function _hasWallets
-;; return
-;; get member wallet
-;; push identifier detailsX_
-GETGLOB 16
-INDEX 1
-;; push identifier ZERO_ADDRESS
-;; address.makeAddrStd()
-PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-SDEQ
-NOT
-;; short-circuiting &&
-DUP
-PUSHCONT {
-	DROP
-	;; get member wallet
-	;; push identifier detailsY_
-	GETGLOB 17
-	INDEX 1
-	;; push identifier ZERO_ADDRESS
-	;; address.makeAddrStd()
-	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-	SDEQ
-	NOT
-}
-IF
-; end function _hasWallets
-THROWIFNOT 515
+CALL $_expireTransactions_internal$
 ;; push identifier _senderKey
 PUSH S3
-NEQINT 0
-;; short-circuiting &&
-DUP
-PUSHCONT {
-	DROP
-	;; push identifier _senderOwner
-	PUSH S2
-	;; push identifier ZERO_ADDRESS
-	;; address.makeAddrStd()
-	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-	SDEQ
-}
-IF
-;; short-circuiting ||
-DUP
-PUSHCONT {
-	DROP
-	;; push identifier _senderKey
-	PUSH S3
-	EQINT 0
-	;; short-circuiting &&
-	DUP
-	PUSHCONT {
-		DROP
-		;; push identifier _senderOwner
-		PUSH S2
-		;; push identifier ZERO_ADDRESS
-		;; address.makeAddrStd()
-		PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-		SDEQ
-		NOT
-	}
-	IF
-}
-IFNOT
-THROWIFNOT 501
-;; !
-;; map.exists
-;; push identifier _senderKey
-PUSH S3
-;; +
-;; get member value
 ;; push identifier _senderOwner
 PUSH S3
-PARSEMSGADDR
-INDEX 3
-PLDU 256
-ADD
+CALL $_processCustomer_internal$
+;; decl: owner
+;; !
+;; push identifier owner
+DUP
+;; param: owner
+; function _hasTransaction
+;; return
+;; map.exists
+;; push identifier owner
+DUP
 ;; push identifier transactions_
 GETGLOB 19
 PUSHINT 256
@@ -2159,33 +1771,22 @@ PUSHCONT {
 	NIP
 }
 IF
+NIP
+; end function _hasTransaction
 NOT
 THROWIFNOT 519
 ;; push identifier _tokenAddress
-PUSH S4
-;; push identifier tokenX_
-GETGLOB 14
-SDEQ
-PUSHCONT {
-	;; push identifier detailsX_
-	GETGLOB 16
-	;; push identifier detailsY_
-	GETGLOB 17
-}
-PUSHCONT {
-	;; push identifier detailsY_
-	GETGLOB 17
-	;; push identifier detailsX_
-	GETGLOB 16
-}
-IFELSE
-SWAP
-SWAP
-;; decl: tokIn
-;; decl: out
+PUSH S5
+CALL $_processToken_internal$
+ROTREV
+ROTREV
+ROTREV
+;; decl: inToken
+;; decl: outToken
+;; decl: xy
 ;; get member balance
-;; push identifier tokIn
-PUSH S1
+;; push identifier inToken
+PUSH S2
 INDEX 6
 EQINT 0
 ;; short-circuiting ||
@@ -2193,31 +1794,31 @@ DUP
 PUSHCONT {
 	DROP
 	;; get member balance
-	;; push identifier out
-	DUP
+	;; push identifier outToken
+	PUSH S1
 	INDEX 6
 	EQINT 0
 }
 IFNOT
 PUSHCONT {
 	;; push identifier _maxSpend
-	PUSH S2
+	PUSH S4
 }
 PUSHCONT {
 	;; push identifier _tokens
-	PUSH S3
+	PUSH S5
 	;; get member balance
-	;; push identifier tokIn
-	PUSH S2
+	;; push identifier inToken
+	PUSH S3
 	INDEX 6
 	;; get member balance
-	;; push identifier out
-	PUSH S2
+	;; push identifier outToken
+	PUSH S3
 	INDEX 6
 	;; param: inAmount
 	;; param: inBalance
 	;; param: outBalance
-	; function calcOtherToken
+	; function _spotAmount
 	;; return
 	;; push identifier outBalance
 	DUP
@@ -2229,7 +1830,7 @@ PUSHCONT {
 	UFITS 128
 	XCHG s3
 	BLKDROP 3
-	; end function calcOtherToken
+	; end function _spotAmount
 }
 IFELSE
 ;; decl: outAmount
@@ -2237,75 +1838,55 @@ IFELSE
 DUP
 ;; <=
 ;; push identifier _maxSpend
-PUSH S4
+PUSH S6
 LEQ
 THROWIFNOT 517
+;; push identifier outAmount
+DUP
+;; >=
+PUSHINT 1000
+GEQ
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; push identifier _tokens
+	PUSH S6
+	;; >=
+	PUSHINT 1000
+	GEQ
+}
+IF
+THROWIFNOT 520
 ;; get member root
-;; push identifier tokIn
-PUSH S2
-INDEX 0
-;; push identifier _senderKey
-PUSH S7
-;; push identifier _senderOwner
-PUSH S7
-CALL $_expectedAddress_internal$
-;; decl: toIn
-;; get member root
-;; push identifier tokIn
+;; push identifier inToken
 PUSH S3
 INDEX 0
 ;; push identifier _senderKey
-PUSH S8
-;; push identifier _senderOwner
-PUSH S8
-CALL $_expectedAddress_internal$
-;; decl: toOut
-;; push identifier _tokenAddress
 PUSH S9
-;; push identifier tokenX_
-GETGLOB 14
-SDEQ
-PUSHCONT {
-	TRUE
-	;; push identifier _tokens
-	PUSH S7
-	;; push identifier outAmount
-	PUSH S4
-}
-PUSHCONT {
-	FALSE
-	;; push identifier outAmount
-	PUSH S3
-	;; push identifier _tokens
-	PUSH S8
-}
-IFELSE
-ROTREV
-ROTREV
-ROTREV
-;; decl: xy
-;; decl: amountX
-;; decl: amountY
+;; push identifier _senderOwner
+PUSH S9
+CALL $_expectedAddress_internal$
+;; decl: fromIn
 ;; push identifier now
 NOW
 ;; push identifier _senderKey
-PUSH S12
+PUSH S10
 ;; push identifier _senderOwner
-PUSH S12
+PUSH S10
 ;; get member DEPOSIT
 PUSHINT 1
 ;; push identifier xy
 PUSH S6
 PUSHINT 0
-;; push identifier amountX
-PUSH S7
-;; push identifier amountY
-PUSH S7
-PUSHINT 0
+;; push identifier _tokens
+PUSH S13
+;; push identifier outAmount
+PUSH S8
 PUSHINT 0
 ;; push identifier _maxSpend
-PUSH S18
-TUPLE 11
+PUSH S15
+TUPLE 10
 ;; decl: tr
 ;; map.add
 ; expValue
@@ -2314,45 +1895,35 @@ GETGLOB 19
 ; end expValue
 ;; push identifier tr
 PUSH S1
-UNTUPLE 11
+UNTUPLE 10
 NEWC
 NEWC
-PUSH S3
-STUR 128
 PUSH S2
 STUR 128
 STBREFR
-PUSH S11
-STUR 64
 PUSH S10
-STUR 256
+STUR 64
 PUSH S9
-STSLICER
+STUR 256
 PUSH S8
-STUR 8
+STSLICER
 PUSH S7
-STIR 1
-PUSH S6
 STUR 8
+PUSH S6
+STIR 1
 PUSH S5
-STUR 128
+STUR 8
 PUSH S4
 STUR 128
 PUSH S3
 STUR 128
-XCHG s11
-BLKDROP 11
+PUSH S2
+STUR 128
+XCHG s10
+BLKDROP 10
 ENDC
-;; push identifier _senderKey
-PUSH S14
-;; +
-;; get member value
-;; push identifier _senderOwner
-PUSH S14
-PARSEMSGADDR
-INDEX 3
-PLDU 256
-ADD
+;; push identifier owner
+PUSH S8
 ROT
 PUSHINT 256
 DICTUADDREF
@@ -2362,10 +1933,8 @@ SETGLOB 19
 ; end colValue
 DROP
 ;; Remote call ITIP3WalletNotify.internalTransferFromNotify
-;; get member wallet
-;; push identifier tokIn
-PUSH S8
-INDEX 1
+;; push identifier fromIn
+PUSH S1
 TRUE
 NEWC
 STSLICECONST x6_
@@ -2373,19 +1942,21 @@ STI 1
 PUSHINT 3
 STZEROES
 STSLICE
-PUSHSLICE x405f5e100000000000000000000000000004_
+PUSHSLICE x42faf0800000000000000000000000000004_
 STSLICER
 STSLICECONST 0
 STSLICECONST 1
 NEWC
 STSLICECONST x548968c1
 ;; to
-;; push identifier toIn
+;; get member wallet
+;; push identifier inToken
 PUSH S7
+INDEX 1
 STSLICER
 ;; tokens
 ;; push identifier _tokens
-PUSH S12
+PUSH S10
 STUR 128
 ;; subscriber
 MYADDR
@@ -2394,44 +1965,10 @@ STBREFR
 ENDC
 PUSHINT 0
 SENDRAWMSG
-;; Remote call ITIP3WalletNotify.internalTransferFromNotify
-;; get member wallet
-;; push identifier out
-PUSH S7
-INDEX 1
-TRUE
-NEWC
-STSLICECONST x6_
-STI 1
-PUSHINT 3
-STZEROES
-STSLICE
-PUSHSLICE x405f5e100000000000000000000000000004_
-STSLICER
-STSLICECONST 0
-STSLICECONST 1
-NEWC
-STSLICECONST x548968c1
-;; to
-;; push identifier toOut
-PUSH S6
-STSLICER
-;; tokens
-;; push identifier outAmount
-PUSH S8
-STUR 128
-;; subscriber
-MYADDR
-STSLICER
-STBREFR
-ENDC
-PUSHINT 0
-SENDRAWMSG
-CALL $_expireTransactions_internal$
-BLKDROP 9
+BLKDROP 7
 ; end function deposit
 BLKDROP 5
-; end modifier customerOnlyPay
+; end modifier forCustomers
 CALLREF {
 	CALL $c7_to_c4$
 }
@@ -2481,7 +2018,7 @@ ENDS
 ;; param: _senderKey
 ;; param: _senderOwner
 ;; param: _tokens
-; modifier customerOnlyPay
+; modifier forCustomers
 ACCEPT
 ; function _hasWallets
 ;; return
@@ -2512,84 +2049,22 @@ IF
 ; end function _hasWallets
 THROWIFNOT 515
 ; function withdraw
-; function _hasWallets
-;; return
-;; get member wallet
-;; push identifier detailsX_
-GETGLOB 16
-INDEX 1
-;; push identifier ZERO_ADDRESS
-;; address.makeAddrStd()
-PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-SDEQ
-NOT
-;; short-circuiting &&
-DUP
-PUSHCONT {
-	DROP
-	;; get member wallet
-	;; push identifier detailsY_
-	GETGLOB 17
-	INDEX 1
-	;; push identifier ZERO_ADDRESS
-	;; address.makeAddrStd()
-	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-	SDEQ
-	NOT
-}
-IF
-; end function _hasWallets
-THROWIFNOT 515
+CALL $_expireTransactions_internal$
 ;; push identifier _senderKey
 PUSH S2
-NEQINT 0
-;; short-circuiting &&
-DUP
-PUSHCONT {
-	DROP
-	;; push identifier _senderOwner
-	PUSH S1
-	;; push identifier ZERO_ADDRESS
-	;; address.makeAddrStd()
-	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-	SDEQ
-}
-IF
-;; short-circuiting ||
-DUP
-PUSHCONT {
-	DROP
-	;; push identifier _senderKey
-	PUSH S2
-	EQINT 0
-	;; short-circuiting &&
-	DUP
-	PUSHCONT {
-		DROP
-		;; push identifier _senderOwner
-		PUSH S1
-		;; push identifier ZERO_ADDRESS
-		;; address.makeAddrStd()
-		PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-		SDEQ
-		NOT
-	}
-	IF
-}
-IFNOT
-THROWIFNOT 501
-;; !
-;; map.exists
-;; push identifier _senderKey
-PUSH S2
-;; +
-;; get member value
 ;; push identifier _senderOwner
 PUSH S2
-PARSEMSGADDR
-INDEX 3
-PLDU 256
-ADD
+CALL $_processCustomer_internal$
+;; decl: owner
+;; !
+;; push identifier owner
+DUP
+;; param: owner
+; function _hasTransaction
+;; return
+;; map.exists
+;; push identifier owner
+DUP
 ;; push identifier transactions_
 GETGLOB 19
 PUSHINT 256
@@ -2599,10 +2074,29 @@ PUSHCONT {
 	NIP
 }
 IF
+NIP
+; end function _hasTransaction
 NOT
 THROWIFNOT 519
-;; push identifier _tokens
+;; get member balance
+;; push identifier detailsX_
+GETGLOB 16
+INDEX 6
+GTINT 0
+;; short-circuiting &&
 DUP
+PUSHCONT {
+	DROP
+	;; get member balance
+	;; push identifier detailsY_
+	GETGLOB 17
+	INDEX 6
+	GTINT 0
+}
+IF
+THROWIFNOT 520
+;; push identifier _tokens
+PUSH S1
 ;; >=
 ;; push identifier total_supply_
 GETGLOB 18
@@ -2614,15 +2108,15 @@ INDEX 6
 ;; push identifier detailsY_
 GETGLOB 17
 INDEX 6
-CALL $minWithdrawLiq_internal$
+CALL $_minWithdrawLiq_internal$
 GEQ
 THROWIFNOT 520
 ;; push identifier now
 NOW
 ;; push identifier _senderKey
-PUSH S3
+PUSH S4
 ;; push identifier _senderOwner
-PUSH S3
+PUSH S4
 ;; get member WITHDRAW
 PUSHINT 2
 TRUE
@@ -2630,10 +2124,9 @@ PUSHINT 0
 PUSHINT 0
 PUSHINT 0
 ;; push identifier _tokens
-PUSH S8
+PUSH S9
 PUSHINT 0
-PUSHINT 0
-TUPLE 11
+TUPLE 10
 ;; decl: tr
 ;; map.add
 ; expValue
@@ -2642,45 +2135,35 @@ GETGLOB 19
 ; end expValue
 ;; push identifier tr
 PUSH S1
-UNTUPLE 11
+UNTUPLE 10
 NEWC
 NEWC
-PUSH S3
-STUR 128
 PUSH S2
 STUR 128
 STBREFR
-PUSH S11
-STUR 64
 PUSH S10
-STUR 256
+STUR 64
 PUSH S9
-STSLICER
+STUR 256
 PUSH S8
-STUR 8
+STSLICER
 PUSH S7
-STIR 1
-PUSH S6
 STUR 8
+PUSH S6
+STIR 1
 PUSH S5
-STUR 128
+STUR 8
 PUSH S4
 STUR 128
 PUSH S3
 STUR 128
-XCHG s11
-BLKDROP 11
+PUSH S2
+STUR 128
+XCHG s10
+BLKDROP 10
 ENDC
-;; push identifier _senderKey
-PUSH S5
-;; +
-;; get member value
-;; push identifier _senderOwner
-PUSH S5
-PARSEMSGADDR
-INDEX 3
-PLDU 256
-ADD
+;; push identifier owner
+PUSH S3
 ROT
 PUSHINT 256
 DICTUADDREF
@@ -2689,24 +2172,334 @@ SWAP
 SETGLOB 19
 ; end colValue
 DROP
+MYADDR
 ;; push identifier _senderKey
-PUSH S3
+PUSH S5
 ;; push identifier _senderOwner
-PUSH S3
+PUSH S5
+CALL $_expectedAddress_internal$
+;; decl: from
+;; Remote call ITIP3WalletRootBurnable.internalBurnFromRoot
+;; push identifier from
+DUP
+TRUE
+NEWC
+STSLICECONST x6_
+STI 1
+PUSHINT 3
+STZEROES
+STSLICE
+PUSHSLICE x42faf0800000000000000000000000000004_
+STSLICER
+STSLICECONST 0
+STSLICECONST 0
+STSLICECONST x5f8838f5
+;; tokens
 ;; push identifier _tokens
-PUSH S3
-CALL $_burn_internal$
-DROP
-CALL $_expireTransactions_internal$
-DROP
+PUSH S4
+STUR 128
+;; subscriber
+MYADDR
+STSLICER
+ENDC
+PUSHINT 0
+SENDRAWMSG
+BLKDROP 3
 ; end function withdraw
 BLKDROP 3
-; end modifier customerOnlyPay
+; end modifier forCustomers
 CALLREF {
 	CALL $c7_to_c4$
 }
 TRUE
 SETGLOB 7
+
+.globl	_deployWallets_internal
+.type	_deployWallets_internal, @function
+; function _deployWallets
+;; Remote call ITIP3RootFungible.deployEmptyWallet
+PUSHINT 1500000000
+;; +
+PUSHINT 200000000
+ADD
+UFITS 64
+;; +
+PUSHINT 50000000
+ADD
+UFITS 64
+;; push identifier tokenX_
+GETGLOB 14
+NEWC
+STSLICECONST x62_
+STSLICE
+SWAP
+STGRAMS
+PUSHINT 105
+STZEROES
+STSLICECONST 0
+STSLICECONST 1
+NEWC
+STSLICECONST x53eef447
+STSLICECONST x2c9fcfbc
+;; workchainId
+PUSHINT 0
+STIR 8
+;; walletPubkey
+PUSHINT 0
+STUR 256
+;; walletOwner
+MYADDR
+STSLICER
+;; grams
+PUSHINT 1500000000
+STUR 128
+STBREFR
+ENDC
+PUSHINT 0
+SENDRAWMSG
+;; Remote call ITIP3RootFungible.deployEmptyWallet
+PUSHINT 1500000000
+;; +
+PUSHINT 200000000
+ADD
+UFITS 64
+;; +
+PUSHINT 50000000
+ADD
+UFITS 64
+;; push identifier tokenY_
+GETGLOB 15
+NEWC
+STSLICECONST x62_
+STSLICE
+SWAP
+STGRAMS
+PUSHINT 105
+STZEROES
+STSLICECONST 0
+STSLICECONST 1
+NEWC
+STSLICECONST x53eef447
+STSLICECONST x2c9fcfbc
+;; workchainId
+PUSHINT 0
+STIR 8
+;; walletPubkey
+PUSHINT 0
+STUR 256
+;; walletOwner
+MYADDR
+STSLICER
+;; grams
+PUSHINT 1500000000
+STUR 128
+STBREFR
+ENDC
+PUSHINT 0
+SENDRAWMSG
+; end function _deployWallets
+
+.globl	onWalletDeploy
+.public	onWalletDeploy
+.type	onWalletDeploy, @function
+GETGLOB 1
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+; Decode input parameters
+; Decode walletAddress
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
+; Decode code
+;; decode TvmCell
+LDREF
+ENDS
+;; param: walletAddress
+;; param: code
+; modifier forCallbacks
+;; get member value
+CALLREF {
+	CALL $message_balance_macro$
+}
+;; >=
+PUSHINT 10000000
+GEQ
+THROWIFNOT 509
+; function onWalletDeploy
+;; if
+;; get member sender
+GETGLOB 9
+;; push identifier tokenX_
+GETGLOB 14
+SDEQ
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; get member wallet
+	;; push identifier detailsX_
+	GETGLOB 16
+	INDEX 1
+	;; push identifier ZERO_ADDRESS
+	;; address.makeAddrStd()
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	SDEQ
+}
+IF
+PUSHCONT {
+	; expValue
+	;; fetch detailsX_
+	GETGLOB 16
+	; end expValue
+	;; push identifier walletAddress
+	PUSH S2
+	; colValue
+	SETINDEX 1
+	SETGLOB 16
+	; end colValue
+}
+PUSHCONT {
+	;; if
+	;; get member sender
+	GETGLOB 9
+	;; push identifier tokenY_
+	GETGLOB 15
+	SDEQ
+	;; short-circuiting &&
+	DUP
+	PUSHCONT {
+		DROP
+		;; get member wallet
+		;; push identifier detailsY_
+		GETGLOB 17
+		INDEX 1
+		;; push identifier ZERO_ADDRESS
+		;; address.makeAddrStd()
+		PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+		SDEQ
+	}
+	IF
+	PUSHCONT {
+		; expValue
+		;; fetch detailsY_
+		GETGLOB 17
+		; end expValue
+		;; push identifier walletAddress
+		PUSH S2
+		; colValue
+		SETINDEX 1
+		SETGLOB 17
+		; end colValue
+	}
+	IF
+	;; end if
+}
+IFELSE
+;; end if
+; end function onWalletDeploy
+DROP2
+; end modifier forCallbacks
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	onWalletDeploy_internal
+.type	onWalletDeploy_internal, @function
+;; param: walletAddress
+;; param: code
+; modifier forCallbacks
+;; get member value
+CALLREF {
+	CALL $message_balance_macro$
+}
+;; >=
+PUSHINT 10000000
+GEQ
+THROWIFNOT 509
+; function onWalletDeploy
+;; if
+;; get member sender
+GETGLOB 9
+;; push identifier tokenX_
+GETGLOB 14
+SDEQ
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; get member wallet
+	;; push identifier detailsX_
+	GETGLOB 16
+	INDEX 1
+	;; push identifier ZERO_ADDRESS
+	;; address.makeAddrStd()
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	SDEQ
+}
+IF
+PUSHCONT {
+	; expValue
+	;; fetch detailsX_
+	GETGLOB 16
+	; end expValue
+	;; push identifier walletAddress
+	PUSH S2
+	; colValue
+	SETINDEX 1
+	SETGLOB 16
+	; end colValue
+}
+PUSHCONT {
+	;; if
+	;; get member sender
+	GETGLOB 9
+	;; push identifier tokenY_
+	GETGLOB 15
+	SDEQ
+	;; short-circuiting &&
+	DUP
+	PUSHCONT {
+		DROP
+		;; get member wallet
+		;; push identifier detailsY_
+		GETGLOB 17
+		INDEX 1
+		;; push identifier ZERO_ADDRESS
+		;; address.makeAddrStd()
+		PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+		SDEQ
+	}
+	IF
+	PUSHCONT {
+		; expValue
+		;; fetch detailsY_
+		GETGLOB 17
+		; end expValue
+		;; push identifier walletAddress
+		PUSH S2
+		; colValue
+		SETINDEX 1
+		SETGLOB 17
+		; end colValue
+	}
+	IF
+	;; end if
+}
+IFELSE
+;; end if
+; end function onWalletDeploy
+DROP2
+; end modifier forCallbacks
 
 .globl	onWalletBurn
 .public	onWalletBurn
@@ -2762,42 +2555,15 @@ ENDS
 ;; param: _senderKey
 ;; param: _senderOwner
 ;; param: _tokens
-; modifier internalOnlyPay
-;; get member sender
-GETGLOB 9
-;; push identifier ZERO_ADDRESS
-;; address.makeAddrStd()
-PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-SDEQ
-NOT
-;; short-circuiting &&
-DUP
-PUSHCONT {
-	DROP
-	;; get member value
-	CALLREF {
-		CALL $message_balance_macro$
-	}
-	;; >=
-	PUSHINT 10000000
-	GEQ
-}
-IF
-THROWIFNOT 509
-PUSHINT 500000000
-;; get member balance
-GETPARAM 7
-INDEX 0
-;; -
+; modifier forCallbacks
 ;; get member value
 CALLREF {
 	CALL $message_balance_macro$
 }
-SUB
-UFITS 128
-MAX
-PUSHINT 2
-RAWRESERVE
+;; >=
+PUSHINT 10000000
+GEQ
+THROWIFNOT 509
 ; function onWalletBurn
 ;; push identifier _tokenAddress
 PUSH S3
@@ -2812,253 +2578,257 @@ PUSH S3
 PUSH S3
 CALL $_expectedAddress_internal$
 ;; decl: senderAddr
-;; push identifier _senderKey
-PUSH S3
-;; +
-;; get member value
-;; push identifier _senderOwner
-PUSH S3
-PARSEMSGADDR
-INDEX 3
-PLDU 256
-ADD
-;; decl: sender
-;; if
 ;; get member sender
 GETGLOB 9
 ;; push identifier senderAddr
-PUSH S2
+PUSH S1
 SDEQ
+THROWIFNOT 501
+;; push identifier _senderKey
+PUSH S3
+;; push identifier _senderOwner
+PUSH S3
+CALL $_processCustomer_internal$
+;; decl: owner
+;; push identifier owner
+DUP
+CALL $_processTransaction_internal$
+;; decl: tr
+;; if
+;; get member operation
+;; push identifier tr
+DUP
+INDEX 3
+;; ==
+;; get member WITHDRAW
+PUSHINT 2
+EQUAL
+;; short-circuiting &&
+DUP
 PUSHCONT {
-	;; map.exists
-	;; push identifier sender
-	DUP
-	;; push identifier transactions_
-	GETGLOB 19
-	PUSHINT 256
-	DICTUGET
-	DUP
-	PUSHCONT {
-		NIP
-	}
-	IF
-	THROWIFNOT 518
-	;; map.fetch
-	;; push identifier sender
-	DUP
-	;; push identifier transactions_
-	GETGLOB 19
-	PUSHINT 256
-	DICTUGETREF
-	NULLSWAPIFNOT
-	PUSHCONT {
-		CTOS
-		LDREF
-		LDU 64
-		LDU 256
-		LDMSGADDR
-		LDU 8
-		LDI 1
-		LDU 8
-		LDU 128
-		LDU 128
-		PLDU 128
-		BLKSWAP 1, 9
-		CTOS
-		LDU 128
-		PLDU 128
-		TUPLE 11
-	}
-	IF
-	DUP
-	ISNULL
-	THROWIF 63
-	;; decl: trans
-	;; if
-	;; get member operation
-	;; push identifier trans
-	DUP
-	INDEX 3
-	;; ==
-	;; get member WITHDRAW
-	PUSHINT 2
-	EQUAL
-	;; short-circuiting &&
-	DUP
-	PUSHCONT {
-		DROP
-		;; get member stage
-		;; push identifier trans
-		DUP
-		INDEX 5
-		EQINT 0
-	}
-	IF
-	PUSHCONT {
-		;; if
-		;; get member amountLiq
-		;; push identifier trans
-		DUP
-		INDEX 8
-		;; ==
-		;; push identifier _tokens
-		PUSH S4
-		EQUAL
-		PUSHCONT {
-			;; push identifier _tokens
-			PUSH S3
-			;; get member balance
-			;; push identifier detailsX_
-			GETGLOB 16
-			INDEX 6
-			;; push identifier total_supply_
-			GETGLOB 18
-			MULDIV
-			UFITS 128
-			; expValue
-			PUSH S1
-			; end expValue
-			SWAP
-			; colValue
-			SETINDEX 6
-			NIP
-			; end colValue
-			;; get member amountX
-			;; push identifier trans
-			DUP
-			INDEX 6
-			;; get member balance
-			;; push identifier detailsX_
-			GETGLOB 16
-			INDEX 6
-			;; get member balance
-			;; push identifier detailsY_
-			GETGLOB 17
-			INDEX 6
-			;; param: inAmount
-			;; param: inBalance
-			;; param: outBalance
-			; function calcOtherToken
-			;; return
-			;; push identifier outBalance
-			DUP
-			;; push identifier inAmount
-			PUSH S3
-			;; push identifier inBalance
-			PUSH S3
-			MULDIV
-			UFITS 128
-			XCHG s3
-			BLKDROP 3
-			; end function calcOtherToken
-			; expValue
-			PUSH S1
-			; end expValue
-			SWAP
-			; colValue
-			SETINDEX 7
-			NIP
-			; end colValue
-			;; Remote call ITIP3WalletFungible.internalTransferFrom
-			;; get member wallet
-			;; push identifier detailsX_
-			GETGLOB 16
-			INDEX 1
-			TRUE
-			NEWC
-			STSLICECONST x6_
-			STI 1
-			PUSHINT 3
-			STZEROES
-			STSLICE
-			PUSHSLICE x402faf080000000000000000000000000004_
-			STSLICER
-			STSLICECONST 0
-			STSLICECONST 0
-			STSLICECONST x7cb81835
-			;; to
-			;; push identifier senderAddr
-			PUSH S3
-			STSLICER
-			;; tokens
-			;; get member amountX
-			;; push identifier trans
-			PUSH S1
-			INDEX 6
-			STUR 128
-			ENDC
-			PUSHINT 0
-			SENDRAWMSG
-			;; Remote call ITIP3WalletFungible.internalTransferFrom
-			;; get member wallet
-			;; push identifier detailsY_
-			GETGLOB 17
-			INDEX 1
-			TRUE
-			NEWC
-			STSLICECONST x6_
-			STI 1
-			PUSHINT 3
-			STZEROES
-			STSLICE
-			PUSHSLICE x402faf080000000000000000000000000004_
-			STSLICER
-			STSLICECONST 0
-			STSLICECONST 0
-			STSLICECONST x7cb81835
-			;; to
-			;; push identifier senderAddr
-			PUSH S3
-			STSLICER
-			;; tokens
-			;; get member amountY
-			;; push identifier trans
-			PUSH S1
-			INDEX 7
-			STUR 128
-			ENDC
-			PUSHINT 0
-			SENDRAWMSG
-			;; push identifier sender
-			PUSH S1
-			;; push identifier trans
-			PUSH S1
-			CALL $_confirmTransaction_internal$
-		}
-		PUSHCONT {
-			;; push identifier sender
-			PUSH S1
-			CALL $_cancelTransaction_internal$
-		}
-		IFELSE
-		;; end if
-	}
-	IF
-	;; end if
 	DROP
+	;; get member stage
+	;; push identifier tr
+	DUP
+	INDEX 5
+	EQINT 0
 }
+IF
 PUSHCONT {
-	THROW 501
+	;; if
+	;; get member amountLiq
+	;; push identifier tr
+	DUP
+	INDEX 8
+	;; ==
+	;; push identifier _tokens
+	PUSH S4
+	EQUAL
+	PUSHCONT {
+		;; push identifier _tokens
+		PUSH S3
+		;; get member balance
+		;; push identifier detailsX_
+		GETGLOB 16
+		INDEX 6
+		;; push identifier total_supply_
+		GETGLOB 18
+		MULDIV
+		UFITS 128
+		; expValue
+		PUSH S1
+		; end expValue
+		SWAP
+		; colValue
+		SETINDEX 6
+		NIP
+		; end colValue
+		;; get member amountIn
+		;; push identifier tr
+		DUP
+		INDEX 6
+		;; get member balance
+		;; push identifier detailsX_
+		GETGLOB 16
+		INDEX 6
+		;; get member balance
+		;; push identifier detailsY_
+		GETGLOB 17
+		INDEX 6
+		;; param: inAmount
+		;; param: inBalance
+		;; param: outBalance
+		; function _spotAmount
+		;; return
+		;; push identifier outBalance
+		DUP
+		;; push identifier inAmount
+		PUSH S3
+		;; push identifier inBalance
+		PUSH S3
+		MULDIV
+		UFITS 128
+		XCHG s3
+		BLKDROP 3
+		; end function _spotAmount
+		; expValue
+		PUSH S1
+		; end expValue
+		SWAP
+		; colValue
+		SETINDEX 7
+		NIP
+		; end colValue
+		;; Remote call ITIP3WalletFungible.internalTransferFrom
+		;; get member wallet
+		;; push identifier detailsX_
+		GETGLOB 16
+		INDEX 1
+		TRUE
+		NEWC
+		STSLICECONST x6_
+		STI 1
+		PUSHINT 3
+		STZEROES
+		STSLICE
+		PUSHSLICE x40bebc200000000000000000000000000004_
+		STSLICER
+		STSLICECONST 0
+		STSLICECONST 0
+		STSLICECONST x7cb81835
+		;; to
+		;; push identifier senderAddr
+		PUSH S3
+		STSLICER
+		;; tokens
+		;; get member amountIn
+		;; push identifier tr
+		PUSH S1
+		INDEX 6
+		STUR 128
+		ENDC
+		PUSHINT 0
+		SENDRAWMSG
+		;; Remote call ITIP3WalletFungible.internalTransferFrom
+		;; get member wallet
+		;; push identifier detailsY_
+		GETGLOB 17
+		INDEX 1
+		TRUE
+		NEWC
+		STSLICECONST x6_
+		STI 1
+		PUSHINT 3
+		STZEROES
+		STSLICE
+		PUSHSLICE x40bebc200000000000000000000000000004_
+		STSLICER
+		STSLICECONST 0
+		STSLICECONST 0
+		STSLICECONST x7cb81835
+		;; to
+		;; push identifier senderAddr
+		PUSH S3
+		STSLICER
+		;; tokens
+		;; get member amountOut
+		;; push identifier tr
+		PUSH S1
+		INDEX 7
+		STUR 128
+		ENDC
+		PUSHINT 0
+		SENDRAWMSG
+		;; push identifier owner
+		PUSH S1
+		;; push identifier tr
+		PUSH S1
+		;; param: user
+		;; param: tr
+		; function _savepoint
+		;; map.getReplace
+		; expValue
+		;; fetch transactions_
+		GETGLOB 19
+		; end expValue
+		;; push identifier tr
+		PUSH S1
+		UNTUPLE 10
+		NEWC
+		NEWC
+		PUSH S2
+		STUR 128
+		STBREFR
+		PUSH S10
+		STUR 64
+		PUSH S9
+		STUR 256
+		PUSH S8
+		STSLICER
+		PUSH S7
+		STUR 8
+		PUSH S6
+		STIR 1
+		PUSH S5
+		STUR 8
+		PUSH S4
+		STUR 128
+		PUSH S3
+		STUR 128
+		PUSH S2
+		STUR 128
+		XCHG s10
+		BLKDROP 10
+		ENDC
+		;; push identifier user
+		PUSH S3
+		ROT
+		PUSHINT 256
+		DICTUREPLACEGETREF
+		NULLSWAPIFNOT
+		PUSHCONT {
+			CTOS
+			LDREF
+			LDU 64
+			LDU 256
+			LDMSGADDR
+			LDU 8
+			LDI 1
+			LDU 8
+			LDU 128
+			LDU 128
+			PLDU 128
+			BLKSWAP 1, 9
+			CTOS
+			PLDU 128
+			TUPLE 10
+		}
+		IF
+		SWAP
+		; colValue
+		SETGLOB 19
+		; end colValue
+		DROP
+		DROP2
+		; end function _savepoint
+		;; push identifier owner
+		PUSH S1
+		CALL $_commit_internal$
+	}
+	PUSHCONT {
+		;; push identifier owner
+		PUSH S1
+		CALL $_rollback_internal$
+	}
+	IFELSE
+	;; end if
 }
-IFELSE
+IF
 ;; end if
-DROP2
+BLKDROP 3
 ; end function onWalletBurn
-;; transfer()
-;; get member sender
-GETGLOB 9
-NEWC
-STSLICECONST x62_
-STSLICE
-PUSHINT 109
-STZEROES
-STSLICECONST 0
-STSLICECONST 0
-ENDC
-PUSHINT 128
-SENDRAWMSG
 BLKDROP 4
-; end modifier internalOnlyPay
+; end modifier forCallbacks
 CALLREF {
 	CALL $c7_to_c4$
 }
@@ -3071,42 +2841,15 @@ SETGLOB 7
 ;; param: _senderKey
 ;; param: _senderOwner
 ;; param: _tokens
-; modifier internalOnlyPay
-;; get member sender
-GETGLOB 9
-;; push identifier ZERO_ADDRESS
-;; address.makeAddrStd()
-PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-SDEQ
-NOT
-;; short-circuiting &&
-DUP
-PUSHCONT {
-	DROP
-	;; get member value
-	CALLREF {
-		CALL $message_balance_macro$
-	}
-	;; >=
-	PUSHINT 10000000
-	GEQ
-}
-IF
-THROWIFNOT 509
-PUSHINT 500000000
-;; get member balance
-GETPARAM 7
-INDEX 0
-;; -
+; modifier forCallbacks
 ;; get member value
 CALLREF {
 	CALL $message_balance_macro$
 }
-SUB
-UFITS 128
-MAX
-PUSHINT 2
-RAWRESERVE
+;; >=
+PUSHINT 10000000
+GEQ
+THROWIFNOT 509
 ; function onWalletBurn
 ;; push identifier _tokenAddress
 PUSH S3
@@ -3121,253 +2864,257 @@ PUSH S3
 PUSH S3
 CALL $_expectedAddress_internal$
 ;; decl: senderAddr
-;; push identifier _senderKey
-PUSH S3
-;; +
-;; get member value
-;; push identifier _senderOwner
-PUSH S3
-PARSEMSGADDR
-INDEX 3
-PLDU 256
-ADD
-;; decl: sender
-;; if
 ;; get member sender
 GETGLOB 9
 ;; push identifier senderAddr
-PUSH S2
+PUSH S1
 SDEQ
+THROWIFNOT 501
+;; push identifier _senderKey
+PUSH S3
+;; push identifier _senderOwner
+PUSH S3
+CALL $_processCustomer_internal$
+;; decl: owner
+;; push identifier owner
+DUP
+CALL $_processTransaction_internal$
+;; decl: tr
+;; if
+;; get member operation
+;; push identifier tr
+DUP
+INDEX 3
+;; ==
+;; get member WITHDRAW
+PUSHINT 2
+EQUAL
+;; short-circuiting &&
+DUP
 PUSHCONT {
-	;; map.exists
-	;; push identifier sender
-	DUP
-	;; push identifier transactions_
-	GETGLOB 19
-	PUSHINT 256
-	DICTUGET
-	DUP
-	PUSHCONT {
-		NIP
-	}
-	IF
-	THROWIFNOT 518
-	;; map.fetch
-	;; push identifier sender
-	DUP
-	;; push identifier transactions_
-	GETGLOB 19
-	PUSHINT 256
-	DICTUGETREF
-	NULLSWAPIFNOT
-	PUSHCONT {
-		CTOS
-		LDREF
-		LDU 64
-		LDU 256
-		LDMSGADDR
-		LDU 8
-		LDI 1
-		LDU 8
-		LDU 128
-		LDU 128
-		PLDU 128
-		BLKSWAP 1, 9
-		CTOS
-		LDU 128
-		PLDU 128
-		TUPLE 11
-	}
-	IF
-	DUP
-	ISNULL
-	THROWIF 63
-	;; decl: trans
-	;; if
-	;; get member operation
-	;; push identifier trans
-	DUP
-	INDEX 3
-	;; ==
-	;; get member WITHDRAW
-	PUSHINT 2
-	EQUAL
-	;; short-circuiting &&
-	DUP
-	PUSHCONT {
-		DROP
-		;; get member stage
-		;; push identifier trans
-		DUP
-		INDEX 5
-		EQINT 0
-	}
-	IF
-	PUSHCONT {
-		;; if
-		;; get member amountLiq
-		;; push identifier trans
-		DUP
-		INDEX 8
-		;; ==
-		;; push identifier _tokens
-		PUSH S4
-		EQUAL
-		PUSHCONT {
-			;; push identifier _tokens
-			PUSH S3
-			;; get member balance
-			;; push identifier detailsX_
-			GETGLOB 16
-			INDEX 6
-			;; push identifier total_supply_
-			GETGLOB 18
-			MULDIV
-			UFITS 128
-			; expValue
-			PUSH S1
-			; end expValue
-			SWAP
-			; colValue
-			SETINDEX 6
-			NIP
-			; end colValue
-			;; get member amountX
-			;; push identifier trans
-			DUP
-			INDEX 6
-			;; get member balance
-			;; push identifier detailsX_
-			GETGLOB 16
-			INDEX 6
-			;; get member balance
-			;; push identifier detailsY_
-			GETGLOB 17
-			INDEX 6
-			;; param: inAmount
-			;; param: inBalance
-			;; param: outBalance
-			; function calcOtherToken
-			;; return
-			;; push identifier outBalance
-			DUP
-			;; push identifier inAmount
-			PUSH S3
-			;; push identifier inBalance
-			PUSH S3
-			MULDIV
-			UFITS 128
-			XCHG s3
-			BLKDROP 3
-			; end function calcOtherToken
-			; expValue
-			PUSH S1
-			; end expValue
-			SWAP
-			; colValue
-			SETINDEX 7
-			NIP
-			; end colValue
-			;; Remote call ITIP3WalletFungible.internalTransferFrom
-			;; get member wallet
-			;; push identifier detailsX_
-			GETGLOB 16
-			INDEX 1
-			TRUE
-			NEWC
-			STSLICECONST x6_
-			STI 1
-			PUSHINT 3
-			STZEROES
-			STSLICE
-			PUSHSLICE x402faf080000000000000000000000000004_
-			STSLICER
-			STSLICECONST 0
-			STSLICECONST 0
-			STSLICECONST x7cb81835
-			;; to
-			;; push identifier senderAddr
-			PUSH S3
-			STSLICER
-			;; tokens
-			;; get member amountX
-			;; push identifier trans
-			PUSH S1
-			INDEX 6
-			STUR 128
-			ENDC
-			PUSHINT 0
-			SENDRAWMSG
-			;; Remote call ITIP3WalletFungible.internalTransferFrom
-			;; get member wallet
-			;; push identifier detailsY_
-			GETGLOB 17
-			INDEX 1
-			TRUE
-			NEWC
-			STSLICECONST x6_
-			STI 1
-			PUSHINT 3
-			STZEROES
-			STSLICE
-			PUSHSLICE x402faf080000000000000000000000000004_
-			STSLICER
-			STSLICECONST 0
-			STSLICECONST 0
-			STSLICECONST x7cb81835
-			;; to
-			;; push identifier senderAddr
-			PUSH S3
-			STSLICER
-			;; tokens
-			;; get member amountY
-			;; push identifier trans
-			PUSH S1
-			INDEX 7
-			STUR 128
-			ENDC
-			PUSHINT 0
-			SENDRAWMSG
-			;; push identifier sender
-			PUSH S1
-			;; push identifier trans
-			PUSH S1
-			CALL $_confirmTransaction_internal$
-		}
-		PUSHCONT {
-			;; push identifier sender
-			PUSH S1
-			CALL $_cancelTransaction_internal$
-		}
-		IFELSE
-		;; end if
-	}
-	IF
-	;; end if
 	DROP
+	;; get member stage
+	;; push identifier tr
+	DUP
+	INDEX 5
+	EQINT 0
 }
+IF
 PUSHCONT {
-	THROW 501
+	;; if
+	;; get member amountLiq
+	;; push identifier tr
+	DUP
+	INDEX 8
+	;; ==
+	;; push identifier _tokens
+	PUSH S4
+	EQUAL
+	PUSHCONT {
+		;; push identifier _tokens
+		PUSH S3
+		;; get member balance
+		;; push identifier detailsX_
+		GETGLOB 16
+		INDEX 6
+		;; push identifier total_supply_
+		GETGLOB 18
+		MULDIV
+		UFITS 128
+		; expValue
+		PUSH S1
+		; end expValue
+		SWAP
+		; colValue
+		SETINDEX 6
+		NIP
+		; end colValue
+		;; get member amountIn
+		;; push identifier tr
+		DUP
+		INDEX 6
+		;; get member balance
+		;; push identifier detailsX_
+		GETGLOB 16
+		INDEX 6
+		;; get member balance
+		;; push identifier detailsY_
+		GETGLOB 17
+		INDEX 6
+		;; param: inAmount
+		;; param: inBalance
+		;; param: outBalance
+		; function _spotAmount
+		;; return
+		;; push identifier outBalance
+		DUP
+		;; push identifier inAmount
+		PUSH S3
+		;; push identifier inBalance
+		PUSH S3
+		MULDIV
+		UFITS 128
+		XCHG s3
+		BLKDROP 3
+		; end function _spotAmount
+		; expValue
+		PUSH S1
+		; end expValue
+		SWAP
+		; colValue
+		SETINDEX 7
+		NIP
+		; end colValue
+		;; Remote call ITIP3WalletFungible.internalTransferFrom
+		;; get member wallet
+		;; push identifier detailsX_
+		GETGLOB 16
+		INDEX 1
+		TRUE
+		NEWC
+		STSLICECONST x6_
+		STI 1
+		PUSHINT 3
+		STZEROES
+		STSLICE
+		PUSHSLICE x40bebc200000000000000000000000000004_
+		STSLICER
+		STSLICECONST 0
+		STSLICECONST 0
+		STSLICECONST x7cb81835
+		;; to
+		;; push identifier senderAddr
+		PUSH S3
+		STSLICER
+		;; tokens
+		;; get member amountIn
+		;; push identifier tr
+		PUSH S1
+		INDEX 6
+		STUR 128
+		ENDC
+		PUSHINT 0
+		SENDRAWMSG
+		;; Remote call ITIP3WalletFungible.internalTransferFrom
+		;; get member wallet
+		;; push identifier detailsY_
+		GETGLOB 17
+		INDEX 1
+		TRUE
+		NEWC
+		STSLICECONST x6_
+		STI 1
+		PUSHINT 3
+		STZEROES
+		STSLICE
+		PUSHSLICE x40bebc200000000000000000000000000004_
+		STSLICER
+		STSLICECONST 0
+		STSLICECONST 0
+		STSLICECONST x7cb81835
+		;; to
+		;; push identifier senderAddr
+		PUSH S3
+		STSLICER
+		;; tokens
+		;; get member amountOut
+		;; push identifier tr
+		PUSH S1
+		INDEX 7
+		STUR 128
+		ENDC
+		PUSHINT 0
+		SENDRAWMSG
+		;; push identifier owner
+		PUSH S1
+		;; push identifier tr
+		PUSH S1
+		;; param: user
+		;; param: tr
+		; function _savepoint
+		;; map.getReplace
+		; expValue
+		;; fetch transactions_
+		GETGLOB 19
+		; end expValue
+		;; push identifier tr
+		PUSH S1
+		UNTUPLE 10
+		NEWC
+		NEWC
+		PUSH S2
+		STUR 128
+		STBREFR
+		PUSH S10
+		STUR 64
+		PUSH S9
+		STUR 256
+		PUSH S8
+		STSLICER
+		PUSH S7
+		STUR 8
+		PUSH S6
+		STIR 1
+		PUSH S5
+		STUR 8
+		PUSH S4
+		STUR 128
+		PUSH S3
+		STUR 128
+		PUSH S2
+		STUR 128
+		XCHG s10
+		BLKDROP 10
+		ENDC
+		;; push identifier user
+		PUSH S3
+		ROT
+		PUSHINT 256
+		DICTUREPLACEGETREF
+		NULLSWAPIFNOT
+		PUSHCONT {
+			CTOS
+			LDREF
+			LDU 64
+			LDU 256
+			LDMSGADDR
+			LDU 8
+			LDI 1
+			LDU 8
+			LDU 128
+			LDU 128
+			PLDU 128
+			BLKSWAP 1, 9
+			CTOS
+			PLDU 128
+			TUPLE 10
+		}
+		IF
+		SWAP
+		; colValue
+		SETGLOB 19
+		; end colValue
+		DROP
+		DROP2
+		; end function _savepoint
+		;; push identifier owner
+		PUSH S1
+		CALL $_commit_internal$
+	}
+	PUSHCONT {
+		;; push identifier owner
+		PUSH S1
+		CALL $_rollback_internal$
+	}
+	IFELSE
+	;; end if
 }
-IFELSE
+IF
 ;; end if
-DROP2
+BLKDROP 3
 ; end function onWalletBurn
-;; transfer()
-;; get member sender
-GETGLOB 9
-NEWC
-STSLICECONST x62_
-STSLICE
-PUSHINT 109
-STZEROES
-STSLICECONST 0
-STSLICECONST 0
-ENDC
-PUSHINT 128
-SENDRAWMSG
 BLKDROP 4
-; end modifier internalOnlyPay
+; end modifier forCallbacks
 
 .globl	onWalletReceive
 .public	onWalletReceive
@@ -3445,529 +3192,46 @@ ENDS
 ;; param: _senderKey
 ;; param: _senderOwner
 ;; param: _tokens
-; modifier internalOnlyPay
-;; get member sender
-GETGLOB 9
-;; push identifier ZERO_ADDRESS
-;; address.makeAddrStd()
-PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-SDEQ
-NOT
-;; short-circuiting &&
-DUP
-PUSHCONT {
-	DROP
-	;; get member value
-	CALLREF {
-		CALL $message_balance_macro$
-	}
-	;; >=
-	PUSHINT 10000000
-	GEQ
-}
-IF
-THROWIFNOT 509
-PUSHINT 500000000
-;; get member balance
-GETPARAM 7
-INDEX 0
-;; -
+; modifier forCallbacks
 ;; get member value
 CALLREF {
 	CALL $message_balance_macro$
 }
-SUB
-UFITS 128
-MAX
-PUSHINT 2
-RAWRESERVE
-; function onWalletReceive
-;; push identifier _tokenAddress
-PUSH S5
-;; param: _token
-; function _checkToken
-;; return
-;; push identifier tokenX_
-GETGLOB 14
-;; push identifier _token
-PUSH S1
-SDEQ
-;; short-circuiting ||
-DUP
-PUSHCONT {
-	DROP
-	;; push identifier tokenY_
-	GETGLOB 15
-	;; push identifier _token
-	PUSH S1
-	SDEQ
-}
-IFNOT
-NIP
-; end function _checkToken
-THROWIFNOT 506
-;; push identifier _tokenAddress
-PUSH S5
-;; push identifier tokenX_
-GETGLOB 14
-SDEQ
-PUSHCONT {
-	;; push identifier detailsX_
-	GETGLOB 16
-	;; push identifier detailsY_
-	GETGLOB 17
-}
-PUSHCONT {
-	;; push identifier detailsY_
-	GETGLOB 17
-	;; push identifier detailsX_
-	GETGLOB 16
-}
-IFELSE
-SWAP
-SWAP
-;; decl: tokIn
-;; decl: out
-;; push identifier _tokenAddress
-PUSH S7
-;; push identifier _receiverKey
-PUSH S7
-;; push identifier _receiverOwner
-PUSH S7
-CALL $_expectedAddress_internal$
-;; decl: receiverAddr
-;; push identifier _tokenAddress
-PUSH S8
-;; push identifier _senderKey
-PUSH S6
-;; push identifier _senderOwner
-PUSH S6
-CALL $_expectedAddress_internal$
-;; decl: senderAddr
-;; push identifier _receiverKey
-PUSH S8
-;; +
-;; get member value
-;; push identifier _receiverOwner
-PUSH S8
-PARSEMSGADDR
-INDEX 3
-PLDU 256
-ADD
-;; decl: receiver
-;; push identifier _senderKey
-PUSH S7
-;; +
-;; get member value
-;; push identifier _senderOwner
-PUSH S7
-PARSEMSGADDR
-INDEX 3
-PLDU 256
-ADD
-;; decl: sender
-;; if
-;; get member sender
-GETGLOB 9
-;; get member wallet
-;; push identifier tokIn
-PUSH S6
-INDEX 1
-SDEQ
-PUSHCONT {
-	;; map.exists
-	;; push identifier sender
-	DUP
-	;; push identifier transactions_
-	GETGLOB 19
-	PUSHINT 256
-	DICTUGET
-	DUP
-	PUSHCONT {
-		NIP
-	}
-	IF
-	THROWIFNOT 518
-	;; push identifier sender
-	DUP
-	TRUE
-	;; push identifier receiverAddr
-	PUSH S5
-	;; push identifier senderAddr
-	PUSH S5
-	;; push identifier tokIn
-	PUSH S9
-	;; push identifier out
-	PUSH S9
-	;; push identifier _tokens
-	PUSH S12
-	CALL $_processAnswer_internal$
-}
-PUSHCONT {
-	;; if
-	;; get member wallet
-	;; push identifier tokIn
-	PUSH S5
-	INDEX 1
-	;; push identifier senderAddr
-	PUSH S3
-	SDEQ
-	;; short-circuiting &&
-	DUP
-	PUSHCONT {
-		DROP
-		;; get member sender
-		GETGLOB 9
-		;; push identifier receiverAddr
-		PUSH S4
-		SDEQ
-	}
-	IF
-	PUSHCONT {
-		;; map.exists
-		;; push identifier receiver
-		PUSH S1
-		;; push identifier transactions_
-		GETGLOB 19
-		PUSHINT 256
-		DICTUGET
-		DUP
-		PUSHCONT {
-			NIP
-		}
-		IF
-		THROWIFNOT 518
-		;; push identifier receiver
-		PUSH S1
-		FALSE
-		;; push identifier receiverAddr
-		PUSH S5
-		;; push identifier senderAddr
-		PUSH S5
-		;; push identifier tokIn
-		PUSH S9
-		;; push identifier out
-		PUSH S9
-		;; push identifier _tokens
-		PUSH S12
-		CALL $_processAnswer_internal$
-	}
-	PUSHCONT {
-		THROW 501
-	}
-	IFELSE
-	;; end if
-}
-IFELSE
-;; end if
-BLKDROP 6
-; end function onWalletReceive
-;; transfer()
-;; get member sender
-GETGLOB 9
-NEWC
-STSLICECONST x62_
-STSLICE
-PUSHINT 109
-STZEROES
-STSLICECONST 0
-STSLICECONST 0
-ENDC
-PUSHINT 128
-SENDRAWMSG
-BLKDROP 6
-; end modifier internalOnlyPay
-CALLREF {
-	CALL $c7_to_c4$
-}
-TRUE
-SETGLOB 7
-
-.globl	onWalletReceive_internal
-.type	onWalletReceive_internal, @function
-;; param: _tokenAddress
-;; param: _receiverKey
-;; param: _receiverOwner
-;; param: _senderKey
-;; param: _senderOwner
-;; param: _tokens
-; modifier internalOnlyPay
-;; get member sender
-GETGLOB 9
-;; push identifier ZERO_ADDRESS
-;; address.makeAddrStd()
-PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-SDEQ
-NOT
-;; short-circuiting &&
-DUP
-PUSHCONT {
-	DROP
-	;; get member value
-	CALLREF {
-		CALL $message_balance_macro$
-	}
-	;; >=
-	PUSHINT 10000000
-	GEQ
-}
-IF
+;; >=
+PUSHINT 10000000
+GEQ
 THROWIFNOT 509
-PUSHINT 500000000
-;; get member balance
-GETPARAM 7
-INDEX 0
-;; -
-;; get member value
-CALLREF {
-	CALL $message_balance_macro$
-}
-SUB
-UFITS 128
-MAX
-PUSHINT 2
-RAWRESERVE
 ; function onWalletReceive
 ;; push identifier _tokenAddress
 PUSH S5
-;; param: _token
-; function _checkToken
-;; return
-;; push identifier tokenX_
-GETGLOB 14
-;; push identifier _token
-PUSH S1
-SDEQ
-;; short-circuiting ||
-DUP
-PUSHCONT {
-	DROP
-	;; push identifier tokenY_
-	GETGLOB 15
-	;; push identifier _token
-	PUSH S1
-	SDEQ
-}
-IFNOT
-NIP
-; end function _checkToken
-THROWIFNOT 506
-;; push identifier _tokenAddress
-PUSH S5
-;; push identifier tokenX_
-GETGLOB 14
-SDEQ
-PUSHCONT {
-	;; push identifier detailsX_
-	GETGLOB 16
-	;; push identifier detailsY_
-	GETGLOB 17
-}
-PUSHCONT {
-	;; push identifier detailsY_
-	GETGLOB 17
-	;; push identifier detailsX_
-	GETGLOB 16
-}
-IFELSE
-SWAP
-SWAP
-;; decl: tokIn
-;; decl: out
-;; push identifier _tokenAddress
-PUSH S7
-;; push identifier _receiverKey
-PUSH S7
-;; push identifier _receiverOwner
-PUSH S7
-CALL $_expectedAddress_internal$
-;; decl: receiverAddr
-;; push identifier _tokenAddress
-PUSH S8
-;; push identifier _senderKey
-PUSH S6
-;; push identifier _senderOwner
-PUSH S6
-CALL $_expectedAddress_internal$
-;; decl: senderAddr
-;; push identifier _receiverKey
-PUSH S8
-;; +
-;; get member value
-;; push identifier _receiverOwner
-PUSH S8
-PARSEMSGADDR
-INDEX 3
-PLDU 256
-ADD
-;; decl: receiver
-;; push identifier _senderKey
-PUSH S7
-;; +
-;; get member value
-;; push identifier _senderOwner
-PUSH S7
-PARSEMSGADDR
-INDEX 3
-PLDU 256
-ADD
-;; decl: sender
-;; if
+CALL $_processToken_internal$
+ROTREV
+ROTREV
+ROTREV
+;; decl: inToken
+;; decl: outToken
+;; decl: xy
 ;; get member sender
 GETGLOB 9
 ;; get member wallet
-;; push identifier tokIn
-PUSH S6
+;; push identifier inToken
+PUSH S3
 INDEX 1
 SDEQ
-PUSHCONT {
-	;; map.exists
-	;; push identifier sender
-	DUP
-	;; push identifier transactions_
-	GETGLOB 19
-	PUSHINT 256
-	DICTUGET
-	DUP
-	PUSHCONT {
-		NIP
-	}
-	IF
-	THROWIFNOT 518
-	;; push identifier sender
-	DUP
-	TRUE
-	;; push identifier receiverAddr
-	PUSH S5
-	;; push identifier senderAddr
-	PUSH S5
-	;; push identifier tokIn
-	PUSH S9
-	;; push identifier out
-	PUSH S9
-	;; push identifier _tokens
-	PUSH S12
-	CALL $_processAnswer_internal$
-}
-PUSHCONT {
-	;; if
-	;; get member wallet
-	;; push identifier tokIn
-	PUSH S5
-	INDEX 1
-	;; push identifier senderAddr
-	PUSH S3
-	SDEQ
-	;; short-circuiting &&
-	DUP
-	PUSHCONT {
-		DROP
-		;; get member sender
-		GETGLOB 9
-		;; push identifier receiverAddr
-		PUSH S4
-		SDEQ
-	}
-	IF
-	PUSHCONT {
-		;; map.exists
-		;; push identifier receiver
-		PUSH S1
-		;; push identifier transactions_
-		GETGLOB 19
-		PUSHINT 256
-		DICTUGET
-		DUP
-		PUSHCONT {
-			NIP
-		}
-		IF
-		THROWIFNOT 518
-		;; push identifier receiver
-		PUSH S1
-		FALSE
-		;; push identifier receiverAddr
-		PUSH S5
-		;; push identifier senderAddr
-		PUSH S5
-		;; push identifier tokIn
-		PUSH S9
-		;; push identifier out
-		PUSH S9
-		;; push identifier _tokens
-		PUSH S12
-		CALL $_processAnswer_internal$
-	}
-	PUSHCONT {
-		THROW 501
-	}
-	IFELSE
-	;; end if
-}
-IFELSE
-;; end if
-BLKDROP 6
-; end function onWalletReceive
-;; transfer()
-;; get member sender
-GETGLOB 9
-NEWC
-STSLICECONST x62_
-STSLICE
-PUSHINT 109
-STZEROES
-STSLICECONST 0
-STSLICECONST 0
-ENDC
-PUSHINT 128
-SENDRAWMSG
-BLKDROP 6
-; end modifier internalOnlyPay
-
-.globl	_processAnswer_internal
-.type	_processAnswer_internal, @function
-;; param: user
-;; param: toDex
-;; param: receiverAddr
-;; param: senderAddr
-;; param: tokenThis
-;; param: tokenThat
-;; param: tokens
-; function _processAnswer
-;; map.fetch
-;; push identifier user
-PUSH S6
-;; push identifier transactions_
-GETGLOB 19
-PUSHINT 256
-DICTUGETREF
-NULLSWAPIFNOT
-PUSHCONT {
-	CTOS
-	LDREF
-	LDU 64
-	LDU 256
-	LDMSGADDR
-	LDU 8
-	LDI 1
-	LDU 8
-	LDU 128
-	LDU 128
-	PLDU 128
-	BLKSWAP 1, 9
-	CTOS
-	LDU 128
-	PLDU 128
-	TUPLE 11
-}
-IF
+THROWIFNOT 501
+;; push identifier _senderKey
+PUSH S5
+;; push identifier _senderOwner
+PUSH S5
+CALL $_processCustomer_internal$
+;; decl: owner
+;; push identifier owner
 DUP
-ISNULL
-THROWIF 63
-;; decl: trans
+CALL $_processTransaction_internal$
+;; decl: tr
 ;; if
 ;; get member operation
-;; push identifier trans
+;; push identifier tr
 DUP
 INDEX 3
 ;; ==
@@ -3979,216 +3243,180 @@ DUP
 PUSHCONT {
 	DROP
 	;; get member stage
-	;; push identifier trans
+	;; push identifier tr
 	DUP
 	INDEX 5
 	EQINT 0
-	;; push identifier toDex
-	PUSH S7
-	AND
-}
-IF
-PUSHCONT {
-	;; if
-	;; get member xy
-	;; push identifier trans
-	DUP
-	INDEX 4
 	;; short-circuiting &&
 	DUP
 	PUSHCONT {
 		DROP
-		;; get member amountX
-		;; push identifier trans
+		;; get member amountIn
+		;; push identifier tr
 		DUP
 		INDEX 6
 		;; ==
-		;; push identifier tokens
-		PUSH S2
+		;; push identifier _tokens
+		PUSH S6
 		EQUAL
 	}
 	IF
+}
+IF
+PUSHCONT {
+	;; push identifier _tokens
+	PUSH S5
+	;; get member balance
+	;; push identifier inToken
+	PUSH S5
+	INDEX 6
+	;; get member balance
+	;; push identifier outToken
+	PUSH S5
+	INDEX 6
+	PUSHINT 300
+	CALL $_effectiveAmount_internal$
+	; expValue
+	PUSH S1
+	; end expValue
+	SWAP
+	; colValue
+	SETINDEX 7
+	NIP
+	; end colValue
+	;; if
+	;; get member amountOut
+	;; push identifier tr
+	DUP
+	INDEX 7
+	;; >=
+	;; get member limit
+	;; push identifier tr
+	PUSH S1
+	INDEX 9
+	GEQ
 	PUSHCONT {
-		;; push identifier tokens
-		PUSH S1
-		;; get member balance
-		;; push identifier tokenThis
-		PUSH S4
-		INDEX 6
-		;; get member balance
-		;; push identifier tokenThat
-		PUSH S4
-		INDEX 6
-		PUSHINT 300
-		CALL $priceSwap_internal$
+		;; get member root
+		;; push identifier outToken
+		PUSH S3
+		INDEX 0
+		;; push identifier _senderKey
+		PUSH S8
+		;; push identifier _senderOwner
+		PUSH S8
+		CALL $_expectedAddress_internal$
+		;; decl: to
+		;; push identifier owner
+		PUSH S2
+		;; push identifier tr
+		PUSH S2
+		;; param: user
+		;; param: tr
+		; function _savepoint
+		;; map.getReplace
 		; expValue
-		PUSH S1
+		;; fetch transactions_
+		GETGLOB 19
 		; end expValue
-		SWAP
-		; colValue
-		SETINDEX 7
-		NIP
-		; end colValue
-		;; if
-		;; get member amountY
-		;; push identifier trans
-		DUP
-		INDEX 7
-		;; >=
-		;; get member minReturn
-		;; push identifier trans
+		;; push identifier tr
 		PUSH S1
-		INDEX 9
-		GEQ
+		UNTUPLE 10
+		NEWC
+		NEWC
+		PUSH S2
+		STUR 128
+		STBREFR
+		PUSH S10
+		STUR 64
+		PUSH S9
+		STUR 256
+		PUSH S8
+		STSLICER
+		PUSH S7
+		STUR 8
+		PUSH S6
+		STIR 1
+		PUSH S5
+		STUR 8
+		PUSH S4
+		STUR 128
+		PUSH S3
+		STUR 128
+		PUSH S2
+		STUR 128
+		XCHG s10
+		BLKDROP 10
+		ENDC
+		;; push identifier user
+		PUSH S3
+		ROT
+		PUSHINT 256
+		DICTUREPLACEGETREF
+		NULLSWAPIFNOT
 		PUSHCONT {
-			;; Remote call ITIP3WalletFungible.internalTransferFrom
-			;; get member wallet
-			;; push identifier tokenThat
-			PUSH S2
-			INDEX 1
-			TRUE
-			NEWC
-			STSLICECONST x6_
-			STI 1
-			PUSHINT 3
-			STZEROES
-			STSLICE
-			PUSHSLICE x402faf080000000000000000000000000004_
-			STSLICER
-			STSLICECONST 0
-			STSLICECONST 0
-			STSLICECONST x7cb81835
-			;; to
-			;; push identifier senderAddr
-			PUSH S5
-			STSLICER
-			;; tokens
-			;; get member amountY
-			;; push identifier trans
-			PUSH S1
-			INDEX 7
-			STUR 128
-			ENDC
-			PUSHINT 0
-			SENDRAWMSG
-			;; push identifier user
-			PUSH S7
-			;; push identifier trans
-			PUSH S1
-			CALL $_confirmTransaction_internal$
-		}
-		PUSHCONT {
-			;; push identifier user
-			PUSH S7
-			CALL $_cancelTransaction_internal$
-		}
-		IFELSE
-		;; end if
-	}
-	PUSHCONT {
-		;; if
-		;; get member xy
-		;; push identifier trans
-		DUP
-		INDEX 4
-		;; short-circuiting &&
-		DUP
-		PUSHCONT {
-			DROP
-			;; get member amountY
-			;; push identifier trans
-			DUP
-			INDEX 7
-			;; ==
-			;; push identifier tokens
-			PUSH S2
-			EQUAL
+			CTOS
+			LDREF
+			LDU 64
+			LDU 256
+			LDMSGADDR
+			LDU 8
+			LDI 1
+			LDU 8
+			LDU 128
+			LDU 128
+			PLDU 128
+			BLKSWAP 1, 9
+			CTOS
+			PLDU 128
+			TUPLE 10
 		}
 		IF
-		PUSHCONT {
-			;; push identifier tokens
-			PUSH S1
-			;; get member balance
-			;; push identifier tokenThis
-			PUSH S4
-			INDEX 6
-			;; get member balance
-			;; push identifier tokenThat
-			PUSH S4
-			INDEX 6
-			PUSHINT 300
-			CALL $priceSwap_internal$
-			; expValue
-			PUSH S1
-			; end expValue
-			SWAP
-			; colValue
-			SETINDEX 6
-			NIP
-			; end colValue
-			;; if
-			;; get member amountX
-			;; push identifier trans
-			DUP
-			INDEX 6
-			;; >=
-			;; get member minReturn
-			;; push identifier trans
-			PUSH S1
-			INDEX 9
-			GEQ
-			PUSHCONT {
-				;; Remote call ITIP3WalletFungible.internalTransferFrom
-				;; get member wallet
-				;; push identifier tokenThat
-				PUSH S2
-				INDEX 1
-				TRUE
-				NEWC
-				STSLICECONST x6_
-				STI 1
-				PUSHINT 3
-				STZEROES
-				STSLICE
-				PUSHSLICE x402faf080000000000000000000000000004_
-				STSLICER
-				STSLICECONST 0
-				STSLICECONST 0
-				STSLICECONST x7cb81835
-				;; to
-				;; push identifier senderAddr
-				PUSH S5
-				STSLICER
-				;; tokens
-				;; get member amountX
-				;; push identifier trans
-				PUSH S1
-				INDEX 6
-				STUR 128
-				ENDC
-				PUSHINT 0
-				SENDRAWMSG
-				;; push identifier user
-				PUSH S7
-				;; push identifier trans
-				PUSH S1
-				CALL $_confirmTransaction_internal$
-			}
-			PUSHCONT {
-				;; push identifier user
-				PUSH S7
-				CALL $_cancelTransaction_internal$
-			}
-			IFELSE
-			;; end if
-		}
-		PUSHCONT {
-			;; push identifier user
-			PUSH S7
-			CALL $_cancelTransaction_internal$
-		}
-		IFELSE
-		;; end if
+		SWAP
+		; colValue
+		SETGLOB 19
+		; end colValue
+		DROP
+		DROP2
+		; end function _savepoint
+		;; push identifier owner
+		PUSH S2
+		CALL $_commit_internal$
+		;; Remote call ITIP3WalletFungible.internalTransferFrom
+		;; get member wallet
+		;; push identifier outToken
+		PUSH S4
+		INDEX 1
+		TRUE
+		NEWC
+		STSLICECONST x6_
+		STI 1
+		PUSHINT 3
+		STZEROES
+		STSLICE
+		PUSHSLICE x140000000000000000000000000004_
+		STSLICER
+		STSLICECONST 0
+		STSLICECONST 0
+		STSLICECONST x7cb81835
+		;; to
+		;; push identifier to
+		PUSH S1
+		STSLICER
+		;; tokens
+		;; get member amountOut
+		;; push identifier tr
+		PUSH S2
+		INDEX 7
+		STUR 128
+		ENDC
+		PUSHINT 0
+		SENDRAWMSG
+		DROP
+	}
+	PUSHCONT {
+		;; push identifier owner
+		PUSH S1
+		CALL $_rollback_internal$
 	}
 	IFELSE
 	;; end if
@@ -4196,7 +3424,7 @@ PUSHCONT {
 PUSHCONT {
 	;; if
 	;; get member operation
-	;; push identifier trans
+	;; push identifier tr
 	DUP
 	INDEX 3
 	;; ==
@@ -4208,79 +3436,263 @@ PUSHCONT {
 	PUSHCONT {
 		DROP
 		;; get member stage
-		;; push identifier trans
+		;; push identifier tr
 		DUP
 		INDEX 5
 		EQINT 0
-		;; push identifier toDex
-		PUSH S7
-		AND
+		;; short-circuiting &&
+		DUP
+		PUSHCONT {
+			DROP
+			;; get member amountIn
+			;; push identifier tr
+			DUP
+			INDEX 6
+			;; ==
+			;; push identifier _tokens
+			PUSH S6
+			EQUAL
+		}
+		IF
 	}
 	IF
 	PUSHCONT {
-		;; if
-		;; get member amountX
-		;; push identifier trans
+		; expValue
 		DUP
+		; end expValue
+		PUSHINT 1
+		; colValue
+		SETINDEX 5
+		NIP
+		; end colValue
+		;; get member balance
+		;; push identifier inToken
+		PUSH S4
 		INDEX 6
-		;; ==
-		;; push identifier tokens
-		PUSH S2
-		EQUAL
+		EQINT 0
 		;; short-circuiting ||
 		DUP
 		PUSHCONT {
 			DROP
-			;; get member amountY
-			;; push identifier trans
-			DUP
-			INDEX 7
-			;; ==
-			;; push identifier tokens
-			PUSH S2
-			EQUAL
+			;; get member balance
+			;; push identifier outToken
+			PUSH S3
+			INDEX 6
+			EQINT 0
 		}
 		IFNOT
 		PUSHCONT {
-			;; map.fetch
-			;; push identifier user
-			PUSH S7
-			;; push identifier transactions_
-			GETGLOB 19
-			PUSHINT 256
-			DICTUGETREF
-			NULLSWAPIFNOT
+			;; get member limit
+			;; push identifier tr
+			DUP
+			INDEX 9
+		}
+		PUSHCONT {
+			;; push identifier _tokens
+			PUSH S5
+			;; get member balance
+			;; push identifier inToken
+			PUSH S5
+			INDEX 6
+			;; get member balance
+			;; push identifier outToken
+			PUSH S5
+			INDEX 6
+			;; param: inAmount
+			;; param: inBalance
+			;; param: outBalance
+			; function _spotAmount
+			;; return
+			;; push identifier outBalance
+			DUP
+			;; push identifier inAmount
+			PUSH S3
+			;; push identifier inBalance
+			PUSH S3
+			MULDIV
+			UFITS 128
+			XCHG s3
+			BLKDROP 3
+			; end function _spotAmount
+		}
+		IFELSE
+		; expValue
+		PUSH S1
+		; end expValue
+		SWAP
+		; colValue
+		SETINDEX 7
+		NIP
+		; end colValue
+		;; push identifier owner
+		PUSH S1
+		;; push identifier tr
+		PUSH S1
+		;; param: user
+		;; param: tr
+		; function _savepoint
+		;; map.getReplace
+		; expValue
+		;; fetch transactions_
+		GETGLOB 19
+		; end expValue
+		;; push identifier tr
+		PUSH S1
+		UNTUPLE 10
+		NEWC
+		NEWC
+		PUSH S2
+		STUR 128
+		STBREFR
+		PUSH S10
+		STUR 64
+		PUSH S9
+		STUR 256
+		PUSH S8
+		STSLICER
+		PUSH S7
+		STUR 8
+		PUSH S6
+		STIR 1
+		PUSH S5
+		STUR 8
+		PUSH S4
+		STUR 128
+		PUSH S3
+		STUR 128
+		PUSH S2
+		STUR 128
+		XCHG s10
+		BLKDROP 10
+		ENDC
+		;; push identifier user
+		PUSH S3
+		ROT
+		PUSHINT 256
+		DICTUREPLACEGETREF
+		NULLSWAPIFNOT
+		PUSHCONT {
+			CTOS
+			LDREF
+			LDU 64
+			LDU 256
+			LDMSGADDR
+			LDU 8
+			LDI 1
+			LDU 8
+			LDU 128
+			LDU 128
+			PLDU 128
+			BLKSWAP 1, 9
+			CTOS
+			PLDU 128
+			TUPLE 10
+		}
+		IF
+		SWAP
+		; colValue
+		SETGLOB 19
+		; end colValue
+		DROP
+		DROP2
+		; end function _savepoint
+		;; get member root
+		;; push identifier outToken
+		PUSH S3
+		INDEX 0
+		;; push identifier _senderKey
+		PUSH S8
+		;; push identifier _senderOwner
+		PUSH S8
+		CALL $_expectedAddress_internal$
+		;; decl: fromOut
+		;; Remote call ITIP3WalletNotify.internalTransferFromNotify
+		;; push identifier fromOut
+		DUP
+		TRUE
+		NEWC
+		STSLICECONST x6_
+		STI 1
+		PUSHINT 3
+		STZEROES
+		STSLICE
+		PUSHSLICE x3989680000000000000000000000000004_
+		STSLICER
+		STSLICECONST 0
+		STSLICECONST 1
+		NEWC
+		STSLICECONST x548968c1
+		;; to
+		;; get member wallet
+		;; push identifier outToken
+		PUSH S6
+		INDEX 1
+		STSLICER
+		;; tokens
+		;; get member amountOut
+		;; push identifier tr
+		PUSH S3
+		INDEX 7
+		STUR 128
+		;; subscriber
+		MYADDR
+		STSLICER
+		STBREFR
+		ENDC
+		PUSHINT 64
+		SENDRAWMSG
+		DROP
+	}
+	PUSHCONT {
+		;; if
+		;; get member operation
+		;; push identifier tr
+		DUP
+		INDEX 3
+		;; ==
+		;; get member DEPOSIT
+		PUSHINT 1
+		EQUAL
+		;; short-circuiting &&
+		DUP
+		PUSHCONT {
+			DROP
+			;; get member stage
+			;; push identifier tr
+			DUP
+			INDEX 5
+			EQINT 1
+			;; short-circuiting &&
+			DUP
 			PUSHCONT {
-				CTOS
-				LDREF
-				LDU 64
-				LDU 256
-				LDMSGADDR
-				LDU 8
-				LDI 1
-				LDU 8
-				LDU 128
-				LDU 128
-				PLDU 128
-				BLKSWAP 1, 9
-				CTOS
-				LDU 128
-				PLDU 128
-				TUPLE 11
+				DROP
+				;; get member amountOut
+				;; push identifier tr
+				DUP
+				INDEX 7
+				;; ==
+				;; push identifier _tokens
+				PUSH S6
+				EQUAL
 			}
 			IF
-			DUP
-			ISNULL
-			THROWIF 63
-			;; decl: tr
-			; expValue
-			DUP
-			; end expValue
-			PUSHINT 1
-			; colValue
-			SETINDEX 5
-			NIP
-			; end colValue
+		}
+		IF
+		PUSHCONT {
+			MYADDR
+			;; push identifier _senderKey
+			PUSH S8
+			;; push identifier _senderOwner
+			PUSH S8
+			CALL $_expectedAddress_internal$
+			;; decl: to
+			;; push identifier owner
+			PUSH S2
+			;; push identifier tr
+			PUSH S2
+			;; param: user
+			;; param: tr
+			; function _savepoint
 			;; map.getReplace
 			; expValue
 			;; fetch transactions_
@@ -4288,37 +3700,35 @@ PUSHCONT {
 			; end expValue
 			;; push identifier tr
 			PUSH S1
-			UNTUPLE 11
+			UNTUPLE 10
 			NEWC
 			NEWC
-			PUSH S3
-			STUR 128
 			PUSH S2
 			STUR 128
 			STBREFR
-			PUSH S11
-			STUR 64
 			PUSH S10
-			STUR 256
+			STUR 64
 			PUSH S9
-			STSLICER
+			STUR 256
 			PUSH S8
-			STUR 8
+			STSLICER
 			PUSH S7
-			STIR 1
-			PUSH S6
 			STUR 8
+			PUSH S6
+			STIR 1
 			PUSH S5
-			STUR 128
+			STUR 8
 			PUSH S4
 			STUR 128
 			PUSH S3
 			STUR 128
-			XCHG s11
-			BLKDROP 11
+			PUSH S2
+			STUR 128
+			XCHG s10
+			BLKDROP 10
 			ENDC
 			;; push identifier user
-			PUSH S10
+			PUSH S3
 			ROT
 			PUSHINT 256
 			DICTUREPLACEGETREF
@@ -4337,9 +3747,8 @@ PUSHCONT {
 				PLDU 128
 				BLKSWAP 1, 9
 				CTOS
-				LDU 128
 				PLDU 128
-				TUPLE 11
+				TUPLE 10
 			}
 			IF
 			SWAP
@@ -4347,20 +3756,540 @@ PUSHCONT {
 			SETGLOB 19
 			; end colValue
 			DROP
+			DROP2
+			; end function _savepoint
+			;; push identifier owner
+			PUSH S2
+			CALL $_commit_internal$
+			;; Remote call ITIP3WalletFungible.accept
+			;; push identifier to
+			DUP
+			TRUE
+			NEWC
+			STSLICECONST x6_
+			STI 1
+			PUSHINT 3
+			STZEROES
+			STSLICE
+			PUSHSLICE x3989680000000000000000000000000004_
+			STSLICER
+			STSLICECONST 0
+			STSLICECONST 0
+			STSLICECONST x0b3fcf57
+			;; tokens
+			;; get member amountIn
+			;; push identifier tr
+			PUSH S2
+			INDEX 6
+			;; get member amountOut
+			;; push identifier tr
+			PUSH S3
+			INDEX 7
+			;; param: inAmountX
+			;; param: inAmountY
+			; function _tokensToLiq
+			;; return
+			;; push identifier inAmountX
+			PUSH S1
+			;; push identifier inAmountY
+			PUSH S1
+			PUSHINT 1000
+			;; *
+			PUSHINT 1000
+			MUL
+			UFITS 128
+			MULDIVC
+			UFITS 128
+			NIP
+			NIP
+			; end function _tokensToLiq
+			STUR 128
+			ENDC
+			PUSHINT 64
+			SENDRAWMSG
 			DROP
 		}
+		IF
+		;; end if
+	}
+	IFELSE
+	;; end if
+}
+IFELSE
+;; end if
+BLKDROP 5
+; end function onWalletReceive
+BLKDROP 6
+; end modifier forCallbacks
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	onWalletReceive_internal
+.type	onWalletReceive_internal, @function
+;; param: _tokenAddress
+;; param: _receiverKey
+;; param: _receiverOwner
+;; param: _senderKey
+;; param: _senderOwner
+;; param: _tokens
+; modifier forCallbacks
+;; get member value
+CALLREF {
+	CALL $message_balance_macro$
+}
+;; >=
+PUSHINT 10000000
+GEQ
+THROWIFNOT 509
+; function onWalletReceive
+;; push identifier _tokenAddress
+PUSH S5
+CALL $_processToken_internal$
+ROTREV
+ROTREV
+ROTREV
+;; decl: inToken
+;; decl: outToken
+;; decl: xy
+;; get member sender
+GETGLOB 9
+;; get member wallet
+;; push identifier inToken
+PUSH S3
+INDEX 1
+SDEQ
+THROWIFNOT 501
+;; push identifier _senderKey
+PUSH S5
+;; push identifier _senderOwner
+PUSH S5
+CALL $_processCustomer_internal$
+;; decl: owner
+;; push identifier owner
+DUP
+CALL $_processTransaction_internal$
+;; decl: tr
+;; if
+;; get member operation
+;; push identifier tr
+DUP
+INDEX 3
+;; ==
+;; get member SWAP
+PUSHINT 0
+EQUAL
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; get member stage
+	;; push identifier tr
+	DUP
+	INDEX 5
+	EQINT 0
+	;; short-circuiting &&
+	DUP
+	PUSHCONT {
+		DROP
+		;; get member amountIn
+		;; push identifier tr
+		DUP
+		INDEX 6
+		;; ==
+		;; push identifier _tokens
+		PUSH S6
+		EQUAL
+	}
+	IF
+}
+IF
+PUSHCONT {
+	;; push identifier _tokens
+	PUSH S5
+	;; get member balance
+	;; push identifier inToken
+	PUSH S5
+	INDEX 6
+	;; get member balance
+	;; push identifier outToken
+	PUSH S5
+	INDEX 6
+	PUSHINT 300
+	CALL $_effectiveAmount_internal$
+	; expValue
+	PUSH S1
+	; end expValue
+	SWAP
+	; colValue
+	SETINDEX 7
+	NIP
+	; end colValue
+	;; if
+	;; get member amountOut
+	;; push identifier tr
+	DUP
+	INDEX 7
+	;; >=
+	;; get member limit
+	;; push identifier tr
+	PUSH S1
+	INDEX 9
+	GEQ
+	PUSHCONT {
+		;; get member root
+		;; push identifier outToken
+		PUSH S3
+		INDEX 0
+		;; push identifier _senderKey
+		PUSH S8
+		;; push identifier _senderOwner
+		PUSH S8
+		CALL $_expectedAddress_internal$
+		;; decl: to
+		;; push identifier owner
+		PUSH S2
+		;; push identifier tr
+		PUSH S2
+		;; param: user
+		;; param: tr
+		; function _savepoint
+		;; map.getReplace
+		; expValue
+		;; fetch transactions_
+		GETGLOB 19
+		; end expValue
+		;; push identifier tr
+		PUSH S1
+		UNTUPLE 10
+		NEWC
+		NEWC
+		PUSH S2
+		STUR 128
+		STBREFR
+		PUSH S10
+		STUR 64
+		PUSH S9
+		STUR 256
+		PUSH S8
+		STSLICER
+		PUSH S7
+		STUR 8
+		PUSH S6
+		STIR 1
+		PUSH S5
+		STUR 8
+		PUSH S4
+		STUR 128
+		PUSH S3
+		STUR 128
+		PUSH S2
+		STUR 128
+		XCHG s10
+		BLKDROP 10
+		ENDC
+		;; push identifier user
+		PUSH S3
+		ROT
+		PUSHINT 256
+		DICTUREPLACEGETREF
+		NULLSWAPIFNOT
 		PUSHCONT {
-			;; push identifier user
-			PUSH S7
-			CALL $_cancelTransaction_internal$
+			CTOS
+			LDREF
+			LDU 64
+			LDU 256
+			LDMSGADDR
+			LDU 8
+			LDI 1
+			LDU 8
+			LDU 128
+			LDU 128
+			PLDU 128
+			BLKSWAP 1, 9
+			CTOS
+			PLDU 128
+			TUPLE 10
+		}
+		IF
+		SWAP
+		; colValue
+		SETGLOB 19
+		; end colValue
+		DROP
+		DROP2
+		; end function _savepoint
+		;; push identifier owner
+		PUSH S2
+		CALL $_commit_internal$
+		;; Remote call ITIP3WalletFungible.internalTransferFrom
+		;; get member wallet
+		;; push identifier outToken
+		PUSH S4
+		INDEX 1
+		TRUE
+		NEWC
+		STSLICECONST x6_
+		STI 1
+		PUSHINT 3
+		STZEROES
+		STSLICE
+		PUSHSLICE x140000000000000000000000000004_
+		STSLICER
+		STSLICECONST 0
+		STSLICECONST 0
+		STSLICECONST x7cb81835
+		;; to
+		;; push identifier to
+		PUSH S1
+		STSLICER
+		;; tokens
+		;; get member amountOut
+		;; push identifier tr
+		PUSH S2
+		INDEX 7
+		STUR 128
+		ENDC
+		PUSHINT 0
+		SENDRAWMSG
+		DROP
+	}
+	PUSHCONT {
+		;; push identifier owner
+		PUSH S1
+		CALL $_rollback_internal$
+	}
+	IFELSE
+	;; end if
+}
+PUSHCONT {
+	;; if
+	;; get member operation
+	;; push identifier tr
+	DUP
+	INDEX 3
+	;; ==
+	;; get member DEPOSIT
+	PUSHINT 1
+	EQUAL
+	;; short-circuiting &&
+	DUP
+	PUSHCONT {
+		DROP
+		;; get member stage
+		;; push identifier tr
+		DUP
+		INDEX 5
+		EQINT 0
+		;; short-circuiting &&
+		DUP
+		PUSHCONT {
+			DROP
+			;; get member amountIn
+			;; push identifier tr
+			DUP
+			INDEX 6
+			;; ==
+			;; push identifier _tokens
+			PUSH S6
+			EQUAL
+		}
+		IF
+	}
+	IF
+	PUSHCONT {
+		; expValue
+		DUP
+		; end expValue
+		PUSHINT 1
+		; colValue
+		SETINDEX 5
+		NIP
+		; end colValue
+		;; get member balance
+		;; push identifier inToken
+		PUSH S4
+		INDEX 6
+		EQINT 0
+		;; short-circuiting ||
+		DUP
+		PUSHCONT {
+			DROP
+			;; get member balance
+			;; push identifier outToken
+			PUSH S3
+			INDEX 6
+			EQINT 0
+		}
+		IFNOT
+		PUSHCONT {
+			;; get member limit
+			;; push identifier tr
+			DUP
+			INDEX 9
+		}
+		PUSHCONT {
+			;; push identifier _tokens
+			PUSH S5
+			;; get member balance
+			;; push identifier inToken
+			PUSH S5
+			INDEX 6
+			;; get member balance
+			;; push identifier outToken
+			PUSH S5
+			INDEX 6
+			;; param: inAmount
+			;; param: inBalance
+			;; param: outBalance
+			; function _spotAmount
+			;; return
+			;; push identifier outBalance
+			DUP
+			;; push identifier inAmount
+			PUSH S3
+			;; push identifier inBalance
+			PUSH S3
+			MULDIV
+			UFITS 128
+			XCHG s3
+			BLKDROP 3
+			; end function _spotAmount
 		}
 		IFELSE
-		;; end if
+		; expValue
+		PUSH S1
+		; end expValue
+		SWAP
+		; colValue
+		SETINDEX 7
+		NIP
+		; end colValue
+		;; push identifier owner
+		PUSH S1
+		;; push identifier tr
+		PUSH S1
+		;; param: user
+		;; param: tr
+		; function _savepoint
+		;; map.getReplace
+		; expValue
+		;; fetch transactions_
+		GETGLOB 19
+		; end expValue
+		;; push identifier tr
+		PUSH S1
+		UNTUPLE 10
+		NEWC
+		NEWC
+		PUSH S2
+		STUR 128
+		STBREFR
+		PUSH S10
+		STUR 64
+		PUSH S9
+		STUR 256
+		PUSH S8
+		STSLICER
+		PUSH S7
+		STUR 8
+		PUSH S6
+		STIR 1
+		PUSH S5
+		STUR 8
+		PUSH S4
+		STUR 128
+		PUSH S3
+		STUR 128
+		PUSH S2
+		STUR 128
+		XCHG s10
+		BLKDROP 10
+		ENDC
+		;; push identifier user
+		PUSH S3
+		ROT
+		PUSHINT 256
+		DICTUREPLACEGETREF
+		NULLSWAPIFNOT
+		PUSHCONT {
+			CTOS
+			LDREF
+			LDU 64
+			LDU 256
+			LDMSGADDR
+			LDU 8
+			LDI 1
+			LDU 8
+			LDU 128
+			LDU 128
+			PLDU 128
+			BLKSWAP 1, 9
+			CTOS
+			PLDU 128
+			TUPLE 10
+		}
+		IF
+		SWAP
+		; colValue
+		SETGLOB 19
+		; end colValue
+		DROP
+		DROP2
+		; end function _savepoint
+		;; get member root
+		;; push identifier outToken
+		PUSH S3
+		INDEX 0
+		;; push identifier _senderKey
+		PUSH S8
+		;; push identifier _senderOwner
+		PUSH S8
+		CALL $_expectedAddress_internal$
+		;; decl: fromOut
+		;; Remote call ITIP3WalletNotify.internalTransferFromNotify
+		;; push identifier fromOut
+		DUP
+		TRUE
+		NEWC
+		STSLICECONST x6_
+		STI 1
+		PUSHINT 3
+		STZEROES
+		STSLICE
+		PUSHSLICE x3989680000000000000000000000000004_
+		STSLICER
+		STSLICECONST 0
+		STSLICECONST 1
+		NEWC
+		STSLICECONST x548968c1
+		;; to
+		;; get member wallet
+		;; push identifier outToken
+		PUSH S6
+		INDEX 1
+		STSLICER
+		;; tokens
+		;; get member amountOut
+		;; push identifier tr
+		PUSH S3
+		INDEX 7
+		STUR 128
+		;; subscriber
+		MYADDR
+		STSLICER
+		STBREFR
+		ENDC
+		PUSHINT 64
+		SENDRAWMSG
+		DROP
 	}
 	PUSHCONT {
 		;; if
 		;; get member operation
-		;; push identifier trans
+		;; push identifier tr
 		DUP
 		INDEX 3
 		;; ==
@@ -4372,323 +4301,156 @@ PUSHCONT {
 		PUSHCONT {
 			DROP
 			;; get member stage
-			;; push identifier trans
+			;; push identifier tr
 			DUP
 			INDEX 5
 			EQINT 1
-			;; push identifier toDex
-			PUSH S7
-			AND
-		}
-		IF
-		PUSHCONT {
-			;; if
-			;; get member amountX
-			;; push identifier trans
-			DUP
-			INDEX 6
-			;; ==
-			;; push identifier tokens
-			PUSH S2
-			EQUAL
-			;; short-circuiting ||
+			;; short-circuiting &&
 			DUP
 			PUSHCONT {
 				DROP
-				;; get member amountY
-				;; push identifier trans
+				;; get member amountOut
+				;; push identifier tr
 				DUP
 				INDEX 7
 				;; ==
-				;; push identifier tokens
-				PUSH S2
+				;; push identifier _tokens
+				PUSH S6
 				EQUAL
 			}
-			IFNOT
-			PUSHCONT {
-				;; Remote call ITIP3WalletFungible.accept
-				;; push identifier senderAddr
-				PUSH S4
-				TRUE
-				NEWC
-				STSLICECONST x6_
-				STI 1
-				PUSHINT 3
-				STZEROES
-				STSLICE
-				PUSHSLICE x402faf080000000000000000000000000004_
-				STSLICER
-				STSLICECONST 0
-				STSLICECONST 0
-				STSLICECONST x0b3fcf57
-				;; tokens
-				;; get member amountX
-				;; push identifier trans
-				PUSH S1
-				INDEX 6
-				;; get member amountY
-				;; push identifier trans
-				PUSH S2
-				INDEX 7
-				;; param: inAmountX
-				;; param: inAmountY
-				; function tokensToLiq
-				;; return
-				;; push identifier inAmountX
-				PUSH S1
-				;; push identifier inAmountY
-				PUSH S1
-				CALL $mul_internal$
-				NIP
-				NIP
-				; end function tokensToLiq
-				STUR 128
-				ENDC
-				PUSHINT 0
-				SENDRAWMSG
-				;; push identifier user
-				PUSH S7
-				;; push identifier trans
-				PUSH S1
-				CALL $_confirmTransaction_internal$
-			}
-			PUSHCONT {
-				;; push identifier user
-				PUSH S7
-				CALL $_cancelTransaction_internal$
-			}
-			IFELSE
-			;; end if
+			IF
 		}
 		IF
-		;; end if
-	}
-	IFELSE
-	;; end if
-}
-IFELSE
-;; end if
-BLKDROP 8
-; end function _processAnswer
-
-.globl	_confirmTransaction_internal
-.type	_confirmTransaction_internal, @function
-;; param: user
-;; param: _transaction
-; function _confirmTransaction
-;; if
-;; get member operation
-;; push identifier _transaction
-DUP
-INDEX 3
-;; ==
-;; get member WITHDRAW
-PUSHINT 2
-EQUAL
-PUSHCONT {
-	;; push identifier total_supply_
-	GETGLOB 18
-	;; get member amountLiq
-	;; push identifier _transaction
-	PUSH S1
-	INDEX 8
-	CALL $add_internal$
-	; expValue
-	; end expValue
-	; colValue
-	SETGLOB 18
-	; end colValue
-	;; get member balance
-	;; push identifier detailsX_
-	GETGLOB 16
-	INDEX 6
-	;; get member amountX
-	;; push identifier _transaction
-	PUSH S1
-	INDEX 6
-	CALL $sub_internal$
-	; expValue
-	;; fetch detailsX_
-	GETGLOB 16
-	; end expValue
-	SWAP
-	; colValue
-	SETINDEX 6
-	SETGLOB 16
-	; end colValue
-	;; get member balance
-	;; push identifier detailsY_
-	GETGLOB 17
-	INDEX 6
-	;; get member amountY
-	;; push identifier _transaction
-	PUSH S1
-	INDEX 7
-	CALL $sub_internal$
-	; expValue
-	;; fetch detailsY_
-	GETGLOB 17
-	; end expValue
-	SWAP
-	; colValue
-	SETINDEX 6
-	SETGLOB 17
-	; end colValue
-}
-PUSHCONT {
-	;; if
-	;; get member operation
-	;; push identifier _transaction
-	DUP
-	INDEX 3
-	;; ==
-	;; get member DEPOSIT
-	PUSHINT 1
-	EQUAL
-	PUSHCONT {
-		;; push identifier total_supply_
-		GETGLOB 18
-		;; get member amountLiq
-		;; push identifier _transaction
-		PUSH S1
-		INDEX 8
-		CALL $sub_internal$
-		; expValue
-		; end expValue
-		; colValue
-		SETGLOB 18
-		; end colValue
-		;; get member balance
-		;; push identifier detailsX_
-		GETGLOB 16
-		INDEX 6
-		;; get member amountX
-		;; push identifier _transaction
-		PUSH S1
-		INDEX 6
-		CALL $add_internal$
-		; expValue
-		;; fetch detailsX_
-		GETGLOB 16
-		; end expValue
-		SWAP
-		; colValue
-		SETINDEX 6
-		SETGLOB 16
-		; end colValue
-		;; get member balance
-		;; push identifier detailsY_
-		GETGLOB 17
-		INDEX 6
-		;; get member amountY
-		;; push identifier _transaction
-		PUSH S1
-		INDEX 7
-		CALL $add_internal$
-		; expValue
-		;; fetch detailsY_
-		GETGLOB 17
-		; end expValue
-		SWAP
-		; colValue
-		SETINDEX 6
-		SETGLOB 17
-		; end colValue
-	}
-	PUSHCONT {
-		;; if
-		;; get member operation
-		;; push identifier _transaction
-		DUP
-		INDEX 3
-		;; ==
-		;; get member SWAP
-		PUSHINT 0
-		EQUAL
 		PUSHCONT {
-			;; if
-			;; get member xy
-			;; push identifier _transaction
+			MYADDR
+			;; push identifier _senderKey
+			PUSH S8
+			;; push identifier _senderOwner
+			PUSH S8
+			CALL $_expectedAddress_internal$
+			;; decl: to
+			;; push identifier owner
+			PUSH S2
+			;; push identifier tr
+			PUSH S2
+			;; param: user
+			;; param: tr
+			; function _savepoint
+			;; map.getReplace
+			; expValue
+			;; fetch transactions_
+			GETGLOB 19
+			; end expValue
+			;; push identifier tr
+			PUSH S1
+			UNTUPLE 10
+			NEWC
+			NEWC
+			PUSH S2
+			STUR 128
+			STBREFR
+			PUSH S10
+			STUR 64
+			PUSH S9
+			STUR 256
+			PUSH S8
+			STSLICER
+			PUSH S7
+			STUR 8
+			PUSH S6
+			STIR 1
+			PUSH S5
+			STUR 8
+			PUSH S4
+			STUR 128
+			PUSH S3
+			STUR 128
+			PUSH S2
+			STUR 128
+			XCHG s10
+			BLKDROP 10
+			ENDC
+			;; push identifier user
+			PUSH S3
+			ROT
+			PUSHINT 256
+			DICTUREPLACEGETREF
+			NULLSWAPIFNOT
+			PUSHCONT {
+				CTOS
+				LDREF
+				LDU 64
+				LDU 256
+				LDMSGADDR
+				LDU 8
+				LDI 1
+				LDU 8
+				LDU 128
+				LDU 128
+				PLDU 128
+				BLKSWAP 1, 9
+				CTOS
+				PLDU 128
+				TUPLE 10
+			}
+			IF
+			SWAP
+			; colValue
+			SETGLOB 19
+			; end colValue
+			DROP
+			DROP2
+			; end function _savepoint
+			;; push identifier owner
+			PUSH S2
+			CALL $_commit_internal$
+			;; Remote call ITIP3WalletFungible.accept
+			;; push identifier to
 			DUP
-			INDEX 4
-			PUSHCONT {
-				;; get member balance
-				;; push identifier detailsX_
-				GETGLOB 16
-				INDEX 6
-				;; get member amountX
-				;; push identifier _transaction
-				PUSH S1
-				INDEX 6
-				CALL $add_internal$
-				; expValue
-				;; fetch detailsX_
-				GETGLOB 16
-				; end expValue
-				SWAP
-				; colValue
-				SETINDEX 6
-				SETGLOB 16
-				; end colValue
-				;; get member balance
-				;; push identifier detailsY_
-				GETGLOB 17
-				INDEX 6
-				;; get member amountY
-				;; push identifier _transaction
-				PUSH S1
-				INDEX 7
-				CALL $sub_internal$
-				; expValue
-				;; fetch detailsY_
-				GETGLOB 17
-				; end expValue
-				SWAP
-				; colValue
-				SETINDEX 6
-				SETGLOB 17
-				; end colValue
-			}
-			PUSHCONT {
-				;; get member balance
-				;; push identifier detailsY_
-				GETGLOB 17
-				INDEX 6
-				;; get member amountY
-				;; push identifier _transaction
-				PUSH S1
-				INDEX 7
-				CALL $add_internal$
-				; expValue
-				;; fetch detailsY_
-				GETGLOB 17
-				; end expValue
-				SWAP
-				; colValue
-				SETINDEX 6
-				SETGLOB 17
-				; end colValue
-				;; get member balance
-				;; push identifier detailsX_
-				GETGLOB 16
-				INDEX 6
-				;; get member amountX
-				;; push identifier _transaction
-				PUSH S1
-				INDEX 6
-				CALL $sub_internal$
-				; expValue
-				;; fetch detailsX_
-				GETGLOB 16
-				; end expValue
-				SWAP
-				; colValue
-				SETINDEX 6
-				SETGLOB 16
-				; end colValue
-			}
-			IFELSE
-			;; end if
+			TRUE
+			NEWC
+			STSLICECONST x6_
+			STI 1
+			PUSHINT 3
+			STZEROES
+			STSLICE
+			PUSHSLICE x3989680000000000000000000000000004_
+			STSLICER
+			STSLICECONST 0
+			STSLICECONST 0
+			STSLICECONST x0b3fcf57
+			;; tokens
+			;; get member amountIn
+			;; push identifier tr
+			PUSH S2
+			INDEX 6
+			;; get member amountOut
+			;; push identifier tr
+			PUSH S3
+			INDEX 7
+			;; param: inAmountX
+			;; param: inAmountY
+			; function _tokensToLiq
+			;; return
+			;; push identifier inAmountX
+			PUSH S1
+			;; push identifier inAmountY
+			PUSH S1
+			PUSHINT 1000
+			;; *
+			PUSHINT 1000
+			MUL
+			UFITS 128
+			MULDIVC
+			UFITS 128
+			NIP
+			NIP
+			; end function _tokensToLiq
+			STUR 128
+			ENDC
+			PUSHINT 64
+			SENDRAWMSG
+			DROP
 		}
 		IF
 		;; end if
@@ -4698,25 +4460,10 @@ PUSHCONT {
 }
 IFELSE
 ;; end if
-;; delete
-; expValue
-;; fetch transactions_
-GETGLOB 19
-;; push identifier user
-PUSH S2
-SWAP
-; end expValue
-PUSH S1
-SWAP
-PUSHINT 256
-DICTUDEL
-DROP
-; colValue
-NIP
-SETGLOB 19
-; end colValue
-DROP2
-; end function _confirmTransaction
+BLKDROP 5
+; end function onWalletReceive
+BLKDROP 6
+; end modifier forCallbacks
 
 .globl	_expireTransactions_internal
 .type	_expireTransactions_internal, @function
@@ -4742,9 +4489,8 @@ PUSHCONT {
 	PLDU 128
 	BLKSWAP 1, 9
 	CTOS
-	LDU 128
 	PLDU 128
-	TUPLE 11
+	TUPLE 10
 	TUPLE 2
 }
 IF
@@ -4780,7 +4526,7 @@ PUSHCONT {
 	PUSHCONT {
 		;; push identifier minUser
 		PUSH S1
-		CALL $_cancelTransaction_internal$
+		CALL $_rollback_internal$
 	}
 	IF
 	;; end if
@@ -4821,9 +4567,8 @@ PUSHCONT {
 			PLDU 128
 			BLKSWAP 1, 9
 			CTOS
-			LDU 128
 			PLDU 128
-			TUPLE 11
+			TUPLE 10
 			TUPLE 2
 		}
 		IF
@@ -4861,7 +4606,7 @@ PUSHCONT {
 			PUSHCONT {
 				;; push identifier nextUser
 				PUSH S1
-				CALL $_cancelTransaction_internal$
+				CALL $_rollback_internal$
 			}
 			IF
 			;; end if
@@ -4897,16 +4642,362 @@ IFNOT
 DROP
 ; end function _expireTransactions
 
-.globl	_cancelTransaction_internal
-.type	_cancelTransaction_internal, @function
+.globl	_commit_internal
+.type	_commit_internal, @function
 ;; param: user
-; function _cancelTransaction
+; function _commit
+;; map.fetch
+;; push identifier user
+DUP
+;; push identifier transactions_
+GETGLOB 19
+PUSHINT 256
+DICTUGETREF
+NULLSWAPIFNOT
+PUSHCONT {
+	CTOS
+	LDREF
+	LDU 64
+	LDU 256
+	LDMSGADDR
+	LDU 8
+	LDI 1
+	LDU 8
+	LDU 128
+	LDU 128
+	PLDU 128
+	BLKSWAP 1, 9
+	CTOS
+	PLDU 128
+	TUPLE 10
+}
+IF
+DUP
+ISNULL
+THROWIF 63
+;; decl: tr
+;; if
+;; get member operation
+;; push identifier tr
+DUP
+INDEX 3
+;; ==
+;; get member WITHDRAW
+PUSHINT 2
+EQUAL
+PUSHCONT {
+	;; push identifier total_supply_
+	GETGLOB 18
+	;; get member amountLiq
+	;; push identifier tr
+	PUSH S1
+	INDEX 8
+	CALL $sub_internal$
+	; expValue
+	; end expValue
+	; colValue
+	SETGLOB 18
+	; end colValue
+	;; if
+	;; get member xy
+	;; push identifier tr
+	DUP
+	INDEX 4
+	PUSHCONT {
+		;; get member balance
+		;; push identifier detailsX_
+		GETGLOB 16
+		INDEX 6
+		;; get member amountIn
+		;; push identifier tr
+		PUSH S1
+		INDEX 6
+		CALL $sub_internal$
+		; expValue
+		;; fetch detailsX_
+		GETGLOB 16
+		; end expValue
+		SWAP
+		; colValue
+		SETINDEX 6
+		SETGLOB 16
+		; end colValue
+		;; get member balance
+		;; push identifier detailsY_
+		GETGLOB 17
+		INDEX 6
+		;; get member amountOut
+		;; push identifier tr
+		PUSH S1
+		INDEX 7
+		CALL $sub_internal$
+		; expValue
+		;; fetch detailsY_
+		GETGLOB 17
+		; end expValue
+		SWAP
+		; colValue
+		SETINDEX 6
+		SETGLOB 17
+		; end colValue
+	}
+	PUSHCONT {
+		;; get member balance
+		;; push identifier detailsY_
+		GETGLOB 17
+		INDEX 6
+		;; get member amountIn
+		;; push identifier tr
+		PUSH S1
+		INDEX 6
+		CALL $sub_internal$
+		; expValue
+		;; fetch detailsY_
+		GETGLOB 17
+		; end expValue
+		SWAP
+		; colValue
+		SETINDEX 6
+		SETGLOB 17
+		; end colValue
+		;; get member balance
+		;; push identifier detailsX_
+		GETGLOB 16
+		INDEX 6
+		;; get member amountOut
+		;; push identifier tr
+		PUSH S1
+		INDEX 7
+		CALL $sub_internal$
+		; expValue
+		;; fetch detailsX_
+		GETGLOB 16
+		; end expValue
+		SWAP
+		; colValue
+		SETINDEX 6
+		SETGLOB 16
+		; end colValue
+	}
+	IFELSE
+	;; end if
+}
+PUSHCONT {
+	;; if
+	;; get member operation
+	;; push identifier tr
+	DUP
+	INDEX 3
+	;; ==
+	;; get member DEPOSIT
+	PUSHINT 1
+	EQUAL
+	PUSHCONT {
+		;; push identifier total_supply_
+		GETGLOB 18
+		;; get member amountLiq
+		;; push identifier tr
+		PUSH S1
+		INDEX 8
+		CALL $add_internal$
+		; expValue
+		; end expValue
+		; colValue
+		SETGLOB 18
+		; end colValue
+		;; if
+		;; get member xy
+		;; push identifier tr
+		DUP
+		INDEX 4
+		PUSHCONT {
+			;; get member balance
+			;; push identifier detailsX_
+			GETGLOB 16
+			INDEX 6
+			;; get member amountIn
+			;; push identifier tr
+			PUSH S1
+			INDEX 6
+			CALL $add_internal$
+			; expValue
+			;; fetch detailsX_
+			GETGLOB 16
+			; end expValue
+			SWAP
+			; colValue
+			SETINDEX 6
+			SETGLOB 16
+			; end colValue
+			;; get member balance
+			;; push identifier detailsY_
+			GETGLOB 17
+			INDEX 6
+			;; get member amountOut
+			;; push identifier tr
+			PUSH S1
+			INDEX 7
+			CALL $add_internal$
+			; expValue
+			;; fetch detailsY_
+			GETGLOB 17
+			; end expValue
+			SWAP
+			; colValue
+			SETINDEX 6
+			SETGLOB 17
+			; end colValue
+		}
+		PUSHCONT {
+			;; get member balance
+			;; push identifier detailsY_
+			GETGLOB 17
+			INDEX 6
+			;; get member amountIn
+			;; push identifier tr
+			PUSH S1
+			INDEX 6
+			CALL $add_internal$
+			; expValue
+			;; fetch detailsY_
+			GETGLOB 17
+			; end expValue
+			SWAP
+			; colValue
+			SETINDEX 6
+			SETGLOB 17
+			; end colValue
+			;; get member balance
+			;; push identifier detailsX_
+			GETGLOB 16
+			INDEX 6
+			;; get member amountOut
+			;; push identifier tr
+			PUSH S1
+			INDEX 7
+			CALL $add_internal$
+			; expValue
+			;; fetch detailsX_
+			GETGLOB 16
+			; end expValue
+			SWAP
+			; colValue
+			SETINDEX 6
+			SETGLOB 16
+			; end colValue
+		}
+		IFELSE
+		;; end if
+	}
+	PUSHCONT {
+		;; if
+		;; get member operation
+		;; push identifier tr
+		DUP
+		INDEX 3
+		;; ==
+		;; get member SWAP
+		PUSHINT 0
+		EQUAL
+		PUSHCONT {
+			;; if
+			;; get member xy
+			;; push identifier tr
+			DUP
+			INDEX 4
+			PUSHCONT {
+				;; get member balance
+				;; push identifier detailsX_
+				GETGLOB 16
+				INDEX 6
+				;; get member amountIn
+				;; push identifier tr
+				PUSH S1
+				INDEX 6
+				CALL $add_internal$
+				; expValue
+				;; fetch detailsX_
+				GETGLOB 16
+				; end expValue
+				SWAP
+				; colValue
+				SETINDEX 6
+				SETGLOB 16
+				; end colValue
+				;; get member balance
+				;; push identifier detailsY_
+				GETGLOB 17
+				INDEX 6
+				;; get member amountOut
+				;; push identifier tr
+				PUSH S1
+				INDEX 7
+				CALL $sub_internal$
+				; expValue
+				;; fetch detailsY_
+				GETGLOB 17
+				; end expValue
+				SWAP
+				; colValue
+				SETINDEX 6
+				SETGLOB 17
+				; end colValue
+			}
+			PUSHCONT {
+				;; get member balance
+				;; push identifier detailsY_
+				GETGLOB 17
+				INDEX 6
+				;; get member amountIn
+				;; push identifier tr
+				PUSH S1
+				INDEX 6
+				CALL $add_internal$
+				; expValue
+				;; fetch detailsY_
+				GETGLOB 17
+				; end expValue
+				SWAP
+				; colValue
+				SETINDEX 6
+				SETGLOB 17
+				; end colValue
+				;; get member balance
+				;; push identifier detailsX_
+				GETGLOB 16
+				INDEX 6
+				;; get member amountOut
+				;; push identifier tr
+				PUSH S1
+				INDEX 7
+				CALL $sub_internal$
+				; expValue
+				;; fetch detailsX_
+				GETGLOB 16
+				; end expValue
+				SWAP
+				; colValue
+				SETINDEX 6
+				SETGLOB 16
+				; end colValue
+			}
+			IFELSE
+			;; end if
+		}
+		IF
+		;; end if
+	}
+	IFELSE
+	;; end if
+}
+IFELSE
+;; end if
 ;; delete
 ; expValue
 ;; fetch transactions_
 GETGLOB 19
 ;; push identifier user
-PUSH S1
+PUSH S2
 SWAP
 ; end expValue
 PUSH S1
@@ -4918,57 +5009,397 @@ DROP
 NIP
 SETGLOB 19
 ; end colValue
-DROP
-; end function _cancelTransaction
+DROP2
+; end function _commit
 
-.globl	_burn_internal
-.type	_burn_internal, @function
-;; param: walletPubkey
-;; param: walletOwner
-;; param: tokens
-; function _burn
-;; ret param: walletAddress
-PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-MYADDR
-;; push identifier walletPubkey
-PUSH S4
-;; push identifier walletOwner
-PUSH S4
-CALL $_expectedAddress_internal$
+.globl	_rollback_internal
+.type	_rollback_internal, @function
+;; param: user
+; function _rollback
+;; map.fetch
+;; push identifier user
+DUP
+;; push identifier transactions_
+GETGLOB 19
+PUSHINT 256
+DICTUGETREF
+NULLSWAPIFNOT
+PUSHCONT {
+	CTOS
+	LDREF
+	LDU 64
+	LDU 256
+	LDMSGADDR
+	LDU 8
+	LDI 1
+	LDU 8
+	LDU 128
+	LDU 128
+	PLDU 128
+	BLKSWAP 1, 9
+	CTOS
+	PLDU 128
+	TUPLE 10
+}
+IF
+DUP
+ISNULL
+THROWIF 63
+;; decl: tr
+;; if
+;; get member operation
+;; push identifier tr
+DUP
+INDEX 3
+;; ==
+;; get member DEPOSIT
+PUSHINT 1
+EQUAL
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; get member stage
+	;; push identifier tr
+	DUP
+	INDEX 5
+	EQINT 1
+}
+IF
+PUSHCONT {
+	;; get member xy
+	;; push identifier tr
+	DUP
+	INDEX 4
+	PUSHCONT {
+		;; get member wallet
+		;; push identifier detailsX_
+		GETGLOB 16
+		INDEX 1
+		;; get member root
+		;; push identifier detailsX_
+		GETGLOB 16
+		INDEX 0
+		;; get member extOwner
+		;; push identifier tr
+		PUSH S2
+		INDEX 1
+		;; get member intOwner
+		;; push identifier tr
+		PUSH S3
+		INDEX 2
+		CALL $_expectedAddress_internal$
+	}
+	PUSHCONT {
+		;; get member wallet
+		;; push identifier detailsY_
+		GETGLOB 17
+		INDEX 1
+		;; get member root
+		;; push identifier detailsY_
+		GETGLOB 17
+		INDEX 0
+		;; get member extOwner
+		;; push identifier tr
+		PUSH S2
+		INDEX 1
+		;; get member intOwner
+		;; push identifier tr
+		PUSH S3
+		INDEX 2
+		CALL $_expectedAddress_internal$
+	}
+	IFELSE
+	SWAP
+	SWAP
+	;; decl: from
+	;; decl: to
+	;; Remote call ITIP3WalletFungible.internalTransferFrom
+	;; push identifier from
+	PUSH S1
+	TRUE
+	NEWC
+	STSLICECONST x6_
+	STI 1
+	PUSHINT 3
+	STZEROES
+	STSLICE
+	PUSHSLICE x402faf080000000000000000000000000004_
+	STSLICER
+	STSLICECONST 0
+	STSLICECONST 0
+	STSLICECONST x7cb81835
+	;; to
+	;; push identifier to
+	PUSH S1
+	STSLICER
+	;; tokens
+	;; get member amountIn
+	;; push identifier tr
+	PUSH S3
+	INDEX 6
+	STUR 128
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+	DROP2
+}
+IF
+;; end if
+;; delete
 ; expValue
+;; fetch transactions_
+GETGLOB 19
+;; push identifier user
+PUSH S2
+SWAP
 ; end expValue
+PUSH S1
+SWAP
+PUSHINT 256
+DICTUDEL
+DROP
 ; colValue
 NIP
+SETGLOB 19
 ; end colValue
-;; Remote call ITIP3WalletRootBurnable.internalBurnFromRoot
-;; push identifier walletAddress
-DUP
-TRUE
-NEWC
-STSLICECONST x6_
-STI 1
-PUSHINT 3
-STZEROES
-STSLICE
-PUSHSLICE x402faf080000000000000000000000000004_
-STSLICER
-STSLICECONST 0
-STSLICECONST 0
-STSLICECONST x5f8838f5
-;; tokens
-;; push identifier tokens
+DROP2
+; end function _rollback
+
+.globl	_processCustomer_internal
+.type	_processCustomer_internal, @function
+;; param: _senderKey
+;; param: _senderOwner
+; function _processCustomer
+PUSHINT 0
+;; decl: owner
+;; if
+;; push identifier _senderKey
 PUSH S2
-STUR 128
-;; subscriber
-MYADDR
-STSLICER
+NEQINT 0
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; push identifier _senderOwner
+	PUSH S1
+	;; push identifier ZERO_ADDRESS
+	;; address.makeAddrStd()
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	SDEQ
+}
+IF
+PUSHCONT {
+	; expValue
+	; end expValue
+	;; push identifier _senderKey
+	PUSH S2
+	; colValue
+	NIP
+	; end colValue
+}
+PUSHCONT {
+	;; if
+	;; push identifier _senderKey
+	PUSH S2
+	EQINT 0
+	;; short-circuiting &&
+	DUP
+	PUSHCONT {
+		DROP
+		;; push identifier _senderOwner
+		PUSH S1
+		;; push identifier ZERO_ADDRESS
+		;; address.makeAddrStd()
+		PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+		SDEQ
+		NOT
+	}
+	IF
+	PUSHCONT {
+		; expValue
+		; end expValue
+		;; get member value
+		;; push identifier _senderOwner
+		PUSH S1
+		PARSEMSGADDR
+		INDEX 3
+		PLDU 256
+		; colValue
+		NIP
+		; end colValue
+	}
+	PUSHCONT {
+		THROW 501
+	}
+	IFELSE
+	;; end if
+}
+IFELSE
+;; end if
+;; return
+NIP
+NIP
+; end function _processCustomer
+
+.globl	_processToken_internal
+.type	_processToken_internal, @function
+;; param: _tokenAddress
+; function _processToken
+;; ret param: inToken
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+NEWC
+ENDC
+NEWC
+ENDC
+NEWC
 ENDC
 PUSHINT 0
-SENDRAWMSG
+PUSHINT 0
+TUPLE 7
+;; ret param: outToken
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+NEWC
+ENDC
+NEWC
+ENDC
+NEWC
+ENDC
+PUSHINT 0
+PUSHINT 0
+TUPLE 7
+;; ret param: xy
+PUSHINT 0
+;; if
+FALSE ; decl return flag
+;; push identifier _tokenAddress
+PUSH S4
+;; push identifier tokenX_
+GETGLOB 14
+SDEQ
+PUSHCONT {
+	;; return
+	;; push identifier detailsX_
+	GETGLOB 16
+	;; push identifier detailsY_
+	GETGLOB 17
+	TRUE
+	BLKDROP2 5, 3
+	PUSHINT 4
+	RET
+	BLKDROP 3
+}
+PUSHCONT {
+	;; if
+	FALSE ; decl return flag
+	;; push identifier _tokenAddress
+	PUSH S5
+	;; push identifier tokenY_
+	GETGLOB 15
+	SDEQ
+	PUSHCONT {
+		;; return
+		;; push identifier detailsY_
+		GETGLOB 17
+		;; push identifier detailsX_
+		GETGLOB 16
+		FALSE
+		BLKDROP2 6, 3
+		PUSHINT 4
+		RET
+		BLKDROP 3
+	}
+	PUSHCONT {
+		THROW 506
+	}
+	IFELSE
+	DUP
+	IFRET
+	DROP
+	;; end if
+}
+IFELSE
+EQINT 4
+IFRET
+;; end if
 ;; returning named params
-BLKSWAP 3, 1
-BLKDROP 3
-; end function _burn
+BLKSWAP 1, 3
+DROP
+; end function _processToken
+
+.globl	_processTransaction_internal
+.type	_processTransaction_internal, @function
+;; param: owner
+; function _processTransaction
+;; map.fetch
+;; push identifier owner
+DUP
+;; push identifier transactions_
+GETGLOB 19
+PUSHINT 256
+DICTUGETREF
+NULLSWAPIFNOT
+PUSHCONT {
+	CTOS
+	LDREF
+	LDU 64
+	LDU 256
+	LDMSGADDR
+	LDU 8
+	LDI 1
+	LDU 8
+	LDU 128
+	LDU 128
+	PLDU 128
+	BLKSWAP 1, 9
+	CTOS
+	PLDU 128
+	TUPLE 10
+}
+IF
+;; decl: opt
+;; if
+FALSE ; decl return flag
+;; push identifier opt
+PUSH S1
+ISNULL
+NOT
+PUSHCONT {
+	;; return
+	;; push identifier opt
+	PUSH S1
+	DUP
+	ISNULL
+	THROWIF 63
+	XCHG s3
+	BLKDROP 3
+	PUSHINT 4
+	RET
+	DROP
+}
+PUSHCONT {
+	THROW 518
+}
+IFELSE
+EQINT 4
+IFRET
+;; end if
+DROP2
+;; ret param: retParam@0
+PUSHINT 0
+PUSHINT 0
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+PUSHINT 0
+TUPLE 10
+; end function _processTransaction
 
 .globl	_expectedAddress_internal
 .type	_expectedAddress_internal, @function
@@ -5362,13 +5793,13 @@ ROTREV
 DROP2
 ; end function mul
 
-.globl	priceSwap_internal
-.type	priceSwap_internal, @function
+.globl	_effectiveAmount_internal
+.type	_effectiveAmount_internal, @function
 ;; param: amountIn
 ;; param: balanceIn
 ;; param: balanceOut
 ;; param: fee
-; function priceSwap
+; function _effectiveAmount
 ;; return
 ;; push identifier balanceOut
 PUSH S1
@@ -5395,15 +5826,15 @@ UFITS 128
 CALL $sub_internal$
 XCHG s4
 BLKDROP 4
-; end function priceSwap
+; end function _effectiveAmount
 
-.globl	liqToTokens_internal
-.type	liqToTokens_internal, @function
+.globl	_liqToTokens_internal
+.type	_liqToTokens_internal, @function
 ;; param: amountIn
 ;; param: supplyIn
 ;; param: balanceX
 ;; param: balanceY
-; function liqToTokens
+; function _liqToTokens
 ;; ret param: outAmountX
 PUSHINT 0
 ;; ret param: outAmountY
@@ -5415,6 +5846,10 @@ PUSH S4
 ;; push identifier supplyIn
 PUSH S6
 MULDIV
+UFITS 128
+;; *
+PUSHINT 1000
+MUL
 UFITS 128
 ; expValue
 ; end expValue
@@ -5430,7 +5865,7 @@ PUSH S4
 ;; param: inAmount
 ;; param: inBalance
 ;; param: outBalance
-; function calcOtherToken
+; function _spotAmount
 ;; return
 ;; push identifier outBalance
 DUP
@@ -5442,7 +5877,11 @@ MULDIV
 UFITS 128
 XCHG s3
 BLKDROP 3
-; end function calcOtherToken
+; end function _spotAmount
+;; *
+PUSHINT 1000
+MUL
+UFITS 128
 ; expValue
 ; end expValue
 ; colValue
@@ -5451,13 +5890,13 @@ NIP
 ;; returning named params
 BLKSWAP 4, 2
 BLKDROP 4
-; end function liqToTokens
+; end function _liqToTokens
 
-.globl	minDeposit_internal
-.type	minDeposit_internal, @function
+.globl	_minDeposit_internal
+.type	_minDeposit_internal, @function
 ;; param: balanceX
 ;; param: balanceY
-; function minDeposit
+; function _minDeposit
 ;; ret param: outAmountX
 PUSHINT 0
 ;; ret param: outAmountY
@@ -5469,18 +5908,18 @@ PUSH S3
 PUSH S3
 GREATER
 PUSHCONT {
-	PUSHINT 100
+	PUSHINT 1000
 	;; push identifier balanceX
 	PUSH S4
 	;; push identifier balanceY
 	PUSH S4
 	MULDIVC
 	UFITS 128
-	PUSHINT 100
+	PUSHINT 1000
 }
 PUSHCONT {
-	PUSHINT 100
-	PUSHINT 100
+	PUSHINT 1000
+	PUSHINT 1000
 	;; push identifier balanceY
 	PUSH S4
 	;; push identifier balanceX
@@ -5503,14 +5942,14 @@ NIP
 ;; returning named params
 SWAP2
 DROP2
-; end function minDeposit
+; end function _minDeposit
 
-.globl	minWithdrawLiq_internal
-.type	minWithdrawLiq_internal, @function
+.globl	_minWithdrawLiq_internal
+.type	_minWithdrawLiq_internal, @function
 ;; param: supplyIn
 ;; param: balanceX
 ;; param: balanceY
-; function minWithdrawLiq
+; function _minWithdrawLiq
 ;; return
 ;; push identifier balanceX
 PUSH S1
@@ -5519,7 +5958,7 @@ PUSH S1
 PUSH S1
 GREATER
 PUSHCONT {
-	PUSHINT 100
+	PUSHINT 1000
 	;; push identifier supplyIn
 	PUSH S3
 	;; push identifier balanceY
@@ -5528,7 +5967,7 @@ PUSHCONT {
 	UFITS 128
 }
 PUSHCONT {
-	PUSHINT 100
+	PUSHINT 1000
 	;; push identifier supplyIn
 	PUSH S3
 	;; push identifier balanceX
@@ -5539,7 +5978,7 @@ PUSHCONT {
 IFELSE
 XCHG s3
 BLKDROP 3
-; end function minWithdrawLiq
+; end function _minWithdrawLiq
 
 .macro c7_to_c4
 GETGLOB 2
@@ -5846,6 +6285,22 @@ LDMSGADDR   ; bounced src tail
 DROP
 SETGLOB 9
 MODPOW2 1
+; beg set default params for responsible func
+GETGLOB 4
+; bounce
+TRUE
+SETINDEXQ 1
+; tons
+PUSHINT 10000000
+SETINDEXQ 2
+; currency
+NULL
+SETINDEXQ 3
+; flag
+PUSHINT 0
+SETINDEXQ 4
+SETGLOB 4
+; end set default params for responsible func
 IFRET
 PUSH S1    ; body
 SEMPTY     ; isEmpty

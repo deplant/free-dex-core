@@ -26,11 +26,10 @@ interface IDEXPool {
         Operation operation;
         bool xy; // x->y:true, y->x:false        
         uint8 stage;   
-        uint128 amountX; 
-        uint128 amountY;
+        uint128 amountIn; 
+        uint128 amountOut;
         uint128 amountLiq;
-        uint128 minReturn;
-        uint128 maxCharge;    
+        uint128 limit;  
     }      
 
     struct PoolDetails {

@@ -103,7 +103,7 @@ CODE=$(grepCode $CONTRACT)
 
 #genaddrSetKeys $CONTRACT $KEYS $DATA
 #'{"random":"0x01"}'
-$TONOSCLI_PATH/tonos-cli genaddr $BUILD_PATH/$CONTRACT.tvc $BUILD_PATH/$CONTRACT.abi.json --data '{"dexAddress":"0:65bff3054f9b09ace3b2501a0b99cac31634bdacf752a1e23bdc6c00fbc2be4d"}' --setkey $BUILD_PATH/$KEYS.keys.json --save > $BUILD_PATH/genaddr_$CONTRACT.log
+$TONOSCLI_PATH/tonos-cli genaddr $BUILD_PATH/$CONTRACT.tvc $BUILD_PATH/$CONTRACT.abi.json --data '{"dexAddress":"0:a55c2c68dd8b039d5a7c79a42a94ea88ee6af58517efc8a5c2c23e1d180f9d38"}' --setkey $BUILD_PATH/$KEYS.keys.json --save > $BUILD_PATH/genaddr_$CONTRACT.log
 CONTRACT_ADDRESS=$(grepAddr $CONTRACT)
 
 giver $CONTRACT $CONTRACT_ADDRESS

@@ -10,15 +10,15 @@ pragma AbiHeader pubkey;
 
 //================================================================================
 //
-import "/home/yankin/ton/contracts/src/dex/lib/DEX.sol";
-import "/home/yankin/ton/contracts/src/std/debot/Debot.sol";
-import "/home/yankin/ton/contracts/src/std/debot/Terminal/Terminal.sol";
-import "/home/yankin/ton/contracts/src/std/debot/AddressInput/AddressInput.sol";
-import "/home/yankin/ton/contracts/src/std/debot/NumberInput/NumberInput.sol";
-import "/home/yankin/ton/contracts/src/dex/int/IDEXPool.sol";
-import "/home/yankin/ton/contracts/src/dex/int/IDEXRoot.sol";
-import "/home/yankin/ton/contracts/src/tip3/int/ITIP3Root.sol";
-import "/home/yankin/ton/contracts/src/tip3/int/ITIP3Wallet.sol";
+import "../../dex/lib/DEX.sol";
+import "../../std/debot/Debot.sol";
+import "../../std/debot/Terminal/Terminal.sol";
+import "../../std/debot/AddressInput/AddressInput.sol";
+import "../../std/debot/NumberInput/NumberInput.sol";
+import "../../dex/int/IDEXPool.sol";
+import "../../dex/int/IDEXRoot.sol";
+import "../../tip3/int/ITIP3Root.sol";
+import "../../tip3/int/ITIP3Wallet.sol";
 
 //================================================================================
 //
@@ -27,6 +27,7 @@ contract SORDebot is Debot
 {
     address static dexAddress;
     address constant ZERO_ADDRESS   = address.makeAddrStd(0, 0);    
+    uint128 constant USAGE_FEE       = 0.1 ton;    
 
     enum State { NONE, TIP3_VIEW_BALANCE , TIP3_TRANSFER , TIP3_APPROVE , DEX_VIEW, DEX_DEPOSIT, DEX_SWAP, DEX_WITHDRAW }
 
@@ -35,6 +36,7 @@ contract SORDebot is Debot
     // Account Context - exists until account change
     uint256 userPubkey_;
     address userRoot_;
+    ITIP3RootMetadata.TokenDetails userTokenDetails_;
     address userWallet_;    
 
     // User Context - restarts in main menu
@@ -103,7 +105,21 @@ contract SORDebot is Debot
 
     function saveRoot(address value) public {
         userRoot_ = value;
-        mainMenu();
+        ITIP3RootMetadata(userRoot_).getTokenInfo{
+                                                    abiVer: 2,
+                                                    extMsg: true,
+                                                    sign: false,
+                                                    time: uint64(now),
+                                                    expire: 0,
+                                                    pubkey: pk,
+                                                    callbackId: tvm.functionId(saveRoot2),
+                                                    onErrorId: 0
+                                                    }();        
+    }
+
+    function saveRoot2(ITIP3RootMetadata.TokenDetails value) public {
+        userTokenDetails_ = value;
+        mainMenu();        
     }
 
     function mainMenu() public 
@@ -124,7 +140,9 @@ contract SORDebot is Debot
         {
             Terminal.print(0, "MAIN MENU");
             Terminal.print(0, format("KEY: 0x{:x}",userPubkey_)); 
-            Terminal.print(0, format("WALLET: 0:{:x}", userWallet_.value));                        
+            Terminal.print(0, format("WALLET: 0:{:x}", userWallet_.value));       
+            Terminal.print(0, format("SYMBOL: {}", userTokenDetails_.symbol));  
+            Terminal.print(0, format("DECIMALS: {} digits", userTokenDetails_.decimals));                                           
             Terminal.print(0, "Choose action...");
             Terminal.print(0, "1)    [Check Balance]"); 
             Terminal.print(0, "2)    [Make transfer]");   
@@ -132,7 +150,7 @@ contract SORDebot is Debot
             Terminal.print(0, "4)    [View pair price & volumes]");              
             Terminal.print(0, "5)    [Swap tokens]"); 
             Terminal.print(0, "6)    [Provide liquidity]");   
-            Terminal.print(0, "7)    [NOT DONE: Withdraw liquidity]");                                  
+            Terminal.print(0, "7)    [Withdraw liquidity]");                                  
             Terminal.print(0, "8) <--[Change Account]");                                    
             NumberInput.get(tvm.functionId(onMainMenu), "Enter your choice: ", 1,8);
         }
@@ -214,7 +232,7 @@ contract SORDebot is Debot
             }
             else if (ctx_action == State.DEX_WITHDRAW)
             {
-                //getWithdrawDetails();
+                NumberInput.get(tvm.functionId(dexWithdrawStep1), "Input LIQ tokens amount to withdraw: ", 0,999_999_999_999_999_999_999);
             }
             else
             {
@@ -258,7 +276,7 @@ contract SORDebot is Debot
                                             expire: 0,
                                             pubkey: pk,
                                             callbackId: tvm.functionId(savePool),
-                                            onErrorId: 0
+                                            onErrorId: tvm.functionId(onDEXError)
                                             }(userRoot_, ctx_swapToken);
     }
 
@@ -282,7 +300,7 @@ contract SORDebot is Debot
                                             expire: 0,
                                             pubkey: pk,
                                             callbackId: tvm.functionId(dexPoolDetailsStep2),
-                                            onErrorId: 0
+                                            onErrorId: tvm.functionId(onDEXError)
                                             }();    
     }    
 
@@ -293,7 +311,7 @@ contract SORDebot is Debot
         Terminal.print(0, format("Token 2 Root: 0:{:x}", details.rootY.value));       
         Terminal.print(0, format("Token 2 Wallet: 0:{:x}", details.walletY.value)); 
         Terminal.print(0, format("Token 2 Balance: {}", details.balanceY));
-        Terminal.print(0, format("Provider Fee: 10/{} pct of amount", details.providerFee));
+        Terminal.print(0, format("Provider Fee: 0.0{}% of amount", details.providerFee));
         Terminal.print(0, format("Liquidity Token Balance: {}", details.balanceLiq));
         mainMenu();          
     }        
@@ -313,7 +331,7 @@ contract SORDebot is Debot
                                         expire: 0,
                                         pubkey: pk,
                                         callbackId: tvm.functionId(dexSwapStep2),
-                                        onErrorId: 0
+                                        onErrorId: tvm.functionId(onDEXError)
                                         }(userRoot_, ctx_tokens);    
     }    
 
@@ -367,12 +385,12 @@ contract SORDebot is Debot
         IDEXPool(ctx_pool).swap{
                                 abiVer: 2,
                                 extMsg: true,
-                                sign: false,
+                                sign: true,
                                 time: uint64(now),
                                 expire: 0,
-                                pubkey: pk,
+                                pubkey: userPubkey_,
                                 callbackId: 0,
-                                onErrorId: 0
+                                onErrorId: tvm.functionId(onDEXError)
                                 }(userRoot_, userPubkey_, ZERO_ADDRESS, ctx_tokens, ctx_limit);  
         Terminal.print(0, "Done!");             
         mainMenu();                      
@@ -472,16 +490,101 @@ contract SORDebot is Debot
         IDEXPool(ctx_pool).deposit{
                                     abiVer: 2,
                                     extMsg: true,
-                                    sign: false,
+                                    sign: true,
                                     time: uint64(now),
                                     expire: 0,
-                                    pubkey: pk,
+                                    pubkey: userPubkey_,
                                     callbackId: 0,
-                                    onErrorId: 0
+                                    onErrorId: tvm.functionId(onDEXError)
                                     }(userRoot_, userPubkey_, ZERO_ADDRESS, ctx_tokens, ctx_limit); 
         Terminal.print(0, "Done!");           
         mainMenu();                
     }   
+
+    // ************************
+    // DEX_WITHDRAW Steps
+    // ************************   
+
+    function dexWithdrawStep1(uint128 value) public 
+    {
+        ctx_tokens = value;
+        IDEXPool(ctx_pool).getWithdrawDetails{
+                                            abiVer: 2,
+                                            extMsg: true,
+                                            sign: false,
+                                            time: uint64(now),
+                                            expire: 0,
+                                            pubkey: pk,
+                                            callbackId: tvm.functionId(dexWithdrawStep2),
+                                            onErrorId: 0
+                                            }(ctx_tokens);    
+    }   
+
+
+    function dexWithdrawStep2(IDEXPool.OrderDetails details) public 
+    { 
+        Terminal.print(0, "Current conditions are: ");        
+        Terminal.print(0, format("You will receive (Token 1): {}", details.firstParam));
+        Terminal.print(0, format("You will receive (Token 2): {}", details.secondParam));
+
+            ITIP3RootMetadata(ctx_pool).getWalletAddress{
+                                                            abiVer: 2,
+                                                            extMsg: true,
+                                                            sign: false,
+                                                            time: uint64(now),
+                                                            expire: 0,
+                                                            pubkey: pk,
+                                                            callbackId: tvm.functionId(dexWithdrawStep2a),
+                                                            onErrorId: 0
+                                                            }(0, userPubkey_, ZERO_ADDRESS);             
+    } 
+
+
+    function dexWithdrawStep2a(address value) public 
+    {              
+        userWallet_ = value;
+        Terminal.print(0, "1)    [Do WITHDRAW]");                                  
+        Terminal.print(0, "2) <--[Main menu]");                                    
+        NumberInput.get(tvm.functionId(dexWithdrawStep3), "Enter your choice: ", 1,2);               
+    } 
+
+
+    function dexWithdrawStep3(int256 value) public 
+    { 
+        if (value == 1)
+        {           
+            Terminal.print(0, format("Please, approve spending of {} tokens from wallet of Token LIQ: ", ctx_tokens));             
+            ITIP3WalletFungible(userWallet_).approve{
+                                                    abiVer: 2,
+                                                    extMsg: true,
+                                                    sign: true,
+                                                    time: uint64(now),
+                                                    expire: 0,
+                                                    pubkey: userPubkey_,
+                                                    callbackId: 0,
+                                                    onErrorId: 0
+                                                    }(ctx_pool, 0, ctx_tokens); 
+            Terminal.print(0, "Proceeding WITHDRAW...");                       
+            IDEXPool(ctx_pool).withdraw{
+                                        abiVer: 2,
+                                        extMsg: true,
+                                        sign: true,
+                                        time: uint64(now),
+                                        expire: 0,
+                                        pubkey: userPubkey_,
+                                        callbackId: 0,
+                                        onErrorId: tvm.functionId(onDEXError)
+                                        }(userPubkey_, ZERO_ADDRESS, ctx_tokens); 
+            Terminal.print(0, "Done!");           
+            mainMenu();                           
+        } 
+        else 
+        {
+            mainMenu(); 
+        }     
+         
+    }               
+
 
     // ************************
     // BALANCE Steps
@@ -544,12 +647,7 @@ contract SORDebot is Debot
     }  
 
     function tip3TransferStep2(uint128 value) public {
-        ctx_tokens = value;     
-        NumberInput.get(tvm.functionId(tip3TransferStep3), "How much TONs as value: ", 0,999_999_999_999_999_999_999);
-    }
-
-    function tip3TransferStep3(uint128 value) public {
-        ctx_grams = value;          
+        ctx_grams = 1000000000;          
         ITIP3WalletFungible(userWallet_).transfer{
                 abiVer: 2,
                 extMsg: true,
@@ -559,7 +657,7 @@ contract SORDebot is Debot
                 pubkey: userPubkey_,
                 callbackId: 0,
                 onErrorId: 0
-        }(ctx_dest, ctx_tokens, ctx_grams);
+        }(ctx_dest, ctx_tokens, 0.1 ton);
         _eraseCtx();
         tip3BalanceStep1();  
     }
@@ -594,7 +692,8 @@ contract SORDebot is Debot
                 onErrorId: 0
         }(ctx_dest, ctx_remainingTokens, ctx_tokens);    
         } else {
-            Terminal.print(0, "Not enough balance!");  
+            Terminal.print(0, "Not enough balance!"); 
+            mainMenu();               
         }
         _eraseCtx(); // remove context, so we can exit to menu after balance
         tip3BalanceStep1();             

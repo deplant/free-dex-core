@@ -721,7 +721,53 @@ DUP
 ; colValue
 SETGLOB 15
 ; end colValue
-CALL $mainMenu_internal$
+;; Remote call ITIP3RootMetadata.getTokenInfo
+;; push identifier userRoot_
+GETGLOB 15
+NEWC
+STSLICECONST x497_
+PUSHINT 1116533395
+STUR 32
+PUSHINT 0
+STUR 32
+PUSHINT 2
+STUR 8
+STONE
+STONE
+STONE
+NEWC
+STSLICECONST xa_
+STB
+STSLICE
+PUSHINT 4
+STZEROES
+STSLICECONST 0
+PUSHINT 2
+STZEROES
+;; push identifier pk
+GETGLOB 13
+ISNULL
+PUSHCONT {
+	STSLICECONST 0
+}
+PUSHCONT {
+	THROW 64
+	STSLICECONST 1
+	;; push identifier pk
+	GETGLOB 13
+	STUR 256
+}
+IFELSE
+;; push identifier now
+NOW
+;; uint64
+STUR 64
+PUSHINT 0
+STUR 32
+STSLICECONST x1e2f4ecc
+ENDC
+PUSHINT 0
+SENDRAWMSG
 DROP
 ; end function saveRoot
 CALLREF {
@@ -741,9 +787,133 @@ DUP
 ; colValue
 SETGLOB 15
 ; end colValue
-CALL $mainMenu_internal$
+;; Remote call ITIP3RootMetadata.getTokenInfo
+;; push identifier userRoot_
+GETGLOB 15
+NEWC
+STSLICECONST x497_
+PUSHINT 1116533395
+STUR 32
+PUSHINT 0
+STUR 32
+PUSHINT 2
+STUR 8
+STONE
+STONE
+STONE
+NEWC
+STSLICECONST xa_
+STB
+STSLICE
+PUSHINT 4
+STZEROES
+STSLICECONST 0
+PUSHINT 2
+STZEROES
+;; push identifier pk
+GETGLOB 13
+ISNULL
+PUSHCONT {
+	STSLICECONST 0
+}
+PUSHCONT {
+	THROW 64
+	STSLICECONST 1
+	;; push identifier pk
+	GETGLOB 13
+	STUR 256
+}
+IFELSE
+;; push identifier now
+NOW
+;; uint64
+STUR 64
+PUSHINT 0
+STUR 32
+STSLICECONST x1e2f4ecc
+ENDC
+PUSHINT 0
+SENDRAWMSG
 DROP
 ; end function saveRoot
+
+.globl	saveRoot2
+.public	saveRoot2
+.type	saveRoot2, @function
+GETGLOB 1
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+; Decode input parameters
+; Decode value
+;; decode struct TokenDetails value
+;; decode TokenDetails.name
+LDREF
+;; decode TokenDetails.symbol
+LDREF
+;; decode TokenDetails.decimals
+LDU 8
+;; decode TokenDetails.code
+;; decode TvmCell
+LDREF
+;; decode TokenDetails.totalSupply
+LDUQ 128
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 128
+}
+IFNOT
+;; decode TokenDetails.totalGranted
+LDUQ 128
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 128
+}
+IFNOT
+;; build struct TokenDetails ss:7
+BLKSWAP 6, 1
+TUPLE 6
+SWAP
+ENDS
+;; param: value
+; function saveRoot2
+; expValue
+; end expValue
+;; push identifier value
+DUP
+; colValue
+SETGLOB 16
+; end colValue
+CALL $mainMenu_internal$
+DROP
+; end function saveRoot2
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	saveRoot2_internal
+.type	saveRoot2_internal, @function
+;; param: value
+; function saveRoot2
+; expValue
+; end expValue
+;; push identifier value
+DUP
+; colValue
+SETGLOB 16
+; end colValue
+CALL $mainMenu_internal$
+DROP
+; end function saveRoot2
 
 .globl	mainMenu
 .public	mainMenu
@@ -789,7 +959,7 @@ PUSHCONT {
 	PUSHCONT {
 		;; if
 		;; push identifier userWallet_
-		GETGLOB 16
+		GETGLOB 17
 		;; push identifier ZERO_ADDRESS
 		;; address.makeAddrStd()
 		PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
@@ -846,7 +1016,7 @@ PUSHCONT {
 			}
 			;; get member value
 			;; push identifier userWallet_
-			GETGLOB 16
+			GETGLOB 17
 			PARSEMSGADDR
 			INDEX 3
 			PLDU 256
@@ -856,6 +1026,69 @@ PUSHCONT {
 			FALSE
 			CALLREF {
 				CALL $convertIntToHexStr_macro$
+			}
+			CALLREF {
+				CALL $appendToList_macro$
+			}
+			CALLREF {
+				CALL $assembleList_macro$
+			}
+			CALL $Terminal_no_obj_print$
+			PUSHINT 0
+			NEWC
+			NULL
+			TUPLE 2
+			NEWC
+			PUSHSLICE x53594d424f4c3a20
+			CALLREF {
+				CALL $storeStringInBuilders_macro$
+			}
+			CALLREF {
+				CALL $appendToList_macro$
+			}
+			;; get member symbol
+			;; push identifier userTokenDetails_
+			GETGLOB 16
+			INDEX 1
+			CTOS
+			CALLREF {
+				CALL $storeStringInBuilders_macro$
+			}
+			CALLREF {
+				CALL $appendToList_macro$
+			}
+			CALLREF {
+				CALL $assembleList_macro$
+			}
+			CALL $Terminal_no_obj_print$
+			PUSHINT 0
+			NEWC
+			NULL
+			TUPLE 2
+			NEWC
+			PUSHSLICE x444543494d414c533a20
+			CALLREF {
+				CALL $storeStringInBuilders_macro$
+			}
+			CALLREF {
+				CALL $appendToList_macro$
+			}
+			;; get member decimals
+			;; push identifier userTokenDetails_
+			GETGLOB 16
+			INDEX 2
+			PUSHINT 0
+			FALSE
+			FALSE
+			CALLREF {
+				CALL $convertIntToDecStr_macro$
+			}
+			CALLREF {
+				CALL $appendToList_macro$
+			}
+			PUSHSLICE x20646967697473
+			CALLREF {
+				CALL $storeStringInBuilders_macro$
 			}
 			CALLREF {
 				CALL $appendToList_macro$
@@ -907,7 +1140,7 @@ PUSHCONT {
 			ENDC
 			CALL $Terminal_no_obj_print$
 			PUSHINT 0
-			PUSHSLICE x3729202020205b4e4f5420444f4e453a205769746864726177206c69717569646974795d
+			PUSHSLICE x3729202020205b5769746864726177206c69717569646974795d
 			NEWC
 			STSLICE
 			ENDC
@@ -978,7 +1211,7 @@ PUSHCONT {
 	PUSHCONT {
 		;; if
 		;; push identifier userWallet_
-		GETGLOB 16
+		GETGLOB 17
 		;; push identifier ZERO_ADDRESS
 		;; address.makeAddrStd()
 		PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
@@ -1035,7 +1268,7 @@ PUSHCONT {
 			}
 			;; get member value
 			;; push identifier userWallet_
-			GETGLOB 16
+			GETGLOB 17
 			PARSEMSGADDR
 			INDEX 3
 			PLDU 256
@@ -1045,6 +1278,69 @@ PUSHCONT {
 			FALSE
 			CALLREF {
 				CALL $convertIntToHexStr_macro$
+			}
+			CALLREF {
+				CALL $appendToList_macro$
+			}
+			CALLREF {
+				CALL $assembleList_macro$
+			}
+			CALL $Terminal_no_obj_print$
+			PUSHINT 0
+			NEWC
+			NULL
+			TUPLE 2
+			NEWC
+			PUSHSLICE x53594d424f4c3a20
+			CALLREF {
+				CALL $storeStringInBuilders_macro$
+			}
+			CALLREF {
+				CALL $appendToList_macro$
+			}
+			;; get member symbol
+			;; push identifier userTokenDetails_
+			GETGLOB 16
+			INDEX 1
+			CTOS
+			CALLREF {
+				CALL $storeStringInBuilders_macro$
+			}
+			CALLREF {
+				CALL $appendToList_macro$
+			}
+			CALLREF {
+				CALL $assembleList_macro$
+			}
+			CALL $Terminal_no_obj_print$
+			PUSHINT 0
+			NEWC
+			NULL
+			TUPLE 2
+			NEWC
+			PUSHSLICE x444543494d414c533a20
+			CALLREF {
+				CALL $storeStringInBuilders_macro$
+			}
+			CALLREF {
+				CALL $appendToList_macro$
+			}
+			;; get member decimals
+			;; push identifier userTokenDetails_
+			GETGLOB 16
+			INDEX 2
+			PUSHINT 0
+			FALSE
+			FALSE
+			CALLREF {
+				CALL $convertIntToDecStr_macro$
+			}
+			CALLREF {
+				CALL $appendToList_macro$
+			}
+			PUSHSLICE x20646967697473
+			CALLREF {
+				CALL $storeStringInBuilders_macro$
 			}
 			CALLREF {
 				CALL $appendToList_macro$
@@ -1096,7 +1392,7 @@ PUSHCONT {
 			ENDC
 			CALL $Terminal_no_obj_print$
 			PUSHINT 0
-			PUSHSLICE x3729202020205b4e4f5420444f4e453a205769746864726177206c69717569646974795d
+			PUSHSLICE x3729202020205b5769746864726177206c69717569646974795d
 			NEWC
 			STSLICE
 			ENDC
@@ -1158,7 +1454,7 @@ PUSHCONT {
 	;; get member TIP3_VIEW_BALANCE
 	PUSHINT 1
 	; colValue
-	SETGLOB 17
+	SETGLOB 18
 	; end colValue
 	CALL $tip3BalanceStep1_internal$
 }
@@ -1173,7 +1469,7 @@ PUSHCONT {
 		;; get member TIP3_TRANSFER
 		PUSHINT 2
 		; colValue
-		SETGLOB 17
+		SETGLOB 18
 		; end colValue
 		PUSHINT 1468747238
 		PUSHSLICE x456e7465722064657374696e6174696f6e2077616c6c65743a20
@@ -1193,7 +1489,7 @@ PUSHCONT {
 			;; get member TIP3_APPROVE
 			PUSHINT 3
 			; colValue
-			SETGLOB 17
+			SETGLOB 18
 			; end colValue
 			PUSHINT 1402047609
 			PUSHSLICE x456e746572207370656e6465722077616c6c65743a20
@@ -1213,7 +1509,7 @@ PUSHCONT {
 				;; get member DEX_VIEW
 				PUSHINT 4
 				; colValue
-				SETGLOB 17
+				SETGLOB 18
 				; end colValue
 				CALL $checkSwapToken_internal$
 			}
@@ -1228,7 +1524,7 @@ PUSHCONT {
 					;; get member DEX_SWAP
 					PUSHINT 6
 					; colValue
-					SETGLOB 17
+					SETGLOB 18
 					; end colValue
 					CALL $checkSwapToken_internal$
 				}
@@ -1243,7 +1539,7 @@ PUSHCONT {
 						;; get member DEX_DEPOSIT
 						PUSHINT 5
 						; colValue
-						SETGLOB 17
+						SETGLOB 18
 						; end colValue
 						CALL $checkSwapToken_internal$
 					}
@@ -1258,7 +1554,7 @@ PUSHCONT {
 							;; get member DEX_WITHDRAW
 							PUSHINT 7
 							; colValue
-							SETGLOB 17
+							SETGLOB 18
 							; end colValue
 							CALL $checkSwapToken_internal$
 						}
@@ -1319,7 +1615,7 @@ PUSHCONT {
 	;; get member TIP3_VIEW_BALANCE
 	PUSHINT 1
 	; colValue
-	SETGLOB 17
+	SETGLOB 18
 	; end colValue
 	CALL $tip3BalanceStep1_internal$
 }
@@ -1334,7 +1630,7 @@ PUSHCONT {
 		;; get member TIP3_TRANSFER
 		PUSHINT 2
 		; colValue
-		SETGLOB 17
+		SETGLOB 18
 		; end colValue
 		PUSHINT 1468747238
 		PUSHSLICE x456e7465722064657374696e6174696f6e2077616c6c65743a20
@@ -1354,7 +1650,7 @@ PUSHCONT {
 			;; get member TIP3_APPROVE
 			PUSHINT 3
 			; colValue
-			SETGLOB 17
+			SETGLOB 18
 			; end colValue
 			PUSHINT 1402047609
 			PUSHSLICE x456e746572207370656e6465722077616c6c65743a20
@@ -1374,7 +1670,7 @@ PUSHCONT {
 				;; get member DEX_VIEW
 				PUSHINT 4
 				; colValue
-				SETGLOB 17
+				SETGLOB 18
 				; end colValue
 				CALL $checkSwapToken_internal$
 			}
@@ -1389,7 +1685,7 @@ PUSHCONT {
 					;; get member DEX_SWAP
 					PUSHINT 6
 					; colValue
-					SETGLOB 17
+					SETGLOB 18
 					; end colValue
 					CALL $checkSwapToken_internal$
 				}
@@ -1404,7 +1700,7 @@ PUSHCONT {
 						;; get member DEX_DEPOSIT
 						PUSHINT 5
 						; colValue
-						SETGLOB 17
+						SETGLOB 18
 						; end colValue
 						CALL $checkSwapToken_internal$
 					}
@@ -1419,7 +1715,7 @@ PUSHCONT {
 							;; get member DEX_WITHDRAW
 							PUSHINT 7
 							; colValue
-							SETGLOB 17
+							SETGLOB 18
 							; end colValue
 							CALL $checkSwapToken_internal$
 						}
@@ -1488,7 +1784,7 @@ ENDS
 ;; push identifier value
 DUP
 ; colValue
-SETGLOB 25
+SETGLOB 26
 ; end colValue
 CALL $checkSwapToken_internal$
 DROP
@@ -1508,7 +1804,7 @@ SETGLOB 7
 ;; push identifier value
 DUP
 ; colValue
-SETGLOB 25
+SETGLOB 26
 ; end colValue
 CALL $checkSwapToken_internal$
 DROP
@@ -1527,7 +1823,7 @@ ENDS
 ; function checkSwapToken
 ;; if
 ;; push identifier ctx_swapToken
-GETGLOB 25
+GETGLOB 26
 ;; push identifier ZERO_ADDRESS
 ;; address.makeAddrStd()
 PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
@@ -1543,7 +1839,7 @@ PUSHCONT {
 PUSHCONT {
 	;; if
 	;; push identifier ctx_pool
-	GETGLOB 26
+	GETGLOB 27
 	;; push identifier ZERO_ADDRESS
 	;; address.makeAddrStd()
 	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
@@ -1554,7 +1850,7 @@ PUSHCONT {
 	PUSHCONT {
 		;; if
 		;; push identifier ctx_action
-		GETGLOB 17
+		GETGLOB 18
 		;; ==
 		;; get member DEX_VIEW
 		PUSHINT 4
@@ -1565,7 +1861,7 @@ PUSHCONT {
 		PUSHCONT {
 			;; if
 			;; push identifier ctx_action
-			GETGLOB 17
+			GETGLOB 18
 			;; ==
 			;; get member DEX_SWAP
 			PUSHINT 6
@@ -1583,7 +1879,7 @@ PUSHCONT {
 			PUSHCONT {
 				;; if
 				;; push identifier ctx_action
-				GETGLOB 17
+				GETGLOB 18
 				;; ==
 				;; get member DEX_DEPOSIT
 				PUSHINT 5
@@ -1601,12 +1897,20 @@ PUSHCONT {
 				PUSHCONT {
 					;; if
 					;; push identifier ctx_action
-					GETGLOB 17
+					GETGLOB 18
 					;; ==
 					;; get member DEX_WITHDRAW
 					PUSHINT 7
 					EQUAL
 					PUSHCONT {
+						PUSHINT 327061644
+						PUSHSLICE x496e707574204c495120746f6b656e7320616d6f756e7420746f2077697468647261773a20
+						NEWC
+						STSLICE
+						ENDC
+						PUSHINT 0
+						PUSHINT 999999999999999999999
+						CALL $NumberInput_no_obj_get$
 					}
 					PUSHCONT {
 						CALL $_eraseCtx_internal$
@@ -1641,7 +1945,7 @@ SETGLOB 7
 ; function checkSwapToken
 ;; if
 ;; push identifier ctx_swapToken
-GETGLOB 25
+GETGLOB 26
 ;; push identifier ZERO_ADDRESS
 ;; address.makeAddrStd()
 PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
@@ -1657,7 +1961,7 @@ PUSHCONT {
 PUSHCONT {
 	;; if
 	;; push identifier ctx_pool
-	GETGLOB 26
+	GETGLOB 27
 	;; push identifier ZERO_ADDRESS
 	;; address.makeAddrStd()
 	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
@@ -1668,7 +1972,7 @@ PUSHCONT {
 	PUSHCONT {
 		;; if
 		;; push identifier ctx_action
-		GETGLOB 17
+		GETGLOB 18
 		;; ==
 		;; get member DEX_VIEW
 		PUSHINT 4
@@ -1679,7 +1983,7 @@ PUSHCONT {
 		PUSHCONT {
 			;; if
 			;; push identifier ctx_action
-			GETGLOB 17
+			GETGLOB 18
 			;; ==
 			;; get member DEX_SWAP
 			PUSHINT 6
@@ -1697,7 +2001,7 @@ PUSHCONT {
 			PUSHCONT {
 				;; if
 				;; push identifier ctx_action
-				GETGLOB 17
+				GETGLOB 18
 				;; ==
 				;; get member DEX_DEPOSIT
 				PUSHINT 5
@@ -1715,12 +2019,20 @@ PUSHCONT {
 				PUSHCONT {
 					;; if
 					;; push identifier ctx_action
-					GETGLOB 17
+					GETGLOB 18
 					;; ==
 					;; get member DEX_WITHDRAW
 					PUSHINT 7
 					EQUAL
 					PUSHCONT {
+						PUSHINT 327061644
+						PUSHSLICE x496e707574204c495120746f6b656e7320616d6f756e7420746f2077697468647261773a20
+						NEWC
+						STSLICE
+						ENDC
+						PUSHINT 0
+						PUSHINT 999999999999999999999
+						CALL $NumberInput_no_obj_get$
 					}
 					PUSHCONT {
 						CALL $_eraseCtx_internal$
@@ -1917,7 +2229,7 @@ ENDS
 ;; push identifier value
 DUP
 ; colValue
-SETGLOB 16
+SETGLOB 17
 ; end colValue
 CALL $mainMenu_internal$
 DROP
@@ -1937,7 +2249,7 @@ SETGLOB 7
 ;; push identifier value
 DUP
 ; colValue
-SETGLOB 16
+SETGLOB 17
 ; end colValue
 CALL $mainMenu_internal$
 DROP
@@ -1961,7 +2273,7 @@ NEWC
 STSLICECONST x497_
 PUSHINT 1220568222
 STUR 32
-PUSHINT 0
+PUSHINT 1851126578
 STUR 32
 PUSHINT 2
 STUR 8
@@ -2005,7 +2317,7 @@ STSLICER
 NEWC
 ;; _tokenB
 ;; push identifier ctx_swapToken
-GETGLOB 25
+GETGLOB 26
 STSLICER
 STBREFR
 ENDC
@@ -2028,7 +2340,7 @@ NEWC
 STSLICECONST x497_
 PUSHINT 1220568222
 STUR 32
-PUSHINT 0
+PUSHINT 1851126578
 STUR 32
 PUSHINT 2
 STUR 8
@@ -2072,7 +2384,7 @@ STSLICER
 NEWC
 ;; _tokenB
 ;; push identifier ctx_swapToken
-GETGLOB 25
+GETGLOB 26
 STSLICER
 STBREFR
 ENDC
@@ -2107,7 +2419,7 @@ ENDS
 ;; push identifier value
 DUP
 ; colValue
-SETGLOB 26
+SETGLOB 27
 ; end colValue
 PUSHINT 0
 NEWC
@@ -2123,7 +2435,7 @@ CALLREF {
 }
 ;; get member value
 ;; push identifier ctx_pool
-GETGLOB 26
+GETGLOB 27
 PARSEMSGADDR
 INDEX 3
 PLDU 256
@@ -2159,7 +2471,7 @@ SETGLOB 7
 ;; push identifier value
 DUP
 ; colValue
-SETGLOB 26
+SETGLOB 27
 ; end colValue
 PUSHINT 0
 NEWC
@@ -2175,7 +2487,7 @@ CALLREF {
 }
 ;; get member value
 ;; push identifier ctx_pool
-GETGLOB 26
+GETGLOB 27
 PARSEMSGADDR
 INDEX 3
 PLDU 256
@@ -2210,12 +2522,12 @@ ENDS
 ; function dexPoolDetailsStep1
 ;; Remote call IDEXPool.getPoolDetails
 ;; push identifier ctx_pool
-GETGLOB 26
+GETGLOB 27
 NEWC
 STSLICECONST x497_
 PUSHINT 1026250647
 STUR 32
-PUSHINT 0
+PUSHINT 1851126578
 STUR 32
 PUSHINT 2
 STUR 8
@@ -2267,12 +2579,12 @@ SETGLOB 7
 ; function dexPoolDetailsStep1
 ;; Remote call IDEXPool.getPoolDetails
 ;; push identifier ctx_pool
-GETGLOB 26
+GETGLOB 27
 NEWC
 STSLICECONST x497_
 PUSHINT 1026250647
 STUR 32
-PUSHINT 0
+PUSHINT 1851126578
 STUR 32
 PUSHINT 2
 STUR 8
@@ -2611,7 +2923,7 @@ NEWC
 NULL
 TUPLE 2
 NEWC
-PUSHSLICE x50726f7669646572204665653a2031302f
+PUSHSLICE x50726f7669646572204665653a20302e30
 CALLREF {
 	CALL $storeStringInBuilders_macro$
 }
@@ -2631,7 +2943,7 @@ CALLREF {
 CALLREF {
 	CALL $appendToList_macro$
 }
-PUSHSLICE x20706374206f6620616d6f756e74
+PUSHSLICE x25206f6620616d6f756e74
 CALLREF {
 	CALL $storeStringInBuilders_macro$
 }
@@ -2883,7 +3195,7 @@ NEWC
 NULL
 TUPLE 2
 NEWC
-PUSHSLICE x50726f7669646572204665653a2031302f
+PUSHSLICE x50726f7669646572204665653a20302e30
 CALLREF {
 	CALL $storeStringInBuilders_macro$
 }
@@ -2903,7 +3215,7 @@ CALLREF {
 CALLREF {
 	CALL $appendToList_macro$
 }
-PUSHSLICE x20706374206f6620616d6f756e74
+PUSHSLICE x25206f6620616d6f756e74
 CALLREF {
 	CALL $storeStringInBuilders_macro$
 }
@@ -2974,16 +3286,16 @@ ENDS
 ;; push identifier value
 DUP
 ; colValue
-SETGLOB 19
+SETGLOB 20
 ; end colValue
 ;; Remote call IDEXPool.getSwapDetails
 ;; push identifier ctx_pool
-GETGLOB 26
+GETGLOB 27
 NEWC
 STSLICECONST x497_
 PUSHINT 809856455
 STUR 32
-PUSHINT 0
+PUSHINT 1851126578
 STUR 32
 PUSHINT 2
 STUR 8
@@ -3026,7 +3338,7 @@ GETGLOB 15
 STSLICER
 ;; _tokens
 ;; push identifier ctx_tokens
-GETGLOB 19
+GETGLOB 20
 STUR 128
 ENDC
 PUSHINT 0
@@ -3048,16 +3360,16 @@ SETGLOB 7
 ;; push identifier value
 DUP
 ; colValue
-SETGLOB 19
+SETGLOB 20
 ; end colValue
 ;; Remote call IDEXPool.getSwapDetails
 ;; push identifier ctx_pool
-GETGLOB 26
+GETGLOB 27
 NEWC
 STSLICECONST x497_
 PUSHINT 809856455
 STUR 32
-PUSHINT 0
+PUSHINT 1851126578
 STUR 32
 PUSHINT 2
 STUR 8
@@ -3100,7 +3412,7 @@ GETGLOB 15
 STSLICER
 ;; _tokens
 ;; push identifier ctx_tokens
-GETGLOB 19
+GETGLOB 20
 STUR 128
 ENDC
 PUSHINT 0
@@ -3153,7 +3465,7 @@ ENDS
 DUP
 INDEX 1
 ; colValue
-SETGLOB 24
+SETGLOB 25
 ; end colValue
 PUSHINT 0
 PUSHSLICE x43757272656e7420707269636573206172653a20
@@ -3293,7 +3605,7 @@ SETGLOB 7
 DUP
 INDEX 1
 ; colValue
-SETGLOB 24
+SETGLOB 25
 ; end colValue
 PUSHINT 0
 PUSHSLICE x43757272656e7420707269636573206172653a20
@@ -3457,7 +3769,7 @@ PUSHCONT {
 		;; get member DEX_DEPOSIT
 		PUSHINT 5
 		; colValue
-		SETGLOB 17
+		SETGLOB 18
 		; end colValue
 		CALL $checkSwapToken_internal$
 	}
@@ -3499,7 +3811,7 @@ PUSHCONT {
 		;; get member DEX_DEPOSIT
 		PUSHINT 5
 		; colValue
-		SETGLOB 17
+		SETGLOB 18
 		; end colValue
 		CALL $checkSwapToken_internal$
 	}
@@ -3538,7 +3850,7 @@ CALLREF {
 	CALL $appendToList_macro$
 }
 ;; push identifier ctx_tokens
-GETGLOB 19
+GETGLOB 20
 PUSHINT 0
 FALSE
 FALSE
@@ -3561,7 +3873,7 @@ CALLREF {
 CALL $Terminal_no_obj_print$
 ;; Remote call ITIP3WalletFungible.approve
 ;; push identifier userWallet_
-GETGLOB 16
+GETGLOB 17
 NEWC
 STSLICECONST x497_
 PUSHINT 0
@@ -3608,14 +3920,14 @@ STSLICECONST x0321d173
 NEWC
 ;; spender
 ;; push identifier ctx_pool
-GETGLOB 26
+GETGLOB 27
 STSLICER
 ;; remainingTokens
 PUSHINT 0
 STUR 128
 ;; tokens
 ;; push identifier ctx_tokens
-GETGLOB 19
+GETGLOB 20
 STUR 128
 STBREFR
 STBREFR
@@ -3630,12 +3942,12 @@ ENDC
 CALL $Terminal_no_obj_print$
 ;; Remote call IDEXPool.swap
 ;; push identifier ctx_pool
-GETGLOB 26
+GETGLOB 27
 NEWC
 STSLICECONST x497_
 PUSHINT 0
 STUR 32
-PUSHINT 0
+PUSHINT 1851126578
 STUR 32
 PUSHINT 2
 STUR 8
@@ -3649,19 +3961,21 @@ STSLICE
 PUSHINT 4
 STZEROES
 STSLICECONST 0
-PUSHINT 2
+STSLICECONST 1
+NEWC
+STSLICECONST 1
+PUSHINT 512
 STZEROES
-;; push identifier pk
-GETGLOB 13
+;; push identifier userPubkey_
+GETGLOB 14
 ISNULL
 PUSHCONT {
 	STSLICECONST 0
 }
 PUSHCONT {
-	THROW 64
 	STSLICECONST 1
-	;; push identifier pk
-	GETGLOB 13
+	;; push identifier userPubkey_
+	GETGLOB 14
 	STUR 256
 }
 IFELSE
@@ -3672,11 +3986,11 @@ STUR 64
 PUSHINT 0
 STUR 32
 STSLICECONST x0929e91f
+NEWC
 ;; _tokenAddress
 ;; push identifier userRoot_
 GETGLOB 15
 STSLICER
-NEWC
 ;; _senderKey
 ;; push identifier userPubkey_
 GETGLOB 14
@@ -3688,12 +4002,15 @@ PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
 STSLICER
 ;; _tokens
 ;; push identifier ctx_tokens
-GETGLOB 19
+GETGLOB 20
 STUR 128
+NEWC
 ;; _minReturn
 ;; push identifier ctx_limit
-GETGLOB 24
+GETGLOB 25
 STUR 128
+STBREFR
+STBREFR
 STBREFR
 ENDC
 PUSHINT 0
@@ -3728,7 +4045,7 @@ CALLREF {
 	CALL $appendToList_macro$
 }
 ;; push identifier ctx_tokens
-GETGLOB 19
+GETGLOB 20
 PUSHINT 0
 FALSE
 FALSE
@@ -3751,7 +4068,7 @@ CALLREF {
 CALL $Terminal_no_obj_print$
 ;; Remote call ITIP3WalletFungible.approve
 ;; push identifier userWallet_
-GETGLOB 16
+GETGLOB 17
 NEWC
 STSLICECONST x497_
 PUSHINT 0
@@ -3798,14 +4115,14 @@ STSLICECONST x0321d173
 NEWC
 ;; spender
 ;; push identifier ctx_pool
-GETGLOB 26
+GETGLOB 27
 STSLICER
 ;; remainingTokens
 PUSHINT 0
 STUR 128
 ;; tokens
 ;; push identifier ctx_tokens
-GETGLOB 19
+GETGLOB 20
 STUR 128
 STBREFR
 STBREFR
@@ -3820,12 +4137,12 @@ ENDC
 CALL $Terminal_no_obj_print$
 ;; Remote call IDEXPool.swap
 ;; push identifier ctx_pool
-GETGLOB 26
+GETGLOB 27
 NEWC
 STSLICECONST x497_
 PUSHINT 0
 STUR 32
-PUSHINT 0
+PUSHINT 1851126578
 STUR 32
 PUSHINT 2
 STUR 8
@@ -3839,19 +4156,21 @@ STSLICE
 PUSHINT 4
 STZEROES
 STSLICECONST 0
-PUSHINT 2
+STSLICECONST 1
+NEWC
+STSLICECONST 1
+PUSHINT 512
 STZEROES
-;; push identifier pk
-GETGLOB 13
+;; push identifier userPubkey_
+GETGLOB 14
 ISNULL
 PUSHCONT {
 	STSLICECONST 0
 }
 PUSHCONT {
-	THROW 64
 	STSLICECONST 1
-	;; push identifier pk
-	GETGLOB 13
+	;; push identifier userPubkey_
+	GETGLOB 14
 	STUR 256
 }
 IFELSE
@@ -3862,11 +4181,11 @@ STUR 64
 PUSHINT 0
 STUR 32
 STSLICECONST x0929e91f
+NEWC
 ;; _tokenAddress
 ;; push identifier userRoot_
 GETGLOB 15
 STSLICER
-NEWC
 ;; _senderKey
 ;; push identifier userPubkey_
 GETGLOB 14
@@ -3878,12 +4197,15 @@ PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
 STSLICER
 ;; _tokens
 ;; push identifier ctx_tokens
-GETGLOB 19
+GETGLOB 20
 STUR 128
+NEWC
 ;; _minReturn
 ;; push identifier ctx_limit
-GETGLOB 24
+GETGLOB 25
 STUR 128
+STBREFR
+STBREFR
 STBREFR
 ENDC
 PUSHINT 0
@@ -3924,11 +4246,11 @@ ENDS
 ;; push identifier value
 DUP
 ; colValue
-SETGLOB 19
+SETGLOB 20
 ; end colValue
 ;; Remote call IDEXPool.getDepositDetails
 ;; push identifier ctx_pool
-GETGLOB 26
+GETGLOB 27
 NEWC
 STSLICECONST x497_
 PUSHINT 2109756276
@@ -3976,7 +4298,7 @@ GETGLOB 15
 STSLICER
 ;; _tokens
 ;; push identifier ctx_tokens
-GETGLOB 19
+GETGLOB 20
 STUR 128
 ENDC
 PUSHINT 0
@@ -3998,11 +4320,11 @@ SETGLOB 7
 ;; push identifier value
 DUP
 ; colValue
-SETGLOB 19
+SETGLOB 20
 ; end colValue
 ;; Remote call IDEXPool.getDepositDetails
 ;; push identifier ctx_pool
-GETGLOB 26
+GETGLOB 27
 NEWC
 STSLICECONST x497_
 PUSHINT 2109756276
@@ -4050,7 +4372,7 @@ GETGLOB 15
 STSLICER
 ;; _tokens
 ;; push identifier ctx_tokens
-GETGLOB 19
+GETGLOB 20
 STUR 128
 ENDC
 PUSHINT 0
@@ -4126,7 +4448,7 @@ PUSHCONT {
 	DUP
 	INDEX 0
 	; colValue
-	SETGLOB 24
+	SETGLOB 25
 	; end colValue
 	; expValue
 	; end expValue
@@ -4135,7 +4457,7 @@ PUSHCONT {
 	DUP
 	INDEX 1
 	; colValue
-	SETGLOB 29
+	SETGLOB 30
 	; end colValue
 	;; get member firstParam
 	;; push identifier details
@@ -4188,7 +4510,7 @@ PUSHCONT {
 	DUP
 	INDEX 0
 	; colValue
-	SETGLOB 24
+	SETGLOB 25
 	; end colValue
 	; expValue
 	; end expValue
@@ -4197,7 +4519,7 @@ PUSHCONT {
 	DUP
 	INDEX 1
 	; colValue
-	SETGLOB 29
+	SETGLOB 30
 	; end colValue
 	;; get member firstParam
 	;; push identifier details
@@ -4240,19 +4562,19 @@ UFITS 128
 ; expValue
 ; end expValue
 ; colValue
-SETGLOB 24
+SETGLOB 25
 ; end colValue
 ; expValue
 ; end expValue
 ;; push identifier ctx_limit
-GETGLOB 24
+GETGLOB 25
 ;; *
 ;; push identifier ctx_tokens
-GETGLOB 19
+GETGLOB 20
 MUL
 UFITS 128
 ; colValue
-SETGLOB 29
+SETGLOB 30
 ; end colValue
 PUSHINT 0
 PUSHSLICE x43757272656e7420636f6e646974696f6e73206172653a20
@@ -4273,7 +4595,7 @@ CALLREF {
 	CALL $appendToList_macro$
 }
 ;; push identifier ctx_limit
-GETGLOB 24
+GETGLOB 25
 PUSHINT 0
 FALSE
 FALSE
@@ -4300,7 +4622,7 @@ CALLREF {
 	CALL $appendToList_macro$
 }
 ;; push identifier ctx_liqReturn
-GETGLOB 29
+GETGLOB 30
 PUSHINT 0
 FALSE
 FALSE
@@ -4353,19 +4675,19 @@ UFITS 128
 ; expValue
 ; end expValue
 ; colValue
-SETGLOB 24
+SETGLOB 25
 ; end colValue
 ; expValue
 ; end expValue
 ;; push identifier ctx_limit
-GETGLOB 24
+GETGLOB 25
 ;; *
 ;; push identifier ctx_tokens
-GETGLOB 19
+GETGLOB 20
 MUL
 UFITS 128
 ; colValue
-SETGLOB 29
+SETGLOB 30
 ; end colValue
 PUSHINT 0
 PUSHSLICE x43757272656e7420636f6e646974696f6e73206172653a20
@@ -4386,7 +4708,7 @@ CALLREF {
 	CALL $appendToList_macro$
 }
 ;; push identifier ctx_limit
-GETGLOB 24
+GETGLOB 25
 PUSHINT 0
 FALSE
 FALSE
@@ -4413,7 +4735,7 @@ CALLREF {
 	CALL $appendToList_macro$
 }
 ;; push identifier ctx_liqReturn
-GETGLOB 29
+GETGLOB 30
 PUSHINT 0
 FALSE
 FALSE
@@ -4490,7 +4812,7 @@ PUSHCONT {
 		CALL $appendToList_macro$
 	}
 	;; push identifier ctx_tokens
-	GETGLOB 19
+	GETGLOB 20
 	PUSHINT 0
 	FALSE
 	FALSE
@@ -4513,7 +4835,7 @@ PUSHCONT {
 	CALL $Terminal_no_obj_print$
 	;; Remote call ITIP3WalletFungible.approve
 	;; push identifier userWallet_
-	GETGLOB 16
+	GETGLOB 17
 	NEWC
 	STSLICECONST x497_
 	PUSHINT 0
@@ -4560,14 +4882,14 @@ PUSHCONT {
 	NEWC
 	;; spender
 	;; push identifier ctx_pool
-	GETGLOB 26
+	GETGLOB 27
 	STSLICER
 	;; remainingTokens
 	PUSHINT 0
 	STUR 128
 	;; tokens
 	;; push identifier ctx_tokens
-	GETGLOB 19
+	GETGLOB 20
 	STUR 128
 	STBREFR
 	STBREFR
@@ -4576,7 +4898,7 @@ PUSHCONT {
 	SENDRAWMSG
 	;; Remote call ITIP3RootMetadata.getWalletAddress
 	;; push identifier ctx_swapToken
-	GETGLOB 25
+	GETGLOB 26
 	NEWC
 	STSLICECONST x497_
 	PUSHINT 1025380382
@@ -4671,7 +4993,7 @@ PUSHCONT {
 		CALL $appendToList_macro$
 	}
 	;; push identifier ctx_tokens
-	GETGLOB 19
+	GETGLOB 20
 	PUSHINT 0
 	FALSE
 	FALSE
@@ -4694,7 +5016,7 @@ PUSHCONT {
 	CALL $Terminal_no_obj_print$
 	;; Remote call ITIP3WalletFungible.approve
 	;; push identifier userWallet_
-	GETGLOB 16
+	GETGLOB 17
 	NEWC
 	STSLICECONST x497_
 	PUSHINT 0
@@ -4741,14 +5063,14 @@ PUSHCONT {
 	NEWC
 	;; spender
 	;; push identifier ctx_pool
-	GETGLOB 26
+	GETGLOB 27
 	STSLICER
 	;; remainingTokens
 	PUSHINT 0
 	STUR 128
 	;; tokens
 	;; push identifier ctx_tokens
-	GETGLOB 19
+	GETGLOB 20
 	STUR 128
 	STBREFR
 	STBREFR
@@ -4757,7 +5079,7 @@ PUSHCONT {
 	SENDRAWMSG
 	;; Remote call ITIP3RootMetadata.getWalletAddress
 	;; push identifier ctx_swapToken
-	GETGLOB 25
+	GETGLOB 26
 	NEWC
 	STSLICECONST x497_
 	PUSHINT 1025380382
@@ -4852,7 +5174,7 @@ ENDS
 ;; push identifier value
 DUP
 ; colValue
-SETGLOB 27
+SETGLOB 28
 ; end colValue
 PUSHINT 0
 NEWC
@@ -4867,7 +5189,7 @@ CALLREF {
 	CALL $appendToList_macro$
 }
 ;; push identifier ctx_limit
-GETGLOB 24
+GETGLOB 25
 PUSHINT 0
 FALSE
 FALSE
@@ -4890,7 +5212,7 @@ CALLREF {
 CALL $Terminal_no_obj_print$
 ;; Remote call ITIP3WalletFungible.approve
 ;; push identifier ctx_2ndWallet
-GETGLOB 27
+GETGLOB 28
 NEWC
 STSLICECONST x497_
 PUSHINT 0
@@ -4937,14 +5259,14 @@ STSLICECONST x0321d173
 NEWC
 ;; spender
 ;; push identifier ctx_pool
-GETGLOB 26
+GETGLOB 27
 STSLICER
 ;; remainingTokens
 PUSHINT 0
 STUR 128
 ;; tokens
 ;; push identifier ctx_limit
-GETGLOB 24
+GETGLOB 25
 STUR 128
 STBREFR
 STBREFR
@@ -4959,12 +5281,12 @@ ENDC
 CALL $Terminal_no_obj_print$
 ;; Remote call IDEXPool.deposit
 ;; push identifier ctx_pool
-GETGLOB 26
+GETGLOB 27
 NEWC
 STSLICECONST x497_
 PUSHINT 0
 STUR 32
-PUSHINT 0
+PUSHINT 1851126578
 STUR 32
 PUSHINT 2
 STUR 8
@@ -4978,19 +5300,21 @@ STSLICE
 PUSHINT 4
 STZEROES
 STSLICECONST 0
-PUSHINT 2
+STSLICECONST 1
+NEWC
+STSLICECONST 1
+PUSHINT 512
 STZEROES
-;; push identifier pk
-GETGLOB 13
+;; push identifier userPubkey_
+GETGLOB 14
 ISNULL
 PUSHCONT {
 	STSLICECONST 0
 }
 PUSHCONT {
-	THROW 64
 	STSLICECONST 1
-	;; push identifier pk
-	GETGLOB 13
+	;; push identifier userPubkey_
+	GETGLOB 14
 	STUR 256
 }
 IFELSE
@@ -5001,11 +5325,11 @@ STUR 64
 PUSHINT 0
 STUR 32
 STSLICECONST x06fcef37
+NEWC
 ;; _tokenAddress
 ;; push identifier userRoot_
 GETGLOB 15
 STSLICER
-NEWC
 ;; _senderKey
 ;; push identifier userPubkey_
 GETGLOB 14
@@ -5017,12 +5341,15 @@ PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
 STSLICER
 ;; _tokens
 ;; push identifier ctx_tokens
-GETGLOB 19
+GETGLOB 20
 STUR 128
+NEWC
 ;; _maxSpend
 ;; push identifier ctx_limit
-GETGLOB 24
+GETGLOB 25
 STUR 128
+STBREFR
+STBREFR
 STBREFR
 ENDC
 PUSHINT 0
@@ -5051,7 +5378,7 @@ SETGLOB 7
 ;; push identifier value
 DUP
 ; colValue
-SETGLOB 27
+SETGLOB 28
 ; end colValue
 PUSHINT 0
 NEWC
@@ -5066,7 +5393,7 @@ CALLREF {
 	CALL $appendToList_macro$
 }
 ;; push identifier ctx_limit
-GETGLOB 24
+GETGLOB 25
 PUSHINT 0
 FALSE
 FALSE
@@ -5089,7 +5416,7 @@ CALLREF {
 CALL $Terminal_no_obj_print$
 ;; Remote call ITIP3WalletFungible.approve
 ;; push identifier ctx_2ndWallet
-GETGLOB 27
+GETGLOB 28
 NEWC
 STSLICECONST x497_
 PUSHINT 0
@@ -5136,14 +5463,14 @@ STSLICECONST x0321d173
 NEWC
 ;; spender
 ;; push identifier ctx_pool
-GETGLOB 26
+GETGLOB 27
 STSLICER
 ;; remainingTokens
 PUSHINT 0
 STUR 128
 ;; tokens
 ;; push identifier ctx_limit
-GETGLOB 24
+GETGLOB 25
 STUR 128
 STBREFR
 STBREFR
@@ -5158,10 +5485,124 @@ ENDC
 CALL $Terminal_no_obj_print$
 ;; Remote call IDEXPool.deposit
 ;; push identifier ctx_pool
-GETGLOB 26
+GETGLOB 27
 NEWC
 STSLICECONST x497_
 PUSHINT 0
+STUR 32
+PUSHINT 1851126578
+STUR 32
+PUSHINT 2
+STUR 8
+STONE
+STONE
+STONE
+NEWC
+STSLICECONST xa_
+STB
+STSLICE
+PUSHINT 4
+STZEROES
+STSLICECONST 0
+STSLICECONST 1
+NEWC
+STSLICECONST 1
+PUSHINT 512
+STZEROES
+;; push identifier userPubkey_
+GETGLOB 14
+ISNULL
+PUSHCONT {
+	STSLICECONST 0
+}
+PUSHCONT {
+	STSLICECONST 1
+	;; push identifier userPubkey_
+	GETGLOB 14
+	STUR 256
+}
+IFELSE
+;; push identifier now
+NOW
+;; uint64
+STUR 64
+PUSHINT 0
+STUR 32
+STSLICECONST x06fcef37
+NEWC
+;; _tokenAddress
+;; push identifier userRoot_
+GETGLOB 15
+STSLICER
+;; _senderKey
+;; push identifier userPubkey_
+GETGLOB 14
+STUR 256
+;; _senderOwner
+;; push identifier ZERO_ADDRESS
+;; address.makeAddrStd()
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+STSLICER
+;; _tokens
+;; push identifier ctx_tokens
+GETGLOB 20
+STUR 128
+NEWC
+;; _maxSpend
+;; push identifier ctx_limit
+GETGLOB 25
+STUR 128
+STBREFR
+STBREFR
+STBREFR
+ENDC
+PUSHINT 0
+SENDRAWMSG
+PUSHINT 0
+PUSHSLICE x446f6e6521
+NEWC
+STSLICE
+ENDC
+CALL $Terminal_no_obj_print$
+CALL $mainMenu_internal$
+DROP
+; end function dexDepositStep4
+
+.globl	dexWithdrawStep1
+.public	dexWithdrawStep1
+.type	dexWithdrawStep1, @function
+GETGLOB 1
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+; Decode input parameters
+; Decode value
+LDUQ 128
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 128
+}
+IFNOT
+ENDS
+;; param: value
+; function dexWithdrawStep1
+; expValue
+; end expValue
+;; push identifier value
+DUP
+; colValue
+SETGLOB 20
+; end colValue
+;; Remote call IDEXPool.getWithdrawDetails
+;; push identifier ctx_pool
+GETGLOB 27
+NEWC
+STSLICECONST x497_
+PUSHINT 1674430659
 STUR 32
 PUSHINT 0
 STUR 32
@@ -5199,42 +5640,889 @@ NOW
 STUR 64
 PUSHINT 0
 STUR 32
-STSLICECONST x06fcef37
-;; _tokenAddress
-;; push identifier userRoot_
-GETGLOB 15
-STSLICER
-NEWC
-;; _senderKey
-;; push identifier userPubkey_
-GETGLOB 14
-STUR 256
-;; _senderOwner
-;; push identifier ZERO_ADDRESS
-;; address.makeAddrStd()
-PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-STSLICER
+STSLICECONST x02b3e116
 ;; _tokens
 ;; push identifier ctx_tokens
-GETGLOB 19
+GETGLOB 20
 STUR 128
-;; _maxSpend
-;; push identifier ctx_limit
-GETGLOB 24
-STUR 128
-STBREFR
 ENDC
 PUSHINT 0
 SENDRAWMSG
+DROP
+; end function dexWithdrawStep1
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	dexWithdrawStep1_internal
+.type	dexWithdrawStep1_internal, @function
+;; param: value
+; function dexWithdrawStep1
+; expValue
+; end expValue
+;; push identifier value
+DUP
+; colValue
+SETGLOB 20
+; end colValue
+;; Remote call IDEXPool.getWithdrawDetails
+;; push identifier ctx_pool
+GETGLOB 27
+NEWC
+STSLICECONST x497_
+PUSHINT 1674430659
+STUR 32
 PUSHINT 0
-PUSHSLICE x446f6e6521
+STUR 32
+PUSHINT 2
+STUR 8
+STONE
+STONE
+STONE
+NEWC
+STSLICECONST xa_
+STB
+STSLICE
+PUSHINT 4
+STZEROES
+STSLICECONST 0
+PUSHINT 2
+STZEROES
+;; push identifier pk
+GETGLOB 13
+ISNULL
+PUSHCONT {
+	STSLICECONST 0
+}
+PUSHCONT {
+	THROW 64
+	STSLICECONST 1
+	;; push identifier pk
+	GETGLOB 13
+	STUR 256
+}
+IFELSE
+;; push identifier now
+NOW
+;; uint64
+STUR 64
+PUSHINT 0
+STUR 32
+STSLICECONST x02b3e116
+;; _tokens
+;; push identifier ctx_tokens
+GETGLOB 20
+STUR 128
+ENDC
+PUSHINT 0
+SENDRAWMSG
+DROP
+; end function dexWithdrawStep1
+
+.globl	dexWithdrawStep2
+.public	dexWithdrawStep2
+.type	dexWithdrawStep2, @function
+GETGLOB 1
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+; Decode input parameters
+; Decode details
+;; decode struct OrderDetails details
+;; decode OrderDetails.firstParam
+LDUQ 128
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 128
+}
+IFNOT
+;; decode OrderDetails.secondParam
+LDUQ 128
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 128
+}
+IFNOT
+;; build struct OrderDetails ss:3
+ROTREV
+TUPLE 2
+SWAP
+ENDS
+;; param: details
+; function dexWithdrawStep2
+PUSHINT 0
+PUSHSLICE x43757272656e7420636f6e646974696f6e73206172653a20
 NEWC
 STSLICE
 ENDC
 CALL $Terminal_no_obj_print$
-CALL $mainMenu_internal$
+PUSHINT 0
+NEWC
+NULL
+TUPLE 2
+NEWC
+PUSHSLICE x596f752077696c6c20726563656976652028546f6b656e2031293a20
+CALLREF {
+	CALL $storeStringInBuilders_macro$
+}
+CALLREF {
+	CALL $appendToList_macro$
+}
+;; get member firstParam
+;; push identifier details
+PUSH S3
+INDEX 0
+PUSHINT 0
+FALSE
+FALSE
+CALLREF {
+	CALL $convertIntToDecStr_macro$
+}
+CALLREF {
+	CALL $appendToList_macro$
+}
+CALLREF {
+	CALL $assembleList_macro$
+}
+CALL $Terminal_no_obj_print$
+PUSHINT 0
+NEWC
+NULL
+TUPLE 2
+NEWC
+PUSHSLICE x596f752077696c6c20726563656976652028546f6b656e2032293a20
+CALLREF {
+	CALL $storeStringInBuilders_macro$
+}
+CALLREF {
+	CALL $appendToList_macro$
+}
+;; get member secondParam
+;; push identifier details
+PUSH S3
+INDEX 1
+PUSHINT 0
+FALSE
+FALSE
+CALLREF {
+	CALL $convertIntToDecStr_macro$
+}
+CALLREF {
+	CALL $appendToList_macro$
+}
+CALLREF {
+	CALL $assembleList_macro$
+}
+CALL $Terminal_no_obj_print$
+;; Remote call ITIP3RootMetadata.getWalletAddress
+;; push identifier ctx_pool
+GETGLOB 27
+NEWC
+STSLICECONST x497_
+PUSHINT 2089519066
+STUR 32
+PUSHINT 0
+STUR 32
+PUSHINT 2
+STUR 8
+STONE
+STONE
+STONE
+NEWC
+STSLICECONST xa_
+STB
+STSLICE
+PUSHINT 4
+STZEROES
+STSLICECONST 0
+PUSHINT 2
+STZEROES
+;; push identifier pk
+GETGLOB 13
+ISNULL
+PUSHCONT {
+	STSLICECONST 0
+}
+PUSHCONT {
+	THROW 64
+	STSLICECONST 1
+	;; push identifier pk
+	GETGLOB 13
+	STUR 256
+}
+IFELSE
+;; push identifier now
+NOW
+;; uint64
+STUR 64
+PUSHINT 0
+STUR 32
+STSLICECONST x5b4f57e1
+;; workchainId
+PUSHINT 0
+STIR 8
+;; walletPubkey
+;; push identifier userPubkey_
+GETGLOB 14
+STUR 256
+NEWC
+;; walletOwner
+;; push identifier ZERO_ADDRESS
+;; address.makeAddrStd()
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+STSLICER
+STBREFR
+ENDC
+PUSHINT 0
+SENDRAWMSG
 DROP
-; end function dexDepositStep4
+; end function dexWithdrawStep2
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	dexWithdrawStep2_internal
+.type	dexWithdrawStep2_internal, @function
+;; param: details
+; function dexWithdrawStep2
+PUSHINT 0
+PUSHSLICE x43757272656e7420636f6e646974696f6e73206172653a20
+NEWC
+STSLICE
+ENDC
+CALL $Terminal_no_obj_print$
+PUSHINT 0
+NEWC
+NULL
+TUPLE 2
+NEWC
+PUSHSLICE x596f752077696c6c20726563656976652028546f6b656e2031293a20
+CALLREF {
+	CALL $storeStringInBuilders_macro$
+}
+CALLREF {
+	CALL $appendToList_macro$
+}
+;; get member firstParam
+;; push identifier details
+PUSH S3
+INDEX 0
+PUSHINT 0
+FALSE
+FALSE
+CALLREF {
+	CALL $convertIntToDecStr_macro$
+}
+CALLREF {
+	CALL $appendToList_macro$
+}
+CALLREF {
+	CALL $assembleList_macro$
+}
+CALL $Terminal_no_obj_print$
+PUSHINT 0
+NEWC
+NULL
+TUPLE 2
+NEWC
+PUSHSLICE x596f752077696c6c20726563656976652028546f6b656e2032293a20
+CALLREF {
+	CALL $storeStringInBuilders_macro$
+}
+CALLREF {
+	CALL $appendToList_macro$
+}
+;; get member secondParam
+;; push identifier details
+PUSH S3
+INDEX 1
+PUSHINT 0
+FALSE
+FALSE
+CALLREF {
+	CALL $convertIntToDecStr_macro$
+}
+CALLREF {
+	CALL $appendToList_macro$
+}
+CALLREF {
+	CALL $assembleList_macro$
+}
+CALL $Terminal_no_obj_print$
+;; Remote call ITIP3RootMetadata.getWalletAddress
+;; push identifier ctx_pool
+GETGLOB 27
+NEWC
+STSLICECONST x497_
+PUSHINT 2089519066
+STUR 32
+PUSHINT 0
+STUR 32
+PUSHINT 2
+STUR 8
+STONE
+STONE
+STONE
+NEWC
+STSLICECONST xa_
+STB
+STSLICE
+PUSHINT 4
+STZEROES
+STSLICECONST 0
+PUSHINT 2
+STZEROES
+;; push identifier pk
+GETGLOB 13
+ISNULL
+PUSHCONT {
+	STSLICECONST 0
+}
+PUSHCONT {
+	THROW 64
+	STSLICECONST 1
+	;; push identifier pk
+	GETGLOB 13
+	STUR 256
+}
+IFELSE
+;; push identifier now
+NOW
+;; uint64
+STUR 64
+PUSHINT 0
+STUR 32
+STSLICECONST x5b4f57e1
+;; workchainId
+PUSHINT 0
+STIR 8
+;; walletPubkey
+;; push identifier userPubkey_
+GETGLOB 14
+STUR 256
+NEWC
+;; walletOwner
+;; push identifier ZERO_ADDRESS
+;; address.makeAddrStd()
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+STSLICER
+STBREFR
+ENDC
+PUSHINT 0
+SENDRAWMSG
+DROP
+; end function dexWithdrawStep2
+
+.globl	dexWithdrawStep2a
+.public	dexWithdrawStep2a
+.type	dexWithdrawStep2a, @function
+GETGLOB 1
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+; Decode input parameters
+; Decode value
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
+ENDS
+;; param: value
+; function dexWithdrawStep2a
+; expValue
+; end expValue
+;; push identifier value
+DUP
+; colValue
+SETGLOB 17
+; end colValue
+PUSHINT 0
+PUSHSLICE x3129202020205b446f2057495448445241575d
+NEWC
+STSLICE
+ENDC
+CALL $Terminal_no_obj_print$
+PUSHINT 0
+PUSHSLICE x3229203c2d2d5b4d61696e206d656e755d
+NEWC
+STSLICE
+ENDC
+CALL $Terminal_no_obj_print$
+PUSHINT 838470142
+PUSHSLICE x456e74657220796f75722063686f6963653a20
+NEWC
+STSLICE
+ENDC
+PUSHINT 1
+PUSHINT 2
+CALL $NumberInput_no_obj_get$
+DROP
+; end function dexWithdrawStep2a
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	dexWithdrawStep2a_internal
+.type	dexWithdrawStep2a_internal, @function
+;; param: value
+; function dexWithdrawStep2a
+; expValue
+; end expValue
+;; push identifier value
+DUP
+; colValue
+SETGLOB 17
+; end colValue
+PUSHINT 0
+PUSHSLICE x3129202020205b446f2057495448445241575d
+NEWC
+STSLICE
+ENDC
+CALL $Terminal_no_obj_print$
+PUSHINT 0
+PUSHSLICE x3229203c2d2d5b4d61696e206d656e755d
+NEWC
+STSLICE
+ENDC
+CALL $Terminal_no_obj_print$
+PUSHINT 838470142
+PUSHSLICE x456e74657220796f75722063686f6963653a20
+NEWC
+STSLICE
+ENDC
+PUSHINT 1
+PUSHINT 2
+CALL $NumberInput_no_obj_get$
+DROP
+; end function dexWithdrawStep2a
+
+.globl	dexWithdrawStep3
+.public	dexWithdrawStep3
+.type	dexWithdrawStep3, @function
+GETGLOB 1
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+; Decode input parameters
+; Decode value
+LDIQ 256
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDI 256
+}
+IFNOT
+ENDS
+;; param: value
+; function dexWithdrawStep3
+;; if
+;; push identifier value
+DUP
+EQINT 1
+PUSHCONT {
+	PUSHINT 0
+	NEWC
+	NULL
+	TUPLE 2
+	NEWC
+	PUSHSLICE x506c656173652c20617070726f7665207370656e64696e67206f6620
+	CALLREF {
+		CALL $storeStringInBuilders_macro$
+	}
+	CALLREF {
+		CALL $appendToList_macro$
+	}
+	;; push identifier ctx_tokens
+	GETGLOB 20
+	PUSHINT 0
+	FALSE
+	FALSE
+	CALLREF {
+		CALL $convertIntToDecStr_macro$
+	}
+	CALLREF {
+		CALL $appendToList_macro$
+	}
+	PUSHSLICE x20746f6b656e732066726f6d2077616c6c6574206f6620546f6b656e204c49513a20
+	CALLREF {
+		CALL $storeStringInBuilders_macro$
+	}
+	CALLREF {
+		CALL $appendToList_macro$
+	}
+	CALLREF {
+		CALL $assembleList_macro$
+	}
+	CALL $Terminal_no_obj_print$
+	;; Remote call ITIP3WalletFungible.approve
+	;; push identifier userWallet_
+	GETGLOB 17
+	NEWC
+	STSLICECONST x497_
+	PUSHINT 0
+	STUR 32
+	PUSHINT 0
+	STUR 32
+	PUSHINT 2
+	STUR 8
+	STONE
+	STONE
+	STONE
+	NEWC
+	STSLICECONST xa_
+	STB
+	STSLICE
+	PUSHINT 4
+	STZEROES
+	STSLICECONST 0
+	STSLICECONST 1
+	NEWC
+	STSLICECONST 1
+	PUSHINT 512
+	STZEROES
+	;; push identifier userPubkey_
+	GETGLOB 14
+	ISNULL
+	PUSHCONT {
+		STSLICECONST 0
+	}
+	PUSHCONT {
+		STSLICECONST 1
+		;; push identifier userPubkey_
+		GETGLOB 14
+		STUR 256
+	}
+	IFELSE
+	;; push identifier now
+	NOW
+	;; uint64
+	STUR 64
+	PUSHINT 0
+	STUR 32
+	STSLICECONST x0321d173
+	NEWC
+	;; spender
+	;; push identifier ctx_pool
+	GETGLOB 27
+	STSLICER
+	;; remainingTokens
+	PUSHINT 0
+	STUR 128
+	;; tokens
+	;; push identifier ctx_tokens
+	GETGLOB 20
+	STUR 128
+	STBREFR
+	STBREFR
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+	PUSHINT 0
+	PUSHSLICE x50726f63656564696e672057495448445241572e2e2e
+	NEWC
+	STSLICE
+	ENDC
+	CALL $Terminal_no_obj_print$
+	;; Remote call IDEXPool.withdraw
+	;; push identifier ctx_pool
+	GETGLOB 27
+	NEWC
+	STSLICECONST x497_
+	PUSHINT 0
+	STUR 32
+	PUSHINT 1851126578
+	STUR 32
+	PUSHINT 2
+	STUR 8
+	STONE
+	STONE
+	STONE
+	NEWC
+	STSLICECONST xa_
+	STB
+	STSLICE
+	PUSHINT 4
+	STZEROES
+	STSLICECONST 0
+	STSLICECONST 1
+	NEWC
+	STSLICECONST 1
+	PUSHINT 512
+	STZEROES
+	;; push identifier userPubkey_
+	GETGLOB 14
+	ISNULL
+	PUSHCONT {
+		STSLICECONST 0
+	}
+	PUSHCONT {
+		STSLICECONST 1
+		;; push identifier userPubkey_
+		GETGLOB 14
+		STUR 256
+	}
+	IFELSE
+	;; push identifier now
+	NOW
+	;; uint64
+	STUR 64
+	PUSHINT 0
+	STUR 32
+	STSLICECONST x48c02f51
+	NEWC
+	;; _senderKey
+	;; push identifier userPubkey_
+	GETGLOB 14
+	STUR 256
+	;; _senderOwner
+	;; push identifier ZERO_ADDRESS
+	;; address.makeAddrStd()
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	STSLICER
+	;; _tokens
+	;; push identifier ctx_tokens
+	GETGLOB 20
+	STUR 128
+	STBREFR
+	STBREFR
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+	PUSHINT 0
+	PUSHSLICE x446f6e6521
+	NEWC
+	STSLICE
+	ENDC
+	CALL $Terminal_no_obj_print$
+	CALL $mainMenu_internal$
+}
+PUSHCONT {
+	CALL $mainMenu_internal$
+}
+IFELSE
+;; end if
+DROP
+; end function dexWithdrawStep3
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	dexWithdrawStep3_internal
+.type	dexWithdrawStep3_internal, @function
+;; param: value
+; function dexWithdrawStep3
+;; if
+;; push identifier value
+DUP
+EQINT 1
+PUSHCONT {
+	PUSHINT 0
+	NEWC
+	NULL
+	TUPLE 2
+	NEWC
+	PUSHSLICE x506c656173652c20617070726f7665207370656e64696e67206f6620
+	CALLREF {
+		CALL $storeStringInBuilders_macro$
+	}
+	CALLREF {
+		CALL $appendToList_macro$
+	}
+	;; push identifier ctx_tokens
+	GETGLOB 20
+	PUSHINT 0
+	FALSE
+	FALSE
+	CALLREF {
+		CALL $convertIntToDecStr_macro$
+	}
+	CALLREF {
+		CALL $appendToList_macro$
+	}
+	PUSHSLICE x20746f6b656e732066726f6d2077616c6c6574206f6620546f6b656e204c49513a20
+	CALLREF {
+		CALL $storeStringInBuilders_macro$
+	}
+	CALLREF {
+		CALL $appendToList_macro$
+	}
+	CALLREF {
+		CALL $assembleList_macro$
+	}
+	CALL $Terminal_no_obj_print$
+	;; Remote call ITIP3WalletFungible.approve
+	;; push identifier userWallet_
+	GETGLOB 17
+	NEWC
+	STSLICECONST x497_
+	PUSHINT 0
+	STUR 32
+	PUSHINT 0
+	STUR 32
+	PUSHINT 2
+	STUR 8
+	STONE
+	STONE
+	STONE
+	NEWC
+	STSLICECONST xa_
+	STB
+	STSLICE
+	PUSHINT 4
+	STZEROES
+	STSLICECONST 0
+	STSLICECONST 1
+	NEWC
+	STSLICECONST 1
+	PUSHINT 512
+	STZEROES
+	;; push identifier userPubkey_
+	GETGLOB 14
+	ISNULL
+	PUSHCONT {
+		STSLICECONST 0
+	}
+	PUSHCONT {
+		STSLICECONST 1
+		;; push identifier userPubkey_
+		GETGLOB 14
+		STUR 256
+	}
+	IFELSE
+	;; push identifier now
+	NOW
+	;; uint64
+	STUR 64
+	PUSHINT 0
+	STUR 32
+	STSLICECONST x0321d173
+	NEWC
+	;; spender
+	;; push identifier ctx_pool
+	GETGLOB 27
+	STSLICER
+	;; remainingTokens
+	PUSHINT 0
+	STUR 128
+	;; tokens
+	;; push identifier ctx_tokens
+	GETGLOB 20
+	STUR 128
+	STBREFR
+	STBREFR
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+	PUSHINT 0
+	PUSHSLICE x50726f63656564696e672057495448445241572e2e2e
+	NEWC
+	STSLICE
+	ENDC
+	CALL $Terminal_no_obj_print$
+	;; Remote call IDEXPool.withdraw
+	;; push identifier ctx_pool
+	GETGLOB 27
+	NEWC
+	STSLICECONST x497_
+	PUSHINT 0
+	STUR 32
+	PUSHINT 1851126578
+	STUR 32
+	PUSHINT 2
+	STUR 8
+	STONE
+	STONE
+	STONE
+	NEWC
+	STSLICECONST xa_
+	STB
+	STSLICE
+	PUSHINT 4
+	STZEROES
+	STSLICECONST 0
+	STSLICECONST 1
+	NEWC
+	STSLICECONST 1
+	PUSHINT 512
+	STZEROES
+	;; push identifier userPubkey_
+	GETGLOB 14
+	ISNULL
+	PUSHCONT {
+		STSLICECONST 0
+	}
+	PUSHCONT {
+		STSLICECONST 1
+		;; push identifier userPubkey_
+		GETGLOB 14
+		STUR 256
+	}
+	IFELSE
+	;; push identifier now
+	NOW
+	;; uint64
+	STUR 64
+	PUSHINT 0
+	STUR 32
+	STSLICECONST x48c02f51
+	NEWC
+	;; _senderKey
+	;; push identifier userPubkey_
+	GETGLOB 14
+	STUR 256
+	;; _senderOwner
+	;; push identifier ZERO_ADDRESS
+	;; address.makeAddrStd()
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	STSLICER
+	;; _tokens
+	;; push identifier ctx_tokens
+	GETGLOB 20
+	STUR 128
+	STBREFR
+	STBREFR
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+	PUSHINT 0
+	PUSHSLICE x446f6e6521
+	NEWC
+	STSLICE
+	ENDC
+	CALL $Terminal_no_obj_print$
+	CALL $mainMenu_internal$
+}
+PUSHCONT {
+	CALL $mainMenu_internal$
+}
+IFELSE
+;; end if
+DROP
+; end function dexWithdrawStep3
 
 .globl	tip3BalanceStep1
 .public	tip3BalanceStep1
@@ -5249,7 +6537,7 @@ ENDS
 ; function tip3BalanceStep1
 ;; Remote call ITIP3WalletMetadata.getBalance
 ;; push identifier userWallet_
-GETGLOB 16
+GETGLOB 17
 NEWC
 STSLICECONST x497_
 PUSHINT 98907555
@@ -5306,7 +6594,7 @@ SETGLOB 7
 ; function tip3BalanceStep1
 ;; Remote call ITIP3WalletMetadata.getBalance
 ;; push identifier userWallet_
-GETGLOB 16
+GETGLOB 17
 NEWC
 STSLICECONST x497_
 PUSHINT 98907555
@@ -5380,7 +6668,7 @@ ENDS
 ;; push identifier balance
 DUP
 ; colValue
-SETGLOB 23
+SETGLOB 24
 ; end colValue
 PUSHINT 0
 NEWC
@@ -5411,7 +6699,7 @@ CALLREF {
 CALL $Terminal_no_obj_print$
 ;; Remote call ITIP3WalletFungible.allowance
 ;; push identifier userWallet_
-GETGLOB 16
+GETGLOB 17
 NEWC
 STSLICECONST x497_
 PUSHINT 616410710
@@ -5473,7 +6761,7 @@ SETGLOB 7
 ;; push identifier balance
 DUP
 ; colValue
-SETGLOB 23
+SETGLOB 24
 ; end colValue
 PUSHINT 0
 NEWC
@@ -5504,7 +6792,7 @@ CALLREF {
 CALL $Terminal_no_obj_print$
 ;; Remote call ITIP3WalletFungible.allowance
 ;; push identifier userWallet_
-GETGLOB 16
+GETGLOB 17
 NEWC
 STSLICECONST x497_
 PUSHINT 616410710
@@ -5597,7 +6885,7 @@ ENDS
 DUP
 INDEX 1
 ; colValue
-SETGLOB 21
+SETGLOB 22
 ; end colValue
 ; expValue
 ; end expValue
@@ -5606,11 +6894,11 @@ SETGLOB 21
 DUP
 INDEX 0
 ; colValue
-SETGLOB 22
+SETGLOB 23
 ; end colValue
 ;; if
 ;; push identifier ctx_action
-GETGLOB 17
+GETGLOB 18
 ;; ==
 ;; get member TIP3_APPROVE
 PUSHINT 3
@@ -5632,7 +6920,7 @@ PUSHCONT {
 		CALL $appendToList_macro$
 	}
 	;; push identifier ctx_remainingTokens
-	GETGLOB 21
+	GETGLOB 22
 	PUSHINT 0
 	FALSE
 	FALSE
@@ -5660,7 +6948,7 @@ PUSHCONT {
 	}
 	;; get member value
 	;; push identifier ctx_spender
-	GETGLOB 22
+	GETGLOB 23
 	PARSEMSGADDR
 	INDEX 3
 	PLDU 256
@@ -5701,7 +6989,7 @@ SETGLOB 7
 DUP
 INDEX 1
 ; colValue
-SETGLOB 21
+SETGLOB 22
 ; end colValue
 ; expValue
 ; end expValue
@@ -5710,11 +6998,11 @@ SETGLOB 21
 DUP
 INDEX 0
 ; colValue
-SETGLOB 22
+SETGLOB 23
 ; end colValue
 ;; if
 ;; push identifier ctx_action
-GETGLOB 17
+GETGLOB 18
 ;; ==
 ;; get member TIP3_APPROVE
 PUSHINT 3
@@ -5736,7 +7024,7 @@ PUSHCONT {
 		CALL $appendToList_macro$
 	}
 	;; push identifier ctx_remainingTokens
-	GETGLOB 21
+	GETGLOB 22
 	PUSHINT 0
 	FALSE
 	FALSE
@@ -5764,7 +7052,7 @@ PUSHCONT {
 	}
 	;; get member value
 	;; push identifier ctx_spender
-	GETGLOB 22
+	GETGLOB 23
 	PARSEMSGADDR
 	INDEX 3
 	PLDU 256
@@ -5816,7 +7104,7 @@ ENDS
 ;; push identifier value
 DUP
 ; colValue
-SETGLOB 18
+SETGLOB 19
 ; end colValue
 PUSHINT 1164929490
 PUSHSLICE x486f77206d756368205449503320746f6b656e733a20
@@ -5843,7 +7131,7 @@ SETGLOB 7
 ;; push identifier value
 DUP
 ; colValue
-SETGLOB 18
+SETGLOB 19
 ; end colValue
 PUSHINT 1164929490
 PUSHSLICE x486f77206d756368205449503320746f6b656e733a20
@@ -5880,19 +7168,75 @@ ENDS
 ; function tip3TransferStep2
 ; expValue
 ; end expValue
-;; push identifier value
-DUP
+PUSHINT 1000000000
 ; colValue
-SETGLOB 19
+SETGLOB 21
 ; end colValue
-PUSHINT 1450606279
-PUSHSLICE x486f77206d75636820544f4e732061732076616c75653a20
+;; Remote call ITIP3WalletFungible.transfer
+;; push identifier userWallet_
+GETGLOB 17
 NEWC
+STSLICECONST x497_
+PUSHINT 0
+STUR 32
+PUSHINT 0
+STUR 32
+PUSHINT 2
+STUR 8
+STONE
+STONE
+STONE
+NEWC
+STSLICECONST xa_
+STB
 STSLICE
+PUSHINT 4
+STZEROES
+STSLICECONST 0
+STSLICECONST 1
+NEWC
+STSLICECONST 1
+PUSHINT 512
+STZEROES
+;; push identifier userPubkey_
+GETGLOB 14
+ISNULL
+PUSHCONT {
+	STSLICECONST 0
+}
+PUSHCONT {
+	STSLICECONST 1
+	;; push identifier userPubkey_
+	GETGLOB 14
+	STUR 256
+}
+IFELSE
+;; push identifier now
+NOW
+;; uint64
+STUR 64
+PUSHINT 0
+STUR 32
+STSLICECONST x7b017417
+NEWC
+;; dest
+;; push identifier ctx_dest
+GETGLOB 19
+STSLICER
+;; tokens
+;; push identifier ctx_tokens
+GETGLOB 20
+STUR 128
+;; grams
+PUSHINT 100000000
+STUR 128
+STBREFR
+STBREFR
 ENDC
 PUSHINT 0
-PUSHINT 999999999999999999999
-CALL $NumberInput_no_obj_get$
+SENDRAWMSG
+CALL $_eraseCtx_internal$
+CALL $tip3BalanceStep1_internal$
 DROP
 ; end function tip3TransferStep2
 CALLREF {
@@ -5907,204 +7251,77 @@ SETGLOB 7
 ; function tip3TransferStep2
 ; expValue
 ; end expValue
-;; push identifier value
-DUP
+PUSHINT 1000000000
 ; colValue
-SETGLOB 19
+SETGLOB 21
 ; end colValue
-PUSHINT 1450606279
-PUSHSLICE x486f77206d75636820544f4e732061732076616c75653a20
+;; Remote call ITIP3WalletFungible.transfer
+;; push identifier userWallet_
+GETGLOB 17
 NEWC
+STSLICECONST x497_
+PUSHINT 0
+STUR 32
+PUSHINT 0
+STUR 32
+PUSHINT 2
+STUR 8
+STONE
+STONE
+STONE
+NEWC
+STSLICECONST xa_
+STB
 STSLICE
+PUSHINT 4
+STZEROES
+STSLICECONST 0
+STSLICECONST 1
+NEWC
+STSLICECONST 1
+PUSHINT 512
+STZEROES
+;; push identifier userPubkey_
+GETGLOB 14
+ISNULL
+PUSHCONT {
+	STSLICECONST 0
+}
+PUSHCONT {
+	STSLICECONST 1
+	;; push identifier userPubkey_
+	GETGLOB 14
+	STUR 256
+}
+IFELSE
+;; push identifier now
+NOW
+;; uint64
+STUR 64
+PUSHINT 0
+STUR 32
+STSLICECONST x7b017417
+NEWC
+;; dest
+;; push identifier ctx_dest
+GETGLOB 19
+STSLICER
+;; tokens
+;; push identifier ctx_tokens
+GETGLOB 20
+STUR 128
+;; grams
+PUSHINT 100000000
+STUR 128
+STBREFR
+STBREFR
 ENDC
 PUSHINT 0
-PUSHINT 999999999999999999999
-CALL $NumberInput_no_obj_get$
+SENDRAWMSG
+CALL $_eraseCtx_internal$
+CALL $tip3BalanceStep1_internal$
 DROP
 ; end function tip3TransferStep2
-
-.globl	tip3TransferStep3
-.public	tip3TransferStep3
-.type	tip3TransferStep3, @function
-GETGLOB 1
-ISNULL
-IFREF {
-	CALL $c4_to_c7$
-}
-; Decode input parameters
-; Decode value
-LDUQ 128
-PUSHCONT {
-	;; load next cell
-	LDREF
-	ENDS
-	CTOS
-	LDU 128
-}
-IFNOT
-ENDS
-;; param: value
-; function tip3TransferStep3
-; expValue
-; end expValue
-;; push identifier value
-DUP
-; colValue
-SETGLOB 20
-; end colValue
-;; Remote call ITIP3WalletFungible.transfer
-;; push identifier userWallet_
-GETGLOB 16
-NEWC
-STSLICECONST x497_
-PUSHINT 0
-STUR 32
-PUSHINT 0
-STUR 32
-PUSHINT 2
-STUR 8
-STONE
-STONE
-STONE
-NEWC
-STSLICECONST xa_
-STB
-STSLICE
-PUSHINT 4
-STZEROES
-STSLICECONST 0
-STSLICECONST 1
-NEWC
-STSLICECONST 1
-PUSHINT 512
-STZEROES
-;; push identifier userPubkey_
-GETGLOB 14
-ISNULL
-PUSHCONT {
-	STSLICECONST 0
-}
-PUSHCONT {
-	STSLICECONST 1
-	;; push identifier userPubkey_
-	GETGLOB 14
-	STUR 256
-}
-IFELSE
-;; push identifier now
-NOW
-;; uint64
-STUR 64
-PUSHINT 0
-STUR 32
-STSLICECONST x7b017417
-NEWC
-;; dest
-;; push identifier ctx_dest
-GETGLOB 18
-STSLICER
-;; tokens
-;; push identifier ctx_tokens
-GETGLOB 19
-STUR 128
-;; grams
-;; push identifier ctx_grams
-GETGLOB 20
-STUR 128
-STBREFR
-STBREFR
-ENDC
-PUSHINT 0
-SENDRAWMSG
-CALL $_eraseCtx_internal$
-CALL $tip3BalanceStep1_internal$
-DROP
-; end function tip3TransferStep3
-CALLREF {
-	CALL $c7_to_c4$
-}
-TRUE
-SETGLOB 7
-
-.globl	tip3TransferStep3_internal
-.type	tip3TransferStep3_internal, @function
-;; param: value
-; function tip3TransferStep3
-; expValue
-; end expValue
-;; push identifier value
-DUP
-; colValue
-SETGLOB 20
-; end colValue
-;; Remote call ITIP3WalletFungible.transfer
-;; push identifier userWallet_
-GETGLOB 16
-NEWC
-STSLICECONST x497_
-PUSHINT 0
-STUR 32
-PUSHINT 0
-STUR 32
-PUSHINT 2
-STUR 8
-STONE
-STONE
-STONE
-NEWC
-STSLICECONST xa_
-STB
-STSLICE
-PUSHINT 4
-STZEROES
-STSLICECONST 0
-STSLICECONST 1
-NEWC
-STSLICECONST 1
-PUSHINT 512
-STZEROES
-;; push identifier userPubkey_
-GETGLOB 14
-ISNULL
-PUSHCONT {
-	STSLICECONST 0
-}
-PUSHCONT {
-	STSLICECONST 1
-	;; push identifier userPubkey_
-	GETGLOB 14
-	STUR 256
-}
-IFELSE
-;; push identifier now
-NOW
-;; uint64
-STUR 64
-PUSHINT 0
-STUR 32
-STSLICECONST x7b017417
-NEWC
-;; dest
-;; push identifier ctx_dest
-GETGLOB 18
-STSLICER
-;; tokens
-;; push identifier ctx_tokens
-GETGLOB 19
-STUR 128
-;; grams
-;; push identifier ctx_grams
-GETGLOB 20
-STUR 128
-STBREFR
-STBREFR
-ENDC
-PUSHINT 0
-SENDRAWMSG
-CALL $_eraseCtx_internal$
-CALL $tip3BalanceStep1_internal$
-DROP
-; end function tip3TransferStep3
 
 .globl	tip3ApproveStep1
 .public	tip3ApproveStep1
@@ -6133,7 +7350,7 @@ ENDS
 ;; push identifier value
 DUP
 ; colValue
-SETGLOB 18
+SETGLOB 19
 ; end colValue
 PUSHINT 853404753
 PUSHSLICE x486f77206d756368205449503320746f6b656e733a20
@@ -6160,7 +7377,7 @@ SETGLOB 7
 ;; push identifier value
 DUP
 ; colValue
-SETGLOB 18
+SETGLOB 19
 ; end colValue
 PUSHINT 853404753
 PUSHSLICE x486f77206d756368205449503320746f6b656e733a20
@@ -6200,7 +7417,7 @@ ENDS
 ;; push identifier value
 DUP
 ; colValue
-SETGLOB 19
+SETGLOB 20
 ; end colValue
 CALL $tip3BalanceStep1_internal$
 DROP
@@ -6220,7 +7437,7 @@ SETGLOB 7
 ;; push identifier value
 DUP
 ; colValue
-SETGLOB 19
+SETGLOB 20
 ; end colValue
 CALL $tip3BalanceStep1_internal$
 DROP
@@ -6239,15 +7456,15 @@ ENDS
 ; function tip3ApproveStep3
 ;; if
 ;; push identifier ctx_balance
-GETGLOB 23
+GETGLOB 24
 ;; >=
 ;; push identifier ctx_tokens
-GETGLOB 19
+GETGLOB 20
 GEQ
 PUSHCONT {
 	;; Remote call ITIP3WalletFungible.approve
 	;; push identifier userWallet_
-	GETGLOB 16
+	GETGLOB 17
 	NEWC
 	STSLICECONST x497_
 	PUSHINT 0
@@ -6294,15 +7511,15 @@ PUSHCONT {
 	NEWC
 	;; spender
 	;; push identifier ctx_dest
-	GETGLOB 18
+	GETGLOB 19
 	STSLICER
 	;; remainingTokens
 	;; push identifier ctx_remainingTokens
-	GETGLOB 21
+	GETGLOB 22
 	STUR 128
 	;; tokens
 	;; push identifier ctx_tokens
-	GETGLOB 19
+	GETGLOB 20
 	STUR 128
 	STBREFR
 	STBREFR
@@ -6317,6 +7534,7 @@ PUSHCONT {
 	STSLICE
 	ENDC
 	CALL $Terminal_no_obj_print$
+	CALL $mainMenu_internal$
 }
 IFELSE
 ;; end if
@@ -6334,15 +7552,15 @@ SETGLOB 7
 ; function tip3ApproveStep3
 ;; if
 ;; push identifier ctx_balance
-GETGLOB 23
+GETGLOB 24
 ;; >=
 ;; push identifier ctx_tokens
-GETGLOB 19
+GETGLOB 20
 GEQ
 PUSHCONT {
 	;; Remote call ITIP3WalletFungible.approve
 	;; push identifier userWallet_
-	GETGLOB 16
+	GETGLOB 17
 	NEWC
 	STSLICECONST x497_
 	PUSHINT 0
@@ -6389,15 +7607,15 @@ PUSHCONT {
 	NEWC
 	;; spender
 	;; push identifier ctx_dest
-	GETGLOB 18
+	GETGLOB 19
 	STSLICER
 	;; remainingTokens
 	;; push identifier ctx_remainingTokens
-	GETGLOB 21
+	GETGLOB 22
 	STUR 128
 	;; tokens
 	;; push identifier ctx_tokens
-	GETGLOB 19
+	GETGLOB 20
 	STUR 128
 	STBREFR
 	STBREFR
@@ -6412,6 +7630,7 @@ PUSHCONT {
 	STSLICE
 	ENDC
 	CALL $Terminal_no_obj_print$
+	CALL $mainMenu_internal$
 }
 IFELSE
 ;; end if
@@ -6438,7 +7657,7 @@ PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
 ; expValue
 ; end expValue
 ; colValue
-SETGLOB 16
+SETGLOB 17
 ; end colValue
 ; end function _eraseAcc
 
@@ -6450,19 +7669,13 @@ SETGLOB 16
 ;; get member NONE
 PUSHINT 0
 ; colValue
-SETGLOB 17
+SETGLOB 18
 ; end colValue
 ; expValue
 ; end expValue
 ;; push identifier ZERO_ADDRESS
 ;; address.makeAddrStd()
 PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-; colValue
-SETGLOB 18
-; end colValue
-; expValue
-; end expValue
-PUSHINT 0
 ; colValue
 SETGLOB 19
 ; end colValue
@@ -6480,15 +7693,15 @@ SETGLOB 21
 ; end colValue
 ; expValue
 ; end expValue
-;; push identifier ZERO_ADDRESS
-;; address.makeAddrStd()
-PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+PUSHINT 0
 ; colValue
 SETGLOB 22
 ; end colValue
 ; expValue
 ; end expValue
-PUSHINT 0
+;; push identifier ZERO_ADDRESS
+;; address.makeAddrStd()
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
 ; colValue
 SETGLOB 23
 ; end colValue
@@ -6500,9 +7713,7 @@ SETGLOB 24
 ; end colValue
 ; expValue
 ; end expValue
-;; push identifier ZERO_ADDRESS
-;; address.makeAddrStd()
-PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+PUSHINT 0
 ; colValue
 SETGLOB 25
 ; end colValue
@@ -6532,9 +7743,17 @@ SETGLOB 28
 ; end colValue
 ; expValue
 ; end expValue
-PUSHINT 0
+;; push identifier ZERO_ADDRESS
+;; address.makeAddrStd()
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
 ; colValue
 SETGLOB 29
+; end colValue
+; expValue
+; end expValue
+PUSHINT 0
+; colValue
+SETGLOB 30
 ; end colValue
 ; end function _eraseCtx
 
@@ -7686,27 +8905,46 @@ GETGLOB 6
 STUR 1
 NEWC
 NEWC
-GETGLOB 25
 GETGLOB 26
 GETGLOB 27
+GETGLOB 28
 REVERSE 4, 0
 STSLICE
 STSLICE
 STSLICE
 NEWC
-GETGLOB 28
 GETGLOB 29
+GETGLOB 30
 XCHG s2
 STSLICE
 STU 128
 GETGLOB 15
 GETGLOB 16
-GETGLOB 18
-GETGLOB 30
-REVERSE 7, 0
+GETGLOB 17
+GETGLOB 19
+GETGLOB 31
+REVERSE 8, 0
 STBREF
 STBREF
 STSLICE
+SWAP
+UNTUPLE 6
+NEWC
+PUSH S6
+STREFR
+PUSH S5
+STREFR
+PUSH S4
+STUR 8
+PUSH S3
+STREFR
+PUSH S2
+STUR 128
+PUSH S1
+STUR 128
+XCHG s6
+BLKDROP 6
+STBREFR
 STSLICE
 STSLICE
 SWAP
@@ -7720,12 +8958,12 @@ NIP
 NIP
 STBREFR
 NEWC
-GETGLOB 19
 GETGLOB 20
 GETGLOB 21
 GETGLOB 22
 GETGLOB 23
 GETGLOB 24
+GETGLOB 25
 REVERSE 7, 0
 STU 128
 STU 128
@@ -7738,7 +8976,7 @@ GETGLOB 11
 GETGLOB 12
 GETGLOB 13
 GETGLOB 14
-GETGLOB 17
+GETGLOB 18
 REVERSE 9, 0
 STBREF
 STBREF
@@ -7791,15 +9029,24 @@ LDREFRTOS
 LDREFRTOS
 LDMSGADDR
 LDMSGADDR
+SETGLOB 28
 SETGLOB 27
 SETGLOB 26
-SETGLOB 25
 LDREFRTOS
 LDMSGADDR
 PLDU 128
+SETGLOB 30
 SETGLOB 29
-SETGLOB 28
 LDMSGADDR
+LDREFRTOS
+LDREF
+LDREF
+LDU 8
+LDREF
+LDU 128
+PLDU 128
+TUPLE 6
+SETGLOB 16
 LDMSGADDR
 LDMSGADDR
 LDREFRTOS
@@ -7807,9 +9054,9 @@ NIP
 LDMSGADDR
 PLDU 128
 TUPLE 2
-SETGLOB 30
-SETGLOB 18
-SETGLOB 16
+SETGLOB 31
+SETGLOB 19
+SETGLOB 17
 SETGLOB 15
 LDREFRTOS
 LDU 128
@@ -7818,12 +9065,12 @@ LDU 128
 LDMSGADDR
 LDU 128
 PLDU 128
+SETGLOB 25
 SETGLOB 24
 SETGLOB 23
 SETGLOB 22
 SETGLOB 21
 SETGLOB 20
-SETGLOB 19
 LDU 8
 LDOPTREF
 SWAP
@@ -7848,7 +9095,7 @@ IFNOT
 SETGLOB 13
 LDU 256
 PLDU 8
-SETGLOB 17
+SETGLOB 18
 SETGLOB 14
 SETGLOB 12
 SETGLOB 10
@@ -7872,15 +9119,24 @@ PUSHCONT {
 	LDREFRTOS
 	LDMSGADDR
 	LDMSGADDR
+	SETGLOB 28
 	SETGLOB 27
 	SETGLOB 26
-	SETGLOB 25
 	LDREFRTOS
 	LDMSGADDR
 	PLDU 128
+	SETGLOB 30
 	SETGLOB 29
-	SETGLOB 28
 	LDMSGADDR
+	LDREFRTOS
+	LDREF
+	LDREF
+	LDU 8
+	LDREF
+	LDU 128
+	PLDU 128
+	TUPLE 6
+	SETGLOB 16
 	LDMSGADDR
 	LDMSGADDR
 	LDREFRTOS
@@ -7888,9 +9144,9 @@ PUSHCONT {
 	LDMSGADDR
 	PLDU 128
 	TUPLE 2
-	SETGLOB 30
-	SETGLOB 18
-	SETGLOB 16
+	SETGLOB 31
+	SETGLOB 19
+	SETGLOB 17
 	SETGLOB 15
 	LDREFRTOS
 	LDU 128
@@ -7899,12 +9155,12 @@ PUSHCONT {
 	LDMSGADDR
 	LDU 128
 	PLDU 128
+	SETGLOB 25
 	SETGLOB 24
 	SETGLOB 23
 	SETGLOB 22
 	SETGLOB 21
 	SETGLOB 20
-	SETGLOB 19
 	LDU 8
 	LDOPTREF
 	SWAP
@@ -7929,7 +9185,7 @@ PUSHCONT {
 	SETGLOB 13
 	LDU 256
 	PLDU 8
-	SETGLOB 17
+	SETGLOB 18
 	SETGLOB 14
 	SETGLOB 12
 	SETGLOB 10
@@ -7966,53 +9222,65 @@ PUSHCONT {
 	; init userRoot_
 	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
 	SETGLOB 15
+	; init userTokenDetails_
+	NEWC
+	ENDC
+	NEWC
+	ENDC
+	PUSHINT 0
+	NEWC
+	ENDC
+	PUSHINT 0
+	PUSHINT 0
+	TUPLE 6
+	SETGLOB 16
 	; init userWallet_
 	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-	SETGLOB 16
+	SETGLOB 17
 	; init ctx_action
 	PUSHINT 0
-	SETGLOB 17
+	SETGLOB 18
 	; init ctx_dest
 	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-	SETGLOB 18
+	SETGLOB 19
 	; init ctx_tokens
 	PUSHINT 0
-	SETGLOB 19
+	SETGLOB 20
 	; init ctx_grams
 	PUSHINT 0
-	SETGLOB 20
+	SETGLOB 21
 	; init ctx_remainingTokens
 	PUSHINT 0
-	SETGLOB 21
+	SETGLOB 22
 	; init ctx_spender
 	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-	SETGLOB 22
+	SETGLOB 23
 	; init ctx_balance
 	PUSHINT 0
-	SETGLOB 23
+	SETGLOB 24
 	; init ctx_limit
 	PUSHINT 0
-	SETGLOB 24
+	SETGLOB 25
 	; init ctx_swapToken
 	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-	SETGLOB 25
+	SETGLOB 26
 	; init ctx_pool
 	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-	SETGLOB 26
+	SETGLOB 27
 	; init ctx_2ndWallet
 	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-	SETGLOB 27
+	SETGLOB 28
 	; init ctx_liqWallet
 	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-	SETGLOB 28
+	SETGLOB 29
 	; init ctx_liqReturn
 	PUSHINT 0
-	SETGLOB 29
+	SETGLOB 30
 	; init walletAllowance
 	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
 	PUSHINT 0
 	TUPLE 2
-	SETGLOB 30
+	SETGLOB 31
 	; set contract pubkey
 	PUSHINT 0
 	SWAP

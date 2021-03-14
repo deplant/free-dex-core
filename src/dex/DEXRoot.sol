@@ -8,11 +8,11 @@ pragma AbiHeader time;
 pragma AbiHeader expire;
 pragma AbiHeader pubkey;
 
-import "/home/yankin/ton/contracts/src/std/lib/TVM.sol";
-import "/home/yankin/ton/contracts/src/dex/lib/DEX.sol";
-import "/home/yankin/ton/contracts/src/dex/DEXPool.sol";
-import "/home/yankin/ton/contracts/src/dex/int/IDEXRoot.sol";
-import "/home/yankin/ton/contracts/src/tip3/int/ITIP3Root.sol";
+import "../std/lib/TVM.sol";
+import "../dex/lib/DEX.sol";
+import "../dex/DEXPool.sol";
+import "../dex/int/IDEXRoot.sol";
+import "../tip3/int/ITIP3Root.sol";
 
 
 contract DEXRoot is IDEXRoot {
@@ -21,14 +21,14 @@ contract DEXRoot is IDEXRoot {
 
     uint8 static iteration;
 
-    mapping(address  => bytes) tokens_; // key - root, value - symbol
+    mapping(address  => ITIP3RootMetadata.TokenDetails) tokens_; // key - root, value - symbol
     
     TvmCell liqWalletCode_;
     TvmCell poolCode_;       
     address governance_;
 
-    uint64 constant DEPLOY_FEE      = 1.5 ton;
-    uint64 constant USAGE_FEE       = 0.1 ton;
+    uint64 constant DEPLOY_FEE      = 1.6 ton;
+    uint64 constant USAGE_FEE       = 0.2 ton;
     uint64 constant MESSAGE_FEE     = 0.05 ton;   
     uint64 constant CALLBACK_FEE    = 0.01 ton;  
     uint128 constant INITIAL_GAS    = 0.5 ton; 
@@ -43,7 +43,7 @@ contract DEXRoot is IDEXRoot {
     /* Gatters */  
 
     function getTokenExists(address rootAddress) external override view returns(bool) {
-      return tokens_.exists(rootAddress);
+      return _checkToken(rootAddress);
     }
 
     function getPoolAddress(address _tokenA, address _tokenB) external override view returns (address poolAddress) {
@@ -54,39 +54,39 @@ contract DEXRoot is IDEXRoot {
     /* User methods */    
      
    // import of tokens by users (requires value) 
-   function importToken(address _rootAddr, bytes symbol) external override onlyOwnerAcceptOrPay {
-     //ITIP3RootFungible(_rootAddr).info{ callback: onGetInfo, value: USAGE_FEE }();
-     tokens_.add(_rootAddr, symbol);
+   function importToken(address _rootAddr) external override onlyOwnerAcceptOrPay {
+     ITIP3RootMetadata(_rootAddr).callTokenInfo{ callback: DEXRoot.onGetInfo, value: USAGE_FEE + USAGE_FEE }();
+     //tokens_.add(_rootAddr, symbol);
    }
  
    /// Function for deployment of pair pools by users (requires value)
-   function deployPool(address _tokenA, address _tokenB, address _walletA, address _walletB) external override onlyOwnerAcceptOrPay returns(address poolAddress) {
+   function deployPool(address _tokenA, address _tokenB) external override onlyOwnerAcceptOrPay returns(address poolAddress) {
 
         // check enough value with message!!!
         //require(msg.value >= DEX.POOL_DEPLOY_FEE, DEX.ERROR_NOT_ENOUGH_VALUE);
 
         // token pair routine
         (address tokenX, address tokenY) = _pairRoutine(_tokenA, _tokenB);
-        (address walletX, address walletY) = _tokenA < _tokenB ? (_walletA, _walletB) : (_walletB, _walletA);
-        //bytes name = abi.encodePacked("0x4c4951534f523a474c443a504c54");//bytes(_pairName(tokenX, tokenY));
-        //bytes symbol = abi.encodePacked("0x4c4951534f523a474c443a504c54");//bytes(_pairSymbol(tokenX, tokenY));
+        //(address walletX, address walletY) = _tokenA < _tokenB ? (_walletA, _walletB) : (_walletB, _walletA);
+
         // deploy pair pool contract
         poolAddress  = new DEXPool {
           code: poolCode_,
-          value: DEPLOY_FEE,
+          value: DEPLOY_FEE + DEPLOY_FEE + DEPLOY_FEE + USAGE_FEE + USAGE_FEE + USAGE_FEE,
           pubkey: 0,
           varInit: {
                 dex_: address(this),
-                name_: "LIQSOR:GLD:PLT",//_pairName(tokenX, tokenY),
-                symbol_: "LIQSOR:GLD:PLT",//_pairSymbol(tokenX, tokenY),
+                name_: _pairName(tokenX, tokenY),
+                symbol_: _pairSymbol(tokenX, tokenY),
                 code_:  liqWalletCode_,                
                 tokenX_:tokenX,
                 tokenY_:tokenY
             }
-          }(walletX, walletY); // constructor params
+          }(tokens_.fetch(tokenX).get(), tokens_.fetch(tokenY).get());
+          //(walletX, walletY, tokens_.fetch(tokenX).get().code, tokens_.fetch(tokenY).get().code); // constructor params
 
+        //_pairName(tokenX, tokenY),
         return poolAddress;
-
    }
 
     /* Owner/Governance methods */  
@@ -109,10 +109,10 @@ contract DEXRoot is IDEXRoot {
     /* Callbacks */  
 
     // callback from TIP-3 token root
-   //function onGetInfo(uint256 rootKey, address rootOwner, bytes name , bytes symbol, uint8 decimals, TvmCell code) public internalOnlyPay {
-       //require(hashes_.exists(tvm.hash(code)), ERROR_WRONG_CODE_CRC);
-   //    tokens_.add(msg.sender, symbol);
-   //}    
+   function onGetInfo(ITIP3RootMetadata.TokenDetails details) public {
+       //tvm.accept();
+       tokens_.add(msg.sender, details);
+   }    
   
     /* Private part */  
 
@@ -161,24 +161,19 @@ contract DEXRoot is IDEXRoot {
     }  
 
     function _checkToken(address _token) private inline view returns(bool) {
-      return tokens_.exists(_token) && tokens_.fetch(_token).hasValue();
+      return tokens_.fetch(_token).hasValue();
     }
 
-    function _pairName(address _tokenX, address _tokenY) private view returns (string) {
-      string str = "4c69717569534f5220506f6f6c207b";
-      str.append(tokens_.fetch(_tokenX).get());
-      str.append("2d");
-      str.append(tokens_.fetch(_tokenY).get());
-      str.append("7d");
+    function _pairName(address _tokenX, address _tokenY) private view returns (bytes) {
+      // format() isn't recommended on-chain, but append() isn't usable now, so using format()
+      string str = format("LiquiSOR({}:{})", string(tokens_.fetch(_tokenX).get().name), string(tokens_.fetch(_tokenX).get().name));
       return bytes(str);
     }
 
     function _pairSymbol(address _tokenX, address _tokenY) private view returns (string) {
-      string str = "4c51534f523a"; 
-      str.append(tokens_.fetch(_tokenX).get());
-      str.append("3a");
-      str.append(tokens_.fetch(_tokenY).get());
-      return bytes(str);  
+      // format() isn't recommended on-chain, but append() isn't usable now, so using format()
+      string str = format("LIQ({}:{})", string(tokens_.fetch(_tokenX).get().symbol), string(tokens_.fetch(_tokenX).get().symbol));
+      return bytes(str);
     }
 
     function _expectedAddress(address _tokenX, address _tokenY) internal inline view returns (address)  {
@@ -188,8 +183,8 @@ contract DEXRoot is IDEXRoot {
             contr: DEXPool,
             varInit: {
                 dex_: address(this),
-                name_: "LIQSOR:GLD:PLT",
-                symbol_: "LIQSOR:GLD:PLT",
+                name_: _pairName(_tokenX, _tokenY),
+                symbol_: _pairSymbol(_tokenX, _tokenY),
                 code_:  liqWalletCode_,                    
                 tokenX_:_tokenX,
                 tokenY_:_tokenY

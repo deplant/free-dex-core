@@ -7,11 +7,11 @@ pragma AbiHeader time;
 pragma AbiHeader expire;
 pragma AbiHeader pubkey;
 
-import "/home/yankin/ton/contracts/src/std/lib/TVM.sol";
-import "/home/yankin/ton/contracts/src/std/lib/SafeUint.sol";
-import "/home/yankin/ton/contracts/src/tip3/lib/TIP3.sol";
-import "/home/yankin/ton/contracts/src/tip3/int/ITIP3Root.sol";
-import "/home/yankin/ton/contracts/src/tip3/TIP3FungibleWallet.sol";
+import "../std/lib/TVM.sol";
+import "../std/lib/SafeUint.sol";
+import "../tip3/lib/TIP3.sol";
+import "../tip3/int/ITIP3Root.sol";
+import "../tip3/TIP3FungibleWallet.sol";
 
 contract TIP3FungibleRoot is ITIP3RootMetadata, ITIP3RootFungible {
     using SafeUint for uint128;
@@ -44,41 +44,31 @@ contract TIP3FungibleRoot is ITIP3RootMetadata, ITIP3RootFungible {
 
     /* Metadata Functions */
 
-    function getName() override external view returns (bytes name) {
-        name = name_;
+    function getTokenInfo() override external view returns (TokenDetails) {
+        return TokenDetails(name_,
+                            symbol_,
+                            decimals_,
+                            code_, 
+                            total_supply_,   
+                            total_granted_);        
+    }    
+
+    function callTokenInfo() override external responsible view responsibleOnlyPay returns (TokenDetails) {
+        return{value: 0, flag: TVM.FLAG_VALUE_ADD_INBOUND}(TokenDetails(name_,
+                                                                    symbol_,
+                                                                    decimals_,
+                                                                    code_, 
+                                                                    total_supply_,   
+                                                                    total_granted_));
     }
 
-    function getSymbol() override external view returns (bytes symbol) {
-        symbol = symbol_;
+    function getWalletAddress(int8 workchainId, uint256 walletPubkey, address walletOwner) override external view returns (address) {
+        return _expectedAddress(workchainId, walletPubkey, walletOwner);
     }
 
-    function getDecimals() override external view returns (uint8 decimals) {
-        decimals = decimals_;
-    }
-
-    function getRootKey() override external view returns (uint256 rootKey) {
-        rootKey = root_public_key_;
-    }
-
-    function getRootOwner() override external view returns (address rootOwner) {
-        rootOwner = root_owner_address_;
-    }        
-
-    function getTotalSupply() override external view returns (uint128 totalSupply) {
-        totalSupply = total_supply_;
-    }
-
-    function getTotalGranted() override external view returns (uint128 totalGranted) {
-        totalGranted = total_granted_;
-    }
-
-    function getWalletCode() override external view returns (TvmCell walletCode) {
-        walletCode = code_;
-    }
-
-    function getWalletAddress(int8 workchainId, uint256 walletPubkey, address walletOwner) override external view returns (address walletAddress) {
-        walletAddress = _expectedAddress(workchainId, walletPubkey, walletOwner);
-    }
+    function callWalletAddress(int8 workchainId, uint256 walletPubkey, address walletOwner) override external responsible view responsibleOnlyPay returns (address) {
+        return {value: 0, flag: TVM.FLAG_VALUE_ADD_INBOUND}(_expectedAddress(workchainId, walletPubkey, walletOwner));
+    }    
 
     /* Fungible Functions */  
 
@@ -109,11 +99,11 @@ contract TIP3FungibleRoot is ITIP3RootMetadata, ITIP3RootFungible {
         total_granted_ = total_granted_.add(tokens);
     }
 
-    function deployEmptyWallet(int8 workchainId, uint256 walletPubkey, address walletOwner, uint128 grams) override external responsible internalOnlyPay returns (address walletAddress, TvmCell walletCode) {
+    function deployEmptyWallet(int8 workchainId, uint256 walletPubkey, address walletOwner, uint128 grams) override external responsible returns (address walletAddress, TvmCell walletCode) {
         require((walletOwner != ZERO_ADDRESS && walletPubkey == 0) ||
                 (walletOwner == ZERO_ADDRESS && walletPubkey != 0),
                 TIP3.ERROR_DEFINE_WALLET_PUBLIC_KEY_OR_OWNER_ADDRESS);
-        require(grams >= DEPLOY_FEE, TIP3.ERROR_LOW_MESSAGE_VALUE);
+        require(grams >= DEPLOY_FEE && msg.value >= USAGE_FEE + DEPLOY_FEE, TIP3.ERROR_LOW_MESSAGE_VALUE);
 
         walletAddress = new TIP3FungibleWallet{
             value: grams,
@@ -148,15 +138,6 @@ contract TIP3FungibleRoot is ITIP3RootMetadata, ITIP3RootFungible {
         total_supply_ = total_supply_.add(tokens);
     }
 
-    function info() override external responsible view internalOnlyPay returns (uint256 rootKey, address rootOwner, bytes name , bytes symbol, uint8 decimals, TvmCell code) {
-        rootKey = root_public_key_;
-        rootOwner = root_owner_address_;    
-        name = name_ ;
-        symbol = symbol_;
-        decimals = decimals_;
-        code = code_;
-    }
-
     /* Private part */
 
     modifier onlyOwnerAcceptOrPay() {
@@ -173,12 +154,19 @@ contract TIP3FungibleRoot is ITIP3RootMetadata, ITIP3RootFungible {
         } 
     }    
 
-    modifier internalOnlyPay() {
+    modifier internalOwnerPay() {
         require(msg.sender != ZERO_ADDRESS && msg.value >= USAGE_FEE,TIP3.ERROR_LOW_MESSAGE_VALUE);   
         _reserveGas();
         _; // BODY
         msg.sender.transfer({ value: 0, flag: TVM.FLAG_ALL_BALANCE });  
-    }     
+    }   
+
+    modifier responsibleOnlyPay() {
+        require(msg.sender != ZERO_ADDRESS && msg.value >= USAGE_FEE,TIP3.ERROR_LOW_MESSAGE_VALUE);   
+        //_reserveGas();
+        _; // BODY
+        //msg.sender.transfer({ value: 0, flag: TVM.FLAG_ALL_BALANCE });  
+    }           
 
     function _isInternalOwner() internal inline view returns (bool) {
         return root_owner_address_ != ZERO_ADDRESS && root_owner_address_ == msg.sender && root_public_key_ == 0;

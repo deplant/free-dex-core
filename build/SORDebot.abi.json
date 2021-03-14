@@ -58,6 +58,14 @@
 			]
 		},
 		{
+			"name": "saveRoot2",
+			"inputs": [
+				{"components":[{"name":"name","type":"bytes"},{"name":"symbol","type":"bytes"},{"name":"decimals","type":"uint8"},{"name":"code","type":"cell"},{"name":"totalSupply","type":"uint128"},{"name":"totalGranted","type":"uint128"}],"name":"value","type":"tuple"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "mainMenu",
 			"inputs": [
 			],
@@ -204,6 +212,38 @@
 			]
 		},
 		{
+			"name": "dexWithdrawStep1",
+			"inputs": [
+				{"name":"value","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "dexWithdrawStep2",
+			"inputs": [
+				{"components":[{"name":"firstParam","type":"uint128"},{"name":"secondParam","type":"uint128"}],"name":"details","type":"tuple"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "dexWithdrawStep2a",
+			"inputs": [
+				{"name":"value","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "dexWithdrawStep3",
+			"inputs": [
+				{"name":"value","type":"int256"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "tip3BalanceStep1",
 			"inputs": [
 			],
@@ -236,14 +276,6 @@
 		},
 		{
 			"name": "tip3TransferStep2",
-			"inputs": [
-				{"name":"value","type":"uint128"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "tip3TransferStep3",
 			"inputs": [
 				{"name":"value","type":"uint128"}
 			],

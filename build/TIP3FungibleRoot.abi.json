@@ -10,67 +10,20 @@
 			]
 		},
 		{
-			"name": "getName",
+			"name": "getTokenInfo",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"name","type":"bytes"}
+				{"components":[{"name":"name","type":"bytes"},{"name":"symbol","type":"bytes"},{"name":"decimals","type":"uint8"},{"name":"code","type":"cell"},{"name":"totalSupply","type":"uint128"},{"name":"totalGranted","type":"uint128"}],"name":"value0","type":"tuple"}
 			]
 		},
 		{
-			"name": "getSymbol",
+			"name": "callTokenInfo",
 			"inputs": [
+				{"name":"_answer_id","type":"uint32"}
 			],
 			"outputs": [
-				{"name":"symbol","type":"bytes"}
-			]
-		},
-		{
-			"name": "getDecimals",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"decimals","type":"uint8"}
-			]
-		},
-		{
-			"name": "getRootKey",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"rootKey","type":"uint256"}
-			]
-		},
-		{
-			"name": "getRootOwner",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"rootOwner","type":"address"}
-			]
-		},
-		{
-			"name": "getTotalSupply",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"totalSupply","type":"uint128"}
-			]
-		},
-		{
-			"name": "getTotalGranted",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"totalGranted","type":"uint128"}
-			]
-		},
-		{
-			"name": "getWalletCode",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"walletCode","type":"cell"}
+				{"components":[{"name":"name","type":"bytes"},{"name":"symbol","type":"bytes"},{"name":"decimals","type":"uint8"},{"name":"code","type":"cell"},{"name":"totalSupply","type":"uint128"},{"name":"totalGranted","type":"uint128"}],"name":"value0","type":"tuple"}
 			]
 		},
 		{
@@ -81,7 +34,19 @@
 				{"name":"walletOwner","type":"address"}
 			],
 			"outputs": [
-				{"name":"walletAddress","type":"address"}
+				{"name":"value0","type":"address"}
+			]
+		},
+		{
+			"name": "callWalletAddress",
+			"inputs": [
+				{"name":"_answer_id","type":"uint32"},
+				{"name":"workchainId","type":"int8"},
+				{"name":"walletPubkey","type":"uint256"},
+				{"name":"walletOwner","type":"address"}
+			],
+			"outputs": [
+				{"name":"value0","type":"address"}
 			]
 		},
 		{
@@ -127,20 +92,6 @@
 				{"name":"tokens","type":"uint128"}
 			],
 			"outputs": [
-			]
-		},
-		{
-			"name": "info",
-			"inputs": [
-				{"name":"_answer_id","type":"uint32"}
-			],
-			"outputs": [
-				{"name":"rootKey","type":"uint256"},
-				{"name":"rootOwner","type":"address"},
-				{"name":"name","type":"bytes"},
-				{"name":"symbol","type":"bytes"},
-				{"name":"decimals","type":"uint8"},
-				{"name":"code","type":"cell"}
 			]
 		}
 	],

@@ -54,7 +54,7 @@ IFNOT
 ENDS
 ;; param: tokens
 ;; param: subscriber
-; modifier internalOnlyPay
+; modifier internalMessagePay
 ;; get member sender
 GETGLOB 9
 ;; push identifier ZERO_ADDRESS
@@ -71,30 +71,11 @@ PUSHCONT {
 		CALL $message_balance_macro$
 	}
 	;; >=
-	PUSHINT 100000000
+	PUSHINT 50000000
 	GEQ
 }
 IF
 THROWIFNOT 110
-; function _reserveGas
-PUSHINT 500000000
-;; get member balance
-GETPARAM 7
-INDEX 0
-;; -
-;; get member value
-CALLREF {
-	CALL $message_balance_macro$
-}
-SUB
-UFITS 128
-MAX
-PUSHINT 2
-RAWRESERVE
-;; ret param: retParam@0
-PUSHINT 0
-; end function _reserveGas
-DROP
 ; function internalBurnFromRoot
 ; function _isRoot
 ;; return
@@ -194,19 +175,15 @@ GETGLOB 18
 PUSH S1
 GEQ
 THROWIFNOT 101
+;; push identifier tokens
+DUP
 ; expValue
 ;; fetch balance_
 GETGLOB 18
 ; end expValue
-;; push identifier tokens
-PUSH S1
-CALL $SafeUint_with_obj_sub$
 SWAP
-; colValue
-SETGLOB 18
-; end colValue
-; expValue
-; end expValue
+SUB
+UFITS 128
 ; colValue
 SETGLOB 18
 ; end colValue
@@ -214,20 +191,15 @@ SETGLOB 18
 ;; push identifier allowance_
 GETGLOB 19
 INDEX 0
-; expValue
-;; fetch allowance_
+;; get member remainingTokens_
+;; push identifier allowance_
 GETGLOB 19
-DUP
 INDEX 1
-; end expValue
+;; -
 ;; push identifier tokens
-PUSH S3
-CALL $SafeUint_with_obj_sub$
-ROTREV
-; colValue
-SETINDEX 1
-SETGLOB 19
-; end colValue
+PUSH S2
+SUB
+UFITS 128
 TUPLE 2
 ; expValue
 ; end expValue
@@ -286,27 +258,14 @@ PUSHCONT {
 	STUR 128
 	STBREFR
 	ENDC
-	PUSHINT 0
+	PUSHINT 64
 	SENDRAWMSG
 }
 IF
 ;; end if
 ; end function internalBurnFromRoot
-;; transfer()
-;; get member sender
-GETGLOB 9
-NEWC
-STSLICECONST x62_
-STSLICE
-PUSHINT 109
-STZEROES
-STSLICECONST 0
-STSLICECONST 0
-ENDC
-PUSHINT 128
-SENDRAWMSG
 DROP2
-; end modifier internalOnlyPay
+; end modifier internalMessagePay
 CALLREF {
 	CALL $c7_to_c4$
 }
@@ -777,7 +736,7 @@ PUSHCONT {
 IFNOT
 ENDS
 ;; param: tokens
-; modifier internalOnlyPay
+; modifier internalMessagePay
 ;; get member sender
 GETGLOB 9
 ;; push identifier ZERO_ADDRESS
@@ -794,30 +753,11 @@ PUSHCONT {
 		CALL $message_balance_macro$
 	}
 	;; >=
-	PUSHINT 100000000
+	PUSHINT 50000000
 	GEQ
 }
 IF
 THROWIFNOT 110
-; function _reserveGas
-PUSHINT 500000000
-;; get member balance
-GETPARAM 7
-INDEX 0
-;; -
-;; get member value
-CALLREF {
-	CALL $message_balance_macro$
-}
-SUB
-UFITS 128
-MAX
-PUSHINT 2
-RAWRESERVE
-;; ret param: retParam@0
-PUSHINT 0
-; end function _reserveGas
-DROP
 ; function accept
 ; function _isRoot
 ;; return
@@ -832,40 +772,23 @@ THROWIFNOT 102
 DUP
 ;; param: tokens
 ; function _receive
+;; push identifier tokens
+DUP
 ; expValue
 ;; fetch balance_
 GETGLOB 18
 ; end expValue
-;; push identifier tokens
-PUSH S1
-CALL $SafeUint_with_obj_add$
 SWAP
-; colValue
-SETGLOB 18
-; end colValue
-; expValue
-; end expValue
+ADD
+UFITS 128
 ; colValue
 SETGLOB 18
 ; end colValue
 DROP
 ; end function _receive
 ; end function accept
-;; transfer()
-;; get member sender
-GETGLOB 9
-NEWC
-STSLICECONST x62_
-STSLICE
-PUSHINT 109
-STZEROES
-STSLICECONST 0
-STSLICECONST 0
-ENDC
-PUSHINT 128
-SENDRAWMSG
 DROP
-; end modifier internalOnlyPay
+; end modifier internalMessagePay
 CALLREF {
 	CALL $c7_to_c4$
 }
@@ -1056,19 +979,15 @@ THROWIFNOT 103
 DUP
 ;; param: tokens
 ; function _receive
+;; push identifier tokens
+DUP
 ; expValue
 ;; fetch balance_
 GETGLOB 18
 ; end expValue
-;; push identifier tokens
-PUSH S1
-CALL $SafeUint_with_obj_add$
 SWAP
-; colValue
-SETGLOB 18
-; end colValue
-; expValue
-; end expValue
+ADD
+UFITS 128
 ; colValue
 SETGLOB 18
 ; end colValue
@@ -1226,19 +1145,15 @@ GETGLOB 18
 PUSH S1
 GEQ
 THROWIFNOT 101
+;; push identifier tokens
+DUP
 ; expValue
 ;; fetch balance_
 GETGLOB 18
 ; end expValue
-;; push identifier tokens
-PUSH S1
-CALL $SafeUint_with_obj_sub$
 SWAP
-; colValue
-SETGLOB 18
-; end colValue
-; expValue
-; end expValue
+SUB
+UFITS 128
 ; colValue
 SETGLOB 18
 ; end colValue
@@ -1246,20 +1161,15 @@ SETGLOB 18
 ;; push identifier allowance_
 GETGLOB 19
 INDEX 0
-; expValue
-;; fetch allowance_
+;; get member remainingTokens_
+;; push identifier allowance_
 GETGLOB 19
-DUP
 INDEX 1
-; end expValue
+;; -
 ;; push identifier tokens
-PUSH S3
-CALL $SafeUint_with_obj_sub$
-ROTREV
-; colValue
-SETINDEX 1
-SETGLOB 19
-; end colValue
+PUSH S2
+SUB
+UFITS 128
 TUPLE 2
 ; expValue
 ; end expValue
@@ -1442,6 +1352,18 @@ PUSHCONT {
 }
 IF
 THROWIFNOT 113
+;; push identifier tokens
+PUSH S1
+; expValue
+;; fetch balance_
+GETGLOB 18
+; end expValue
+SWAP
+SUB
+UFITS 128
+; colValue
+SETGLOB 18
+; end colValue
 ;; Remote call ITIP3WalletFungible.internalTransfer
 ;; push identifier grams
 DUP
@@ -1478,22 +1400,6 @@ STBREFR
 ENDC
 PUSHINT 0
 SENDRAWMSG
-; expValue
-;; fetch balance_
-GETGLOB 18
-; end expValue
-;; push identifier tokens
-PUSH S2
-CALL $SafeUint_with_obj_sub$
-SWAP
-; colValue
-SETGLOB 18
-; end colValue
-; expValue
-; end expValue
-; colValue
-SETGLOB 18
-; end colValue
 ; end function transfer
 BLKDROP 3
 ; end modifier onlyExtOwnerAccept
@@ -1920,30 +1826,6 @@ SETGLOB 19
 DROP2
 ; end function _allow
 ; end function approve
-;; if
-;; get member sender
-GETGLOB 9
-;; push identifier ZERO_ADDRESS
-;; address.makeAddrStd()
-PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-SDEQ
-PUSHCONT {
-	;; transfer()
-	;; get member sender
-	GETGLOB 9
-	NEWC
-	STSLICECONST x62_
-	STSLICE
-	PUSHINT 109
-	STZEROES
-	STSLICECONST 0
-	STSLICECONST 0
-	ENDC
-	PUSHINT 128
-	SENDRAWMSG
-}
-IFNOT
-;; end if
 BLKDROP 3
 ; end modifier onlyOwnerAcceptOrPay
 CALLREF {
@@ -2147,19 +2029,15 @@ THROWIFNOT 103
 PUSH S1
 ;; param: tokens
 ; function _receive
+;; push identifier tokens
+DUP
 ; expValue
 ;; fetch balance_
 GETGLOB 18
 ; end expValue
-;; push identifier tokens
-PUSH S1
-CALL $SafeUint_with_obj_add$
 SWAP
-; colValue
-SETGLOB 18
-; end colValue
-; expValue
-; end expValue
+ADD
+UFITS 128
 ; colValue
 SETGLOB 18
 ; end colValue
@@ -2225,7 +2103,7 @@ PUSHCONT {
 	STBREFR
 	STBREFR
 	ENDC
-	PUSHINT 0
+	PUSHINT 64
 	SENDRAWMSG
 }
 IF
@@ -2283,26 +2161,13 @@ ENDS
 ;; param: tokens
 ;; param: subscriber
 ; function internalTransferFromNotify
-;; get member sender
-GETGLOB 9
-;; push identifier ZERO_ADDRESS
-;; address.makeAddrStd()
-PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-SDEQ
-NOT
-;; short-circuiting &&
-DUP
-PUSHCONT {
-	DROP
-	;; get member value
-	CALLREF {
-		CALL $message_balance_macro$
-	}
-	;; >=
-	PUSHINT 100000000
-	GEQ
+;; get member value
+CALLREF {
+	CALL $message_balance_macro$
 }
-IF
+;; >=
+PUSHINT 100000000
+GEQ
 THROWIFNOT 110
 ;; push identifier tokens
 PUSH S1
@@ -2393,19 +2258,15 @@ GETGLOB 18
 PUSH S1
 GEQ
 THROWIFNOT 101
+;; push identifier tokens
+DUP
 ; expValue
 ;; fetch balance_
 GETGLOB 18
 ; end expValue
-;; push identifier tokens
-PUSH S1
-CALL $SafeUint_with_obj_sub$
 SWAP
-; colValue
-SETGLOB 18
-; end colValue
-; expValue
-; end expValue
+SUB
+UFITS 128
 ; colValue
 SETGLOB 18
 ; end colValue
@@ -2413,20 +2274,15 @@ SETGLOB 18
 ;; push identifier allowance_
 GETGLOB 19
 INDEX 0
-; expValue
-;; fetch allowance_
+;; get member remainingTokens_
+;; push identifier allowance_
 GETGLOB 19
-DUP
 INDEX 1
-; end expValue
+;; -
 ;; push identifier tokens
-PUSH S3
-CALL $SafeUint_with_obj_sub$
-ROTREV
-; colValue
-SETINDEX 1
-SETGLOB 19
-; end colValue
+PUSH S2
+SUB
+UFITS 128
 TUPLE 2
 ; expValue
 ; end expValue
@@ -2775,19 +2631,15 @@ PUSHCONT {
 		; end colValue
 		;; param: tokens
 		; function _receive
+		;; push identifier tokens
+		DUP
 		; expValue
 		;; fetch balance_
 		GETGLOB 18
 		; end expValue
-		;; push identifier tokens
-		PUSH S1
-		CALL $SafeUint_with_obj_add$
 		SWAP
-		; colValue
-		SETGLOB 18
-		; end colValue
-		; expValue
-		; end expValue
+		ADD
+		UFITS 128
 		; colValue
 		SETGLOB 18
 		; end colValue
@@ -2854,19 +2706,15 @@ PUSHCONT {
 			; end colValue
 			;; param: tokens
 			; function _receive
+			;; push identifier tokens
+			DUP
 			; expValue
 			;; fetch balance_
 			GETGLOB 18
 			; end expValue
-			;; push identifier tokens
-			PUSH S1
-			CALL $SafeUint_with_obj_add$
 			SWAP
-			; colValue
-			SETGLOB 18
-			; end colValue
-			; expValue
-			; end expValue
+			ADD
+			UFITS 128
 			; colValue
 			SETGLOB 18
 			; end colValue
@@ -3023,174 +2871,4 @@ PUSHCONT {
 	THROW 60
 }
 IF
-
-.globl	SafeUint_with_obj_add
-.type	SafeUint_with_obj_add, @function
-;; param: x
-;; param: y
-; function add
-;; ret param: z
-PUSHINT 0
-PUSHINT 300
-;; push identifier x
-PUSH S3
-;; +
-;; push identifier y
-PUSH S3
-ADD
-UFITS 128
-; expValue
-; end expValue
-PUSH s0
-; colValue
-POP S3
-; end colValue
-;; >=
-;; push identifier x
-PUSH S4
-GEQ
-THROWARGIFNOT 301
-; expValue
-; end expValue
-;; push identifier x
-PUSH S2
-;; +
-;; push identifier y
-PUSH S2
-ADD
-UFITS 128
-; colValue
-NIP
-; end colValue
-;; returning named params
-NIP
-; end function add
-
-.globl	SafeUint_no_obj_add
-.type	SafeUint_no_obj_add, @function
-;; param: x
-;; param: y
-; function add
-;; ret param: z
-PUSHINT 0
-PUSHINT 300
-;; push identifier x
-PUSH S3
-;; +
-;; push identifier y
-PUSH S3
-ADD
-UFITS 128
-; expValue
-; end expValue
-PUSH s0
-; colValue
-POP S3
-; end colValue
-;; >=
-;; push identifier x
-PUSH S4
-GEQ
-THROWARGIFNOT 301
-; expValue
-; end expValue
-;; push identifier x
-PUSH S2
-;; +
-;; push identifier y
-PUSH S2
-ADD
-UFITS 128
-; colValue
-NIP
-; end colValue
-;; returning named params
-ROTREV
-DROP2
-; end function add
-
-.globl	SafeUint_with_obj_sub
-.type	SafeUint_with_obj_sub, @function
-;; param: x
-;; param: y
-; function sub
-;; ret param: z
-PUSHINT 0
-PUSHINT 301
-;; push identifier x
-PUSH S3
-;; -
-;; push identifier y
-PUSH S3
-SUB
-UFITS 128
-; expValue
-; end expValue
-PUSH s0
-; colValue
-POP S3
-; end colValue
-;; <=
-;; push identifier x
-PUSH S4
-LEQ
-THROWARGIFNOT 302
-; expValue
-; end expValue
-;; push identifier x
-PUSH S2
-;; -
-;; push identifier y
-PUSH S2
-SUB
-UFITS 128
-; colValue
-NIP
-; end colValue
-;; returning named params
-NIP
-; end function sub
-
-.globl	SafeUint_no_obj_sub
-.type	SafeUint_no_obj_sub, @function
-;; param: x
-;; param: y
-; function sub
-;; ret param: z
-PUSHINT 0
-PUSHINT 301
-;; push identifier x
-PUSH S3
-;; -
-;; push identifier y
-PUSH S3
-SUB
-UFITS 128
-; expValue
-; end expValue
-PUSH s0
-; colValue
-POP S3
-; end colValue
-;; <=
-;; push identifier x
-PUSH S4
-LEQ
-THROWARGIFNOT 302
-; expValue
-; end expValue
-;; push identifier x
-PUSH S2
-;; -
-;; push identifier y
-PUSH S2
-SUB
-UFITS 128
-; colValue
-NIP
-; end colValue
-;; returning named params
-ROTREV
-DROP2
-; end function sub
 

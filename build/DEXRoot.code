@@ -58,18 +58,33 @@ ENDS
 ;; param: rootAddress
 ; function getTokenExists
 ;; return
-;; map.exists
 ;; push identifier rootAddress
+DUP
+;; param: _token
+; function _checkToken
+;; return
+;; map.fetch
+;; push identifier _token
 DUP
 ;; push identifier tokens_
 GETGLOB 11
 PUSHINT 267
 DICTGET
-DUP
+NULLSWAPIFNOT
 PUSHCONT {
-	NIP
+	LDREF
+	LDREF
+	LDU 8
+	LDREF
+	LDU 128
+	PLDU 128
+	TUPLE 6
 }
 IF
+ISNULL
+NOT
+NIP
+; end function _checkToken
 NIP
 ;; emitting 1 value(s)
 PUSH S1
@@ -155,37 +170,26 @@ PUSH S3
 ;; param: _token
 ; function _checkToken
 ;; return
-;; map.exists
+;; map.fetch
 ;; push identifier _token
 DUP
 ;; push identifier tokens_
 GETGLOB 11
 PUSHINT 267
 DICTGET
-DUP
+NULLSWAPIFNOT
 PUSHCONT {
-	NIP
+	LDREF
+	LDREF
+	LDU 8
+	LDREF
+	LDU 128
+	PLDU 128
+	TUPLE 6
 }
 IF
-;; short-circuiting &&
-DUP
-PUSHCONT {
-	DROP
-	;; map.fetch
-	;; push identifier _token
-	DUP
-	;; push identifier tokens_
-	GETGLOB 11
-	PUSHINT 267
-	DICTGETREF
-	NULLSWAPIFNOT
-	PUSHCONT {
-	}
-	IF
-	ISNULL
-	NOT
-}
-IF
+ISNULL
+NOT
 NIP
 ; end function _checkToken
 ;; short-circuiting &&
@@ -197,37 +201,26 @@ PUSHCONT {
 	;; param: _token
 	; function _checkToken
 	;; return
-	;; map.exists
+	;; map.fetch
 	;; push identifier _token
 	DUP
 	;; push identifier tokens_
 	GETGLOB 11
 	PUSHINT 267
 	DICTGET
-	DUP
+	NULLSWAPIFNOT
 	PUSHCONT {
-		NIP
+		LDREF
+		LDREF
+		LDU 8
+		LDREF
+		LDU 128
+		PLDU 128
+		TUPLE 6
 	}
 	IF
-	;; short-circuiting &&
-	DUP
-	PUSHCONT {
-		DROP
-		;; map.fetch
-		;; push identifier _token
-		DUP
-		;; push identifier tokens_
-		GETGLOB 11
-		PUSHINT 267
-		DICTGETREF
-		NULLSWAPIFNOT
-		PUSHCONT {
-		}
-		IF
-		ISNULL
-		NOT
-	}
-	IF
+	ISNULL
+	NOT
 	NIP
 	; end function _checkToken
 }
@@ -298,18 +291,20 @@ PUSHINT 1
 ROT
 PUSHINT 64
 DICTUSET
-PUSHSLICE x4c4951534f523a474c443a504c54
-NEWC
-STSLICE
-ENDC
+;; push identifier _tokenX
+PUSH S2
+;; push identifier _tokenY
+PUSH S2
+CALL $_pairName_internal$
 PUSHINT 2
 ROT
 PUSHINT 64
 DICTUSETREF
-PUSHSLICE x4c4951534f523a474c443a504c54
-NEWC
-STSLICE
-ENDC
+;; push identifier _tokenX
+PUSH S2
+;; push identifier _tokenY
+PUSH S2
+CALL $_pairSymbol_internal$
 PUSHINT 3
 ROT
 PUSHINT 64
@@ -419,11 +414,8 @@ PUSHCONT {
 	LDMSGADDR
 }
 IFNOT
-; Decode symbol
-LDREF
 ENDS
 ;; param: _rootAddr
-;; param: symbol
 ; modifier onlyOwnerAcceptOrPay
 ; function _isOwner
 ;; return
@@ -490,7 +482,7 @@ PUSHCONT {
 		CALL $message_balance_macro$
 	}
 	;; >=
-	PUSHINT 100000000
+	PUSHINT 200000000
 	GEQ
 	THROWIFNOT 509
 	; function _reserveGas
@@ -519,23 +511,28 @@ PUSHCONT {
 IFELSE
 ;; end if
 ; function importToken
-;; map.add
-; expValue
-;; fetch tokens_
-GETGLOB 11
-; end expValue
-;; push identifier symbol
-PUSH S1
+;; Remote call ITIP3RootMetadata.callTokenInfo
+PUSHINT 200000000
+;; +
+PUSHINT 200000000
+ADD
+UFITS 64
 ;; push identifier _rootAddr
-PUSH S3
-ROT
-PUSHINT 267
-DICTADDREF
+PUSH S1
+NEWC
+STSLICECONST x62_
+STSLICE
 SWAP
-; colValue
-SETGLOB 11
-; end colValue
-DROP
+STGRAMS
+PUSHINT 105
+STZEROES
+STSLICECONST 0
+STSLICECONST 0
+STSLICECONST x6356f9c1
+STSLICECONST x61ec9f20
+ENDC
+PUSHINT 0
+SENDRAWMSG
 ; end function importToken
 ;; if
 ;; get member sender
@@ -561,7 +558,7 @@ PUSHCONT {
 }
 IFNOT
 ;; end if
-DROP2
+DROP
 ; end modifier onlyOwnerAcceptOrPay
 CALLREF {
 	CALL $c7_to_c4$
@@ -598,31 +595,9 @@ PUSHCONT {
 	LDMSGADDR
 }
 IFNOT
-; Decode _walletA
-LDMSGADDRQ
-PUSHCONT {
-	;; load next cell
-	LDREF
-	ENDS
-	CTOS
-	LDMSGADDR
-}
-IFNOT
-; Decode _walletB
-LDMSGADDRQ
-PUSHCONT {
-	;; load next cell
-	LDREF
-	ENDS
-	CTOS
-	LDMSGADDR
-}
-IFNOT
 ENDS
 ;; param: _tokenA
 ;; param: _tokenB
-;; param: _walletA
-;; param: _walletB
 ; modifier onlyOwnerAcceptOrPay
 ; function _isOwner
 ;; return
@@ -689,7 +664,7 @@ PUSHCONT {
 		CALL $message_balance_macro$
 	}
 	;; >=
-	PUSHINT 100000000
+	PUSHINT 200000000
 	GEQ
 	THROWIFNOT 509
 	; function _reserveGas
@@ -721,9 +696,9 @@ IFELSE
 ;; ret param: poolAddress
 PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
 ;; push identifier _tokenA
-PUSH S4
+PUSH S2
 ;; push identifier _tokenB
-PUSH S4
+PUSH S2
 ;; param: _tokenA
 ;; param: _tokenB
 ; function _pairRoutine
@@ -736,37 +711,26 @@ PUSH S3
 ;; param: _token
 ; function _checkToken
 ;; return
-;; map.exists
+;; map.fetch
 ;; push identifier _token
 DUP
 ;; push identifier tokens_
 GETGLOB 11
 PUSHINT 267
 DICTGET
-DUP
+NULLSWAPIFNOT
 PUSHCONT {
-	NIP
+	LDREF
+	LDREF
+	LDU 8
+	LDREF
+	LDU 128
+	PLDU 128
+	TUPLE 6
 }
 IF
-;; short-circuiting &&
-DUP
-PUSHCONT {
-	DROP
-	;; map.fetch
-	;; push identifier _token
-	DUP
-	;; push identifier tokens_
-	GETGLOB 11
-	PUSHINT 267
-	DICTGETREF
-	NULLSWAPIFNOT
-	PUSHCONT {
-	}
-	IF
-	ISNULL
-	NOT
-}
-IF
+ISNULL
+NOT
 NIP
 ; end function _checkToken
 ;; short-circuiting &&
@@ -778,37 +742,26 @@ PUSHCONT {
 	;; param: _token
 	; function _checkToken
 	;; return
-	;; map.exists
+	;; map.fetch
 	;; push identifier _token
 	DUP
 	;; push identifier tokens_
 	GETGLOB 11
 	PUSHINT 267
 	DICTGET
-	DUP
+	NULLSWAPIFNOT
 	PUSHCONT {
-		NIP
+		LDREF
+		LDREF
+		LDU 8
+		LDREF
+		LDU 128
+		PLDU 128
+		TUPLE 6
 	}
 	IF
-	;; short-circuiting &&
-	DUP
-	PUSHCONT {
-		DROP
-		;; map.fetch
-		;; push identifier _token
-		DUP
-		;; push identifier tokens_
-		GETGLOB 11
-		PUSHINT 267
-		DICTGETREF
-		NULLSWAPIFNOT
-		PUSHCONT {
-		}
-		IF
-		ISNULL
-		NOT
-	}
-	IF
+	ISNULL
+	NOT
 	NIP
 	; end function _checkToken
 }
@@ -859,29 +812,6 @@ SWAP
 SWAP
 ;; decl: tokenX
 ;; decl: tokenY
-;; push identifier _tokenA
-PUSH S6
-;; push identifier _tokenB
-PUSH S6
-SDLEXCMP
-ISNEG
-PUSHCONT {
-	;; push identifier _walletA
-	PUSH S4
-	;; push identifier _walletB
-	PUSH S4
-}
-PUSHCONT {
-	;; push identifier _walletB
-	PUSH S3
-	;; push identifier _walletA
-	PUSH S5
-}
-IFELSE
-SWAP
-SWAP
-;; decl: walletX
-;; decl: walletY
 NEWDICT
 PUSHINT 0
 NEWC
@@ -895,18 +825,20 @@ PUSHINT 1
 ROT
 PUSHINT 64
 DICTUSET
-PUSHSLICE x4c4951534f523a474c443a504c54
-NEWC
-STSLICE
-ENDC
+;; push identifier tokenX
+PUSH S2
+;; push identifier tokenY
+PUSH S2
+CALL $_pairName_internal$
 PUSHINT 2
 ROT
 PUSHINT 64
 DICTUSETREF
-PUSHSLICE x4c4951534f523a474c443a504c54
-NEWC
-STSLICE
-ENDC
+;; push identifier tokenX
+PUSH S2
+;; push identifier tokenY
+PUSH S2
+CALL $_pairSymbol_internal$
 PUSHINT 3
 ROT
 PUSHINT 64
@@ -918,13 +850,13 @@ ROT
 PUSHINT 64
 DICTUSETREF
 ;; push identifier tokenX
-PUSH S4
+PUSH S2
 PUSHINT 5
 ROT
 PUSHINT 64
 DICTUSET
 ;; push identifier tokenY
-PUSH S3
+PUSH S1
 PUSHINT 6
 ROT
 PUSHINT 64
@@ -947,7 +879,27 @@ STSLICECONST x801_
 STU 256
 ENDC
 CTOS
-PUSHINT 1500000000
+PUSHINT 1600000000
+;; +
+PUSHINT 1600000000
+ADD
+UFITS 64
+;; +
+PUSHINT 1600000000
+ADD
+UFITS 64
+;; +
+PUSHINT 200000000
+ADD
+UFITS 64
+;; +
+PUSHINT 200000000
+ADD
+UFITS 64
+;; +
+PUSHINT 200000000
+ADD
+UFITS 64
 PUSH S1
 NEWC
 STSLICECONST x62_
@@ -962,15 +914,84 @@ PUSH S2
 STREFR
 STSLICECONST 1
 NEWC
-STSLICECONST x49fa7cdf
-;; walletX
-;; push identifier walletX
+STSLICECONST x1a85a016
+;; valueX
+;; map.fetch
+;; push identifier tokenX
 PUSH S5
-STSLICER
-;; walletY
-;; push identifier walletY
+;; push identifier tokens_
+GETGLOB 11
+PUSHINT 267
+DICTGET
+NULLSWAPIFNOT
+PUSHCONT {
+	LDREF
+	LDREF
+	LDU 8
+	LDREF
+	LDU 128
+	PLDU 128
+	TUPLE 6
+}
+IF
+DUP
+ISNULL
+THROWIF 63
+UNTUPLE 6
+BLKSWAP 1, 6
+PUSH S6
+STREFR
+PUSH S5
+STREFR
 PUSH S4
-STSLICER
+STUR 8
+PUSH S3
+STREFR
+PUSH S2
+STUR 128
+PUSH S1
+STUR 128
+XCHG s6
+BLKDROP 6
+;; valueY
+;; map.fetch
+;; push identifier tokenY
+PUSH S4
+;; push identifier tokens_
+GETGLOB 11
+PUSHINT 267
+DICTGET
+NULLSWAPIFNOT
+PUSHCONT {
+	LDREF
+	LDREF
+	LDU 8
+	LDREF
+	LDU 128
+	PLDU 128
+	TUPLE 6
+}
+IF
+DUP
+ISNULL
+THROWIF 63
+UNTUPLE 6
+BLKSWAP 1, 6
+NEWC
+PUSH S7
+STREFR
+PUSH S6
+STREFR
+PUSH S5
+STUR 8
+PUSH S4
+STREFR
+PUSH S3
+STUR 128
+PUSH S2
+STUR 128
+BLKDROP2 6, 2
+STBREFR
 STBREFR
 ENDC
 PUSHINT 0
@@ -979,18 +1000,18 @@ NIP
 ; expValue
 ; end expValue
 ; colValue
-POP S5
+POP S3
 ; end colValue
 ;; return
 ;; push identifier poolAddress
-PUSH S4
-XCHG s5
-BLKDROP 5
+PUSH S2
+XCHG s3
+BLKDROP 3
 ;; emitting 1 value(s)
-PUSH S5
+PUSH S3
 EQINT -1
 PUSHCONT {
-	PUSH S7
+	PUSH S5
 	CTOS
 	LDU 2
 	LDMSGADDR
@@ -1003,7 +1024,7 @@ PUSHCONT {
 	STZEROES
 	STSLICECONST 0
 	STSLICECONST 0
-	STSLICECONST xd76ffcf3
+	STSLICECONST xe4bed0d1
 	PUSH S1
 	STSLICER
 	ENDC
@@ -1037,7 +1058,7 @@ PUSHCONT {
 }
 IFNOT
 ;; end if
-BLKDROP 4
+DROP2
 ; end modifier onlyOwnerAcceptOrPay
 CALLREF {
 	CALL $c7_to_c4$
@@ -1125,7 +1146,7 @@ PUSHCONT {
 		CALL $message_balance_macro$
 	}
 	;; >=
-	PUSHINT 100000000
+	PUSHINT 200000000
 	GEQ
 	THROWIFNOT 509
 	; function _reserveGas
@@ -1274,7 +1295,7 @@ PUSHCONT {
 		CALL $message_balance_macro$
 	}
 	;; >=
-	PUSHINT 100000000
+	PUSHINT 200000000
 	GEQ
 	THROWIFNOT 509
 	; function _reserveGas
@@ -1430,7 +1451,7 @@ PUSHCONT {
 		CALL $message_balance_macro$
 	}
 	;; >=
-	PUSHINT 100000000
+	PUSHINT 200000000
 	GEQ
 	THROWIFNOT 509
 	; function _reserveGas
@@ -1507,88 +1528,230 @@ CALLREF {
 TRUE
 SETGLOB 7
 
+.globl	onGetInfo
+.public	onGetInfo
+.type	onGetInfo, @function
+GETGLOB 1
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+; Decode input parameters
+; Decode details
+;; decode struct TokenDetails details
+;; decode TokenDetails.name
+LDREF
+;; decode TokenDetails.symbol
+LDREF
+;; decode TokenDetails.decimals
+LDU 8
+;; decode TokenDetails.code
+;; decode TvmCell
+LDREF
+;; decode TokenDetails.totalSupply
+LDUQ 128
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 128
+}
+IFNOT
+;; decode TokenDetails.totalGranted
+LDUQ 128
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 128
+}
+IFNOT
+;; build struct TokenDetails ss:7
+BLKSWAP 6, 1
+TUPLE 6
+SWAP
+ENDS
+;; param: details
+; function onGetInfo
+;; map.add
+; expValue
+;; fetch tokens_
+GETGLOB 11
+; end expValue
+;; push identifier details
+PUSH S1
+UNTUPLE 6
+NEWC
+PUSH S6
+STREFR
+PUSH S5
+STREFR
+PUSH S4
+STUR 8
+PUSH S3
+STREFR
+PUSH S2
+STUR 128
+PUSH S1
+STUR 128
+XCHG s6
+BLKDROP 6
+;; get member sender
+GETGLOB 9
+ROT
+PUSHINT 267
+DICTADDB
+SWAP
+; colValue
+SETGLOB 11
+; end colValue
+DROP
+DROP
+; end function onGetInfo
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	onGetInfo_internal
+.type	onGetInfo_internal, @function
+;; param: details
+; function onGetInfo
+;; map.add
+; expValue
+;; fetch tokens_
+GETGLOB 11
+; end expValue
+;; push identifier details
+PUSH S1
+UNTUPLE 6
+NEWC
+PUSH S6
+STREFR
+PUSH S5
+STREFR
+PUSH S4
+STUR 8
+PUSH S3
+STREFR
+PUSH S2
+STUR 128
+PUSH S1
+STUR 128
+XCHG s6
+BLKDROP 6
+;; get member sender
+GETGLOB 9
+ROT
+PUSHINT 267
+DICTADDB
+SWAP
+; colValue
+SETGLOB 11
+; end colValue
+DROP
+DROP
+; end function onGetInfo
+
 .globl	_pairName_internal
 .type	_pairName_internal, @function
 ;; param: _tokenX
 ;; param: _tokenY
 ; function _pairName
-PUSHSLICE x346336393731373536393533346635323230353036663666366332303762
 NEWC
-STSLICE
-ENDC
-;; decl: str
-; expValue
-DUP
-; end expValue
+NULL
+TUPLE 2
+NEWC
+PUSHSLICE x4c69717569534f5228
+CALLREF {
+	CALL $storeStringInBuilders_macro$
+}
+CALLREF {
+	CALL $appendToList_macro$
+}
+;; get member name
 ;; map.fetch
 ;; push identifier _tokenX
 PUSH S3
 ;; push identifier tokens_
 GETGLOB 11
 PUSHINT 267
-DICTGETREF
+DICTGET
 NULLSWAPIFNOT
 PUSHCONT {
+	LDREF
+	LDREF
+	LDU 8
+	LDREF
+	LDU 128
+	PLDU 128
+	TUPLE 6
 }
 IF
 DUP
 ISNULL
 THROWIF 63
+INDEX 0
+;; string
+CTOS
 CALLREF {
-	CALL $concatenateStrings_macro$
+	CALL $storeStringInBuilders_macro$
 }
-; colValue
-NIP
-; end colValue
-; expValue
-DUP
-; end expValue
-PUSHSLICE x3264
-NEWC
-STSLICE
-ENDC
 CALLREF {
-	CALL $concatenateStrings_macro$
+	CALL $appendToList_macro$
 }
-; colValue
-NIP
-; end colValue
-; expValue
-DUP
-; end expValue
+PUSHSLICE x3a
+CALLREF {
+	CALL $storeStringInBuilders_macro$
+}
+CALLREF {
+	CALL $appendToList_macro$
+}
+;; get member name
 ;; map.fetch
-;; push identifier _tokenY
-PUSH S2
+;; push identifier _tokenX
+PUSH S3
 ;; push identifier tokens_
 GETGLOB 11
 PUSHINT 267
-DICTGETREF
+DICTGET
 NULLSWAPIFNOT
 PUSHCONT {
+	LDREF
+	LDREF
+	LDU 8
+	LDREF
+	LDU 128
+	PLDU 128
+	TUPLE 6
 }
 IF
 DUP
 ISNULL
 THROWIF 63
+INDEX 0
+;; string
+CTOS
 CALLREF {
-	CALL $concatenateStrings_macro$
+	CALL $storeStringInBuilders_macro$
 }
-; colValue
-NIP
-; end colValue
-; expValue
-DUP
-; end expValue
-PUSHSLICE x3764
-NEWC
-STSLICE
-ENDC
 CALLREF {
-	CALL $concatenateStrings_macro$
+	CALL $appendToList_macro$
 }
-; colValue
-NIP
-; end colValue
+PUSHSLICE x29
+CALLREF {
+	CALL $storeStringInBuilders_macro$
+}
+CALLREF {
+	CALL $appendToList_macro$
+}
+CALLREF {
+	CALL $assembleList_macro$
+}
+;; decl: str
 ;; return
 ;; push identifier str
 DUP
@@ -1602,70 +1765,97 @@ BLKDROP 3
 ;; param: _tokenX
 ;; param: _tokenY
 ; function _pairSymbol
-PUSHSLICE x346335313533346635323361
 NEWC
-STSLICE
-ENDC
-;; decl: str
-; expValue
-DUP
-; end expValue
+NULL
+TUPLE 2
+NEWC
+PUSHSLICE x4c495128
+CALLREF {
+	CALL $storeStringInBuilders_macro$
+}
+CALLREF {
+	CALL $appendToList_macro$
+}
+;; get member symbol
 ;; map.fetch
 ;; push identifier _tokenX
 PUSH S3
 ;; push identifier tokens_
 GETGLOB 11
 PUSHINT 267
-DICTGETREF
+DICTGET
 NULLSWAPIFNOT
 PUSHCONT {
+	LDREF
+	LDREF
+	LDU 8
+	LDREF
+	LDU 128
+	PLDU 128
+	TUPLE 6
 }
 IF
 DUP
 ISNULL
 THROWIF 63
+INDEX 1
+;; string
+CTOS
 CALLREF {
-	CALL $concatenateStrings_macro$
+	CALL $storeStringInBuilders_macro$
 }
-; colValue
-NIP
-; end colValue
-; expValue
-DUP
-; end expValue
-PUSHSLICE x3361
-NEWC
-STSLICE
-ENDC
 CALLREF {
-	CALL $concatenateStrings_macro$
+	CALL $appendToList_macro$
 }
-; colValue
-NIP
-; end colValue
-; expValue
-DUP
-; end expValue
+PUSHSLICE x3a
+CALLREF {
+	CALL $storeStringInBuilders_macro$
+}
+CALLREF {
+	CALL $appendToList_macro$
+}
+;; get member symbol
 ;; map.fetch
-;; push identifier _tokenY
-PUSH S2
+;; push identifier _tokenX
+PUSH S3
 ;; push identifier tokens_
 GETGLOB 11
 PUSHINT 267
-DICTGETREF
+DICTGET
 NULLSWAPIFNOT
 PUSHCONT {
+	LDREF
+	LDREF
+	LDU 8
+	LDREF
+	LDU 128
+	PLDU 128
+	TUPLE 6
 }
 IF
 DUP
 ISNULL
 THROWIF 63
+INDEX 1
+;; string
+CTOS
 CALLREF {
-	CALL $concatenateStrings_macro$
+	CALL $storeStringInBuilders_macro$
 }
-; colValue
-NIP
-; end colValue
+CALLREF {
+	CALL $appendToList_macro$
+}
+PUSHSLICE x29
+CALLREF {
+	CALL $storeStringInBuilders_macro$
+}
+CALLREF {
+	CALL $appendToList_macro$
+}
+CALLREF {
+	CALL $assembleList_macro$
+}
+;; decl: str
 ;; return
 ;; push identifier str
 DUP

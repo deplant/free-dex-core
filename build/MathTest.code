@@ -20,150 +20,10 @@ CALLREF {
 TRUE
 SETGLOB 7
 
-.globl	onWalletBurn
-.public	onWalletBurn
-.type	onWalletBurn, @function
-GETGLOB 1
-ISNULL
-IFREF {
-	CALL $c4_to_c7$
-}
-; Decode input parameters
-; Decode _tokenAddress
-LDMSGADDR
-; Decode _senderKey
-LDUQ 256
-PUSHCONT {
-	;; load next cell
-	LDREF
-	ENDS
-	CTOS
-	LDU 256
-}
-IFNOT
-; Decode _senderOwner
-LDMSGADDRQ
-PUSHCONT {
-	;; load next cell
-	LDREF
-	ENDS
-	CTOS
-	LDMSGADDR
-}
-IFNOT
-; Decode _tokens
-LDUQ 128
-PUSHCONT {
-	;; load next cell
-	LDREF
-	ENDS
-	CTOS
-	LDU 128
-}
-IFNOT
-ENDS
-;; param: _tokenAddress
-;; param: _senderKey
-;; param: _senderOwner
-;; param: _tokens
-; function onWalletBurn
-;; map.fetch
-;; push identifier _senderKey
-PUSH S2
-;; push identifier transactions_
-GETGLOB 10
-PUSHINT 256
-DICTUGET
-NULLSWAPIFNOT
-PUSHCONT {
-	LDU 128
-	PLDU 128
-	TUPLE 2
-}
-IF
-DUP
-ISNULL
-THROWIF 63
-;; decl: trans
-PUSHINT 10
-PUSHINT 20
-PUSHINT 10
-PUSHINT 20
-CALL $B_no_obj_liqToTokens$
-SWAP
-; expValue
-PUSH S2
-; end expValue
-SWAP
-; colValue
-SETINDEX 0
-POP S2
-; end colValue
-; expValue
-PUSH S1
-; end expValue
-SWAP
-; colValue
-SETINDEX 1
-NIP
-; end colValue
-BLKDROP 5
-; end function onWalletBurn
-CALLREF {
-	CALL $c7_to_c4$
-}
-TRUE
-SETGLOB 7
-
-.globl	onWalletBurn_internal
-.type	onWalletBurn_internal, @function
-;; param: _tokenAddress
-;; param: _senderKey
-;; param: _senderOwner
-;; param: _tokens
-; function onWalletBurn
-;; map.fetch
-;; push identifier _senderKey
-PUSH S2
-;; push identifier transactions_
-GETGLOB 10
-PUSHINT 256
-DICTUGET
-NULLSWAPIFNOT
-PUSHCONT {
-	LDU 128
-	PLDU 128
-	TUPLE 2
-}
-IF
-DUP
-ISNULL
-THROWIF 63
-;; decl: trans
-PUSHINT 10
-PUSHINT 20
-PUSHINT 10
-PUSHINT 20
-CALL $B_no_obj_liqToTokens$
-SWAP
-; expValue
-PUSH S2
-; end expValue
-SWAP
-; colValue
-SETINDEX 0
-POP S2
-; end colValue
-; expValue
-PUSH S1
-; end expValue
-SWAP
-; colValue
-SETINDEX 1
-NIP
-; end colValue
-BLKDROP 5
-; end function onWalletBurn
+.globl	one1_internal
+.type	one1_internal, @function
+; function one1
+; end function one1
 
 .macro c7_to_c4
 GETGLOB 2
@@ -173,9 +33,6 @@ GETGLOB 3
 STUR 64
 GETGLOB 6
 STUR 1
-GETGLOB 10
-SWAP
-STDICT
 ENDC
 POP C4
 
@@ -185,8 +42,7 @@ CTOS        ; c4
 LDU 256      ; pubkey c4
 LDU 64      ; pubkey timestamp c4
 LDU 1       ; pubkey [timestamp] constructor_flag memory
-PLDDICT
-SETGLOB 10
+ENDS
 TRUE
 SETGLOB 1   ; pubkey [timestamp] constructor_flag
 SETGLOB 6   ; pubkey [timestamp]
@@ -203,8 +59,7 @@ PUSHCONT {
 	LDU 256      ; pubkey c4
 	LDU 64      ; pubkey timestamp c4
 	LDU 1       ; pubkey [timestamp] constructor_flag memory
-	PLDDICT
-	SETGLOB 10
+	ENDS
 	TRUE
 	SETGLOB 1   ; pubkey [timestamp] constructor_flag
 	SETGLOB 6   ; pubkey [timestamp]
@@ -213,9 +68,6 @@ PUSHCONT {
 }
 PUSHCONT {
 	PLDDICT   ; D
-	; init transactions_
-	NEWDICT
-	SETGLOB 10
 	; set contract pubkey
 	PUSHINT 0
 	SWAP
@@ -317,59 +169,4 @@ PUSHCONT {
 	THROW 60
 }
 IF
-
-.globl	B_with_obj_liqToTokens
-.type	B_with_obj_liqToTokens, @function
-;; param: amountIn
-;; param: supplyIn
-;; param: balanceX
-;; param: balanceY
-; function liqToTokens
-;; ret param: outAmountX
-PUSHINT 0
-;; ret param: outAmountY
-PUSHINT 0
-; expValue
-; end expValue
-PUSHINT 10
-; colValue
-POP S2
-; end colValue
-; expValue
-; end expValue
-PUSHINT 20
-; colValue
-NIP
-; end colValue
-;; returning named params
-BLKDROP2 3, 2
-; end function liqToTokens
-
-.globl	B_no_obj_liqToTokens
-.type	B_no_obj_liqToTokens, @function
-;; param: amountIn
-;; param: supplyIn
-;; param: balanceX
-;; param: balanceY
-; function liqToTokens
-;; ret param: outAmountX
-PUSHINT 0
-;; ret param: outAmountY
-PUSHINT 0
-; expValue
-; end expValue
-PUSHINT 10
-; colValue
-POP S2
-; end colValue
-; expValue
-; end expValue
-PUSHINT 20
-; colValue
-NIP
-; end colValue
-;; returning named params
-BLKSWAP 4, 2
-BLKDROP 4
-; end function liqToTokens
 

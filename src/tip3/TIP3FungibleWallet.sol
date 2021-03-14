@@ -7,10 +7,10 @@ pragma AbiHeader time;
 pragma AbiHeader expire;
 pragma AbiHeader pubkey;
 
-import "/home/yankin/ton/contracts/src/std/lib/TVM.sol";
-import "/home/yankin/ton/contracts/src/std/lib/SafeUint.sol";
-import "/home/yankin/ton/contracts/src/tip3/lib/TIP3.sol";
-import "/home/yankin/ton/contracts/src/tip3/int/ITIP3Wallet.sol";
+import "../std/lib/TVM.sol";
+import "../std/lib/SafeUint.sol";
+import "../tip3/lib/TIP3.sol";
+import "../tip3/int/ITIP3Wallet.sol";
 
 contract TIP3FungibleWallet is ITIP3WalletMetadata, ITIP3WalletFungible, ITIP3WalletNotify {
     using SafeUint for uint128;
@@ -79,7 +79,7 @@ contract TIP3FungibleWallet is ITIP3WalletMetadata, ITIP3WalletFungible, ITIP3Wa
         allowance = allowance_;
     }    
 
-    function accept(uint128 tokens) override external internalOnlyPay {
+    function accept(uint128 tokens) override external internalMessagePay {
         require(_isRoot(),TIP3.ERROR_MESSAGE_SENDER_IS_NOT_MY_ROOT);
         _receive(tokens);
     }          
@@ -99,8 +99,8 @@ contract TIP3FungibleWallet is ITIP3WalletMetadata, ITIP3WalletFungible, ITIP3Wa
         require(balance_ >= tokens, TIP3.ERROR_NOT_ENOUGH_BALANCE);
         require(dest != ZERO_ADDRESS, TIP3.ERROR_MESSAGE_SENDER_IS_NOT_GOOD_WALLET);        
         require(address(this).balance > grams && grams >= USAGE_FEE, TIP3.ERROR_NOT_ENOUGH_GAS);
+        balance_ -= tokens;        
         ITIP3WalletFungible(dest).internalTransfer{ value: grams, bounce: true }(wallet_public_key_, wallet_owner_address_, tokens);
-        balance_ = balance_.sub(tokens);
     }        
 
     function transferFrom(address dest, address to, uint128 tokens, uint128 grams) override external onlyExtOwnerAccept {
@@ -123,12 +123,12 @@ contract TIP3FungibleWallet is ITIP3WalletMetadata, ITIP3WalletFungible, ITIP3Wa
         require(_isWallet(senderKey, senderOwner),TIP3.ERROR_MESSAGE_SENDER_IS_NOT_GOOD_WALLET);
         _receive(tokens);
         if (_hasSubscriber(subscriber)) { 
-            ITIP3WalletNotifyHandler(subscriber).onWalletReceive{ value: CALLBACK_FEE, bounce: true }(root_address_, wallet_public_key_, wallet_owner_address_, senderKey, senderOwner, tokens);
+            ITIP3WalletNotifyHandler(subscriber).onWalletReceive{ flag: TVM.FLAG_VALUE_ADD_INBOUND, bounce: true }(root_address_, wallet_public_key_, wallet_owner_address_, senderKey, senderOwner, tokens);
         }
     }         
 
     function internalTransferFromNotify(address to, uint128 tokens, address subscriber) override external {
-        require(msg.sender != ZERO_ADDRESS && msg.value >= USAGE_FEE,TIP3.ERROR_LOW_MESSAGE_VALUE);   
+        require(msg.value >= USAGE_FEE,TIP3.ERROR_LOW_MESSAGE_VALUE);   
         _spend(tokens);
         ITIP3WalletNotify(to).internalTransferNotify{ flag: TVM.FLAG_VALUE_ADD_INBOUND, bounce: true }(wallet_public_key_, wallet_owner_address_, tokens, subscriber);       
     }      
@@ -157,7 +157,7 @@ contract TIP3FungibleWallet is ITIP3WalletMetadata, ITIP3WalletFungible, ITIP3Wa
         require(msg.sender != ZERO_ADDRESS && msg.value >= USAGE_FEE,TIP3.ERROR_LOW_MESSAGE_VALUE);   
         _reserveGas();
         _; // BODY
-        msg.sender.transfer({ value: 0, flag: TVM.FLAG_ALL_BALANCE });  
+        //msg.sender.transfer({ value: 0, flag: TVM.FLAG_ALL_BALANCE });  
     }
 
     modifier internalMessagePay() {
@@ -174,9 +174,9 @@ contract TIP3FungibleWallet is ITIP3WalletMetadata, ITIP3WalletFungible, ITIP3Wa
             tvm.accept();
         }
         _; // BODY
-        if (msg.sender != ZERO_ADDRESS) {
-            msg.sender.transfer({ value: 0, flag: TVM.FLAG_ALL_BALANCE });  
-        } 
+        //if (msg.sender != ZERO_ADDRESS) {
+        //    msg.sender.transfer({ value: 0, flag: TVM.FLAG_ALL_BALANCE });  
+        //} 
     }
 
     modifier onlyExtOwnerAccept() {
@@ -250,7 +250,7 @@ contract TIP3FungibleWallet is ITIP3WalletMetadata, ITIP3WalletFungible, ITIP3Wa
     }   
 
     function _receive(uint128 tokens) virtual internal inline {
-        balance_ = balance_.add(tokens);
+        balance_ += tokens;    
     }     
 
     function _spend(uint128 tokens) internal inline {
@@ -259,9 +259,9 @@ contract TIP3FungibleWallet is ITIP3WalletMetadata, ITIP3WalletFungible, ITIP3Wa
             require(_isAllowed(tokens),TIP3.ERROR_NOT_ENOUGH_ALLOWANCE);                      
         }
         require(balance_ >= tokens,TIP3.ERROR_NOT_ENOUGH_BALANCE);
-        balance_ = balance_.sub(tokens);
+        balance_ -= tokens;    
         
-        allowance_ = AllowanceInfo(allowance_.spender_, allowance_.remainingTokens_.sub(tokens));
+        allowance_ = AllowanceInfo(allowance_.spender_, allowance_.remainingTokens_ - tokens);
     }     
 
 }

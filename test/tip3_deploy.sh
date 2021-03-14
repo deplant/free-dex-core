@@ -56,7 +56,9 @@ echo "Success!"
 function compile {
 echo "Compiling $1 ..."
 echo "$SOLC_PATH/solc SOURCE_REPO/=/home/yankin/ton/contracts/src/ $2/$1.sol --output-dir $BUILD_PATH  > $BUILD_PATH/compile_$1.log"
+cd $2
 $SOLC_PATH/solc $2/$1.sol --output-dir $BUILD_PATH > $BUILD_PATH/compile_$1.log
+cd $REPO_HOME
 echo "Success!"
 }
 function link {
@@ -91,7 +93,7 @@ echo "--------------------------------------------------------------------------
 echo "#1 TIP3 Deploy Scenario"
 echo "-----------------------------------------------------------------------------------"
 
-ITERATION=23
+ITERATION=86
 
 echo "Gold$ITERATION Token"
 SYMBOL=$(echo -n "GLD$ITERATION" | xxd -p )
@@ -113,7 +115,7 @@ $TONOSCLI_PATH/tonos-cli genaddr $BUILD_PATH/$CONTRACT.tvc $BUILD_PATH/$CONTRACT
 CONTRACT_ADDRESS=$(grepAddr $CONTRACT)
 ROOT1_ADDRESS=$CONTRACT_ADDRESS
 giver $CONTRACT $CONTRACT_ADDRESS
-$TONOSCLI_PATH/tonos-cli --url $NETWORK deploy $BUILD_PATH/$CONTRACT.tvc '{}' --sign $BUILD_PATH/$KEYS.keys.json --abi $BUILD_PATH/$CONTRACT.abi.json > $BUILD_PATH/deploy_$CONTRACT.log | awk '{print $$(NF)}' | tr -d '\"\n'
+$TONOSCLI_PATH/tonos-cli --url $NETWORK deploy $BUILD_PATH/$CONTRACT.tvc '{}' --sign $BUILD_PATH/$KEYS.keys.json --abi $BUILD_PATH/$CONTRACT.abi.json > $BUILD_PATH/deploy_$CONTRACT.log
 
 echo "GLD Wallet of Alice"
 WALLET1_KEYS=wallet1
@@ -174,11 +176,11 @@ $TONOSCLI_PATH/tonos-cli -u $NETWORK run $2 $3 '{}' --abi $BUILD_PATH/$1.abi.jso
 
 
 echo $($TONOSCLI_PATH/tonos-cli -u $NETWORK run $ROOT1_ADDRESS getWalletAddress '{"workchainId":"0", "walletPubkey":"0x'$WALLET1_PUBKEY'", "walletOwner":"'$ZERO_ADDRESS'"}' --abi $BUILD_PATH/$CONTRACT.abi.json)
-R1_W1_ADDRESS=$($TONOSCLI_PATH/tonos-cli -u $NETWORK run $ROOT1_ADDRESS getWalletAddress '{"workchainId":"0", "walletPubkey":"0x'$WALLET1_PUBKEY'", "walletOwner":"'$ZERO_ADDRESS'"}' --abi $BUILD_PATH/$CONTRACT.abi.json | grep "walletAddress" | cut -c 21-86)
-R1_W2_ADDRESS=$($TONOSCLI_PATH/tonos-cli -u $NETWORK run $ROOT1_ADDRESS getWalletAddress '{"workchainId":"0", "walletPubkey":"0x'$WALLET2_PUBKEY'", "walletOwner":"'$ZERO_ADDRESS'"}' --abi $BUILD_PATH/$CONTRACT.abi.json | grep "walletAddress" | cut -c 21-86)
+R1_W1_ADDRESS=$($TONOSCLI_PATH/tonos-cli -u $NETWORK run $ROOT1_ADDRESS getWalletAddress '{"workchainId":"0", "walletPubkey":"0x'$WALLET1_PUBKEY'", "walletOwner":"'$ZERO_ADDRESS'"}' --abi $BUILD_PATH/$CONTRACT.abi.json | grep "value" | cut -c 14-79)
+R1_W2_ADDRESS=$($TONOSCLI_PATH/tonos-cli -u $NETWORK run $ROOT1_ADDRESS getWalletAddress '{"workchainId":"0", "walletPubkey":"0x'$WALLET2_PUBKEY'", "walletOwner":"'$ZERO_ADDRESS'"}' --abi $BUILD_PATH/$CONTRACT.abi.json | grep "value" | cut -c 14-79)
 
-R2_W1_ADDRESS=$($TONOSCLI_PATH/tonos-cli -u $NETWORK run $ROOT2_ADDRESS getWalletAddress '{"workchainId":"0", "walletPubkey":"0x'$WALLET1_PUBKEY'", "walletOwner":"'$ZERO_ADDRESS'"}' --abi $BUILD_PATH/$CONTRACT.abi.json | grep "walletAddress" | cut -c 21-86)
-R2_W2_ADDRESS=$($TONOSCLI_PATH/tonos-cli -u $NETWORK run $ROOT2_ADDRESS getWalletAddress '{"workchainId":"0", "walletPubkey":"0x'$WALLET2_PUBKEY'", "walletOwner":"'$ZERO_ADDRESS'"}' --abi $BUILD_PATH/$CONTRACT.abi.json | grep "walletAddress" | cut -c 21-86)
+R2_W1_ADDRESS=$($TONOSCLI_PATH/tonos-cli -u $NETWORK run $ROOT2_ADDRESS getWalletAddress '{"workchainId":"0", "walletPubkey":"0x'$WALLET1_PUBKEY'", "walletOwner":"'$ZERO_ADDRESS'"}' --abi $BUILD_PATH/$CONTRACT.abi.json | grep "value" | cut -c 14-79)
+R2_W2_ADDRESS=$($TONOSCLI_PATH/tonos-cli -u $NETWORK run $ROOT2_ADDRESS getWalletAddress '{"workchainId":"0", "walletPubkey":"0x'$WALLET2_PUBKEY'", "walletOwner":"'$ZERO_ADDRESS'"}' --abi $BUILD_PATH/$CONTRACT.abi.json | grep "value" | cut -c 14-79)
 
 echo $ROOT1_ADDRESS
 echo $ROOT2_ADDRESS
@@ -188,15 +190,15 @@ echo $R2_W1_ADDRESS
 echo $R2_W2_ADDRESS
 
 echo "Root 1: Granted - 0.0"
-getter TIP3FungibleRoot $ROOT1_ADDRESS getTotalGranted
+#getter TIP3FungibleRoot $ROOT1_ADDRESS getTokenInfo
 echo "Root 1: Supply - 0.0"
-getter TIP3FungibleRoot $ROOT1_ADDRESS getTotalSupply
+#getter TIP3FungibleRoot $ROOT1_ADDRESS getTotalSupply
 
 echo "Root 1: Mint tokens"
 $TONOSCLI_PATH/tonos-cli -u $NETWORK call $ROOT1_ADDRESS mint '{"tokens":"999888000000"}' --sign $BUILD_PATH/root1.keys.json --abi $BUILD_PATH/TIP3FungibleRoot.abi.json  | awk '/Result: {/,/}/'
 
 echo "Root 1: Supply - 999888.0"
-getter TIP3FungibleRoot $ROOT1_ADDRESS getTotalSupply
+#getter TIP3FungibleRoot $ROOT1_ADDRESS getTokenInfo
 
 echo "Root 1: Grant to wallet 1 - 55.0"
 $TONOSCLI_PATH/tonos-cli -u $NETWORK call $ROOT1_ADDRESS grant '{"dest":"'$R1_W1_ADDRESS'","tokens":"55000000","grams":"3000000000"}' --sign $BUILD_PATH/root1.keys.json --abi $BUILD_PATH/TIP3FungibleRoot.abi.json  >> $BUILD_PATH/tip3_tests.log #| awk '/Result: {/,/}/'
@@ -205,7 +207,7 @@ $TONOSCLI_PATH/tonos-cli -u $NETWORK call $ROOT1_ADDRESS grant '{"dest":"'$R1_W2
 
 
 echo "Root 1: Granted - 121.0"
-getter TIP3FungibleRoot $ROOT1_ADDRESS getTotalGranted
+#getter TIP3FungibleRoot $ROOT1_ADDRESS getTokenInfo
 
 echo "Wallet 1: Balance - 55.0"
 getter TIP3FungibleWallet $R1_W1_ADDRESS getBalance
@@ -285,13 +287,13 @@ echo "Import wallet code"
 $TONOSCLI_PATH/tonos-cli -u $NETWORK call --abi $BUILD_PATH/$CONTRACT.abi.json $CONTRACT_ADDRESS  updateLiqWalletCode '{"_cell":"'$WALLET_CODE'"}' --sign $BUILD_PATH/$KEYS.keys.json
 
 echo "Import token1"
-$TONOSCLI_PATH/tonos-cli -u $NETWORK call --abi $BUILD_PATH/$CONTRACT.abi.json $CONTRACT_ADDRESS importToken '{"_rootAddr":"'$TOKENX'","symbol":"'$SYMBOLX'"}' --sign $BUILD_PATH/$KEYS.keys.json
+$TONOSCLI_PATH/tonos-cli -u $NETWORK call --abi $BUILD_PATH/$CONTRACT.abi.json $CONTRACT_ADDRESS importToken '{"_rootAddr":"'$TOKENX'"}' --sign $BUILD_PATH/$KEYS.keys.json
 
 echo "Check token1"
 $TONOSCLI_PATH/tonos-cli -u $NETWORK run $CONTRACT_ADDRESS getTokenExists '{"rootAddress":"'$TOKENX'"}' --abi $BUILD_PATH/$CONTRACT.abi.json  | awk '/Result: {/,/}/'
 
 echo "Import token2"
-$TONOSCLI_PATH/tonos-cli -u $NETWORK call --abi $BUILD_PATH/$CONTRACT.abi.json $CONTRACT_ADDRESS importToken '{"_rootAddr":"'$TOKENY'","symbol":"'$SYMBOLY'"}' --sign $BUILD_PATH/$KEYS.keys.json
+$TONOSCLI_PATH/tonos-cli -u $NETWORK call --abi $BUILD_PATH/$CONTRACT.abi.json $CONTRACT_ADDRESS importToken '{"_rootAddr":"'$TOKENY'"}' --sign $BUILD_PATH/$KEYS.keys.json
 
 echo "Check token2"
 $TONOSCLI_PATH/tonos-cli -u $NETWORK run $CONTRACT_ADDRESS getTokenExists '{"rootAddress":"'$TOKENY'"}' --abi $BUILD_PATH/$CONTRACT.abi.json  | awk '/Result: {/,/}/'
@@ -301,22 +303,23 @@ POOL_ADDRESS=$($TONOSCLI_PATH/tonos-cli -u $NETWORK run $CONTRACT_ADDRESS getPoo
 
 echo $POOL_ADDRESS
 
-$TONOSCLI_PATH/tonos-cli -u $NETWORK call --abi $BUILD_PATH/TIP3FungibleRoot.abi.json $ROOT1_ADDRESS deployWallet '{"workchainId":"0","walletPubkey":"0x00","walletOwner":"'$POOL_ADDRESS'","tokens":"0","grams":"3000000000"}' --sign $BUILD_PATH/root1.keys.json
-$TONOSCLI_PATH/tonos-cli -u $NETWORK call --abi $BUILD_PATH/TIP3FungibleRoot.abi.json $ROOT2_ADDRESS deployWallet '{"workchainId":"0","walletPubkey":"0x00","walletOwner":"'$POOL_ADDRESS'","tokens":"0","grams":"3000000000"}' --sign $BUILD_PATH/root2.keys.json
+#$TONOSCLI_PATH/tonos-cli -u $NETWORK call --abi $BUILD_PATH/TIP3FungibleRoot.abi.json $ROOT1_ADDRESS deployWallet '{"workchainId":"0","walletPubkey":"0x00","walletOwner":"'$POOL_ADDRESS'","tokens":"0","grams":"3000000000"}' --sign $BUILD_PATH/root1.keys.json
+#$TONOSCLI_PATH/tonos-cli -u $NETWORK call --abi $BUILD_PATH/TIP3FungibleRoot.abi.json $ROOT2_ADDRESS deployWallet '{"workchainId":"0","walletPubkey":"0x00","walletOwner":"'$POOL_ADDRESS'","tokens":"0","grams":"3000000000"}' --sign $BUILD_PATH/root2.keys.json
 
-R1_POOL_ADDRESS=$($TONOSCLI_PATH/tonos-cli -u $NETWORK run $ROOT1_ADDRESS getWalletAddress '{"workchainId":"0", "walletPubkey":"0x00","walletOwner":"'$POOL_ADDRESS'"}' --abi $BUILD_PATH/TIP3FungibleRoot.abi.json | grep "walletAddress" | cut -c 21-86)
-R2_POOL_ADDRESS=$($TONOSCLI_PATH/tonos-cli -u $NETWORK run $ROOT2_ADDRESS getWalletAddress '{"workchainId":"0", "walletPubkey":"0x00","walletOwner":"'$POOL_ADDRESS'"}' --abi $BUILD_PATH/TIP3FungibleRoot.abi.json | grep "walletAddress" | cut -c 21-86)
+#R1_POOL_ADDRESS=$($TONOSCLI_PATH/tonos-cli -u $NETWORK run $ROOT1_ADDRESS getWalletAddress '{"workchainId":"0", "walletPubkey":"0x00","walletOwner":"'$POOL_ADDRESS'"}' --abi $BUILD_PATH/TIP3FungibleRoot.abi.json | grep "walletAddress" | cut -c 21-86)
+#R2_POOL_ADDRESS=$($TONOSCLI_PATH/tonos-cli -u $NETWORK run $ROOT2_ADDRESS getWalletAddress '{"workchainId":"0", "walletPubkey":"0x00","walletOwner":"'$POOL_ADDRESS'"}' --abi $BUILD_PATH/TIP3FungibleRoot.abi.json | grep "walletAddress" | cut -c 21-86)
 
-echo $R1_POOL_ADDRESS
-echo $R2_POOL_ADDRESS
+#echo $R1_POOL_ADDRESS
+#echo $R2_POOL_ADDRESS
 
 echo "Deploy pool"
-$TONOSCLI_PATH/tonos-cli -u $NETWORK call --abi $BUILD_PATH/$CONTRACT.abi.json $CONTRACT_ADDRESS deployPool '{"_tokenA":"'$TOKENX'", "_tokenB":"'$TOKENY'", "_walletA":"'$R1_POOL_ADDRESS'", "_walletB":"'$R2_POOL_ADDRESS'"}' --sign $BUILD_PATH/$KEYS.keys.json
+#$TONOSCLI_PATH/tonos-cli -u $NETWORK call --abi $BUILD_PATH/$CONTRACT.abi.json $CONTRACT_ADDRESS deployPool '{"_tokenA":"'$TOKENX'", "_tokenB":"'$TOKENY'", "_walletA":"'$R1_POOL_ADDRESS'", "_walletB":"'$R2_POOL_ADDRESS'"}' --sign $BUILD_PATH/$KEYS.keys.json
+$TONOSCLI_PATH/tonos-cli -u $NETWORK call --abi $BUILD_PATH/$CONTRACT.abi.json $CONTRACT_ADDRESS deployPool '{"_tokenA":"'$TOKENX'", "_tokenB":"'$TOKENY'"}' --sign $BUILD_PATH/$KEYS.keys.json
 
 CONTRACT=DEXPool
 
 echo "Wallet 1: Approve Deposit"
-$TONOSCLI_PATH/tonos-cli -u $NETWORK call $R1_W1_ADDRESS approve '{"spender":"'$POOL_ADDRESS'","remainingTokens":"0","tokens":"10000000"}' --sign $BUILD_PATH/$WALLET1_KEYS.keys.json --abi $BUILD_PATH/TIP3FungibleWallet.abi.json | awk '/Result: {/,/}/' #>> $BUILD_PATH/tip3_tests.log
+#$TONOSCLI_PATH/tonos-cli -u $NETWORK call $R1_W1_ADDRESS approve '{"spender":"'$POOL_ADDRESS'","remainingTokens":"0","tokens":"10000000"}' --sign $BUILD_PATH/$WALLET1_KEYS.keys.json --abi $BUILD_PATH/TIP3FungibleWallet.abi.json | awk '/Result: {/,/}/' #>> $BUILD_PATH/tip3_tests.log
 
 giver $CONTRACT $POOL_ADDRESS
 #$TONOSCLI_PATH/tonos-cli -u $NETWORK call --abi $BUILD_PATH/$CONTRACT.abi.json $ADDR _deployWallets '{}'
@@ -366,8 +369,12 @@ giver TIP3FungibleWallet $R1_W1_ADDRESS
 giver TIP3FungibleWallet $R1_W2_ADDRESS
 giver TIP3FungibleWallet $R2_W1_ADDRESS
 giver TIP3FungibleWallet $R2_W2_ADDRESS
-giver TIP3FungibleWallet $R1_POOL_ADDRESS
-giver TIP3FungibleWallet $R2_POOL_ADDRESS
+#giver TIP3FungibleWallet $R1_POOL_ADDRESS
+#giver TIP3FungibleWallet $R2_POOL_ADDRESS
+
+echo "Wallet 1: Approve DEX a deposit of 10.0"
+$TONOSCLI_PATH/tonos-cli -u $NETWORK call $R1_W1_ADDRESS approve '{"spender":"'$R1_W2_ADDRESS'","remainingTokens":"0","tokens":"10000000"}' --sign $BUILD_PATH/$WALLET1_KEYS.keys.json --abi $BUILD_PATH/TIP3FungibleWallet.abi.json | awk '/Result: {/,/}/' #>> $BUILD_PATH/tip3_tests.log
+
 
 echo "DEX"
 echo $DEXROOT_ADDRESS
@@ -387,10 +394,10 @@ echo "Root2Wallet1"
 echo $R2_W1_ADDRESS
 echo "Root2Wallet2"
 echo $R2_W2_ADDRESS
-echo "Root1DEXWallet"
-echo $R1_POOL_ADDRESS
-echo "Root2DEXWallet"
-echo $R2_POOL_ADDRESS
+#echo "Root1DEXWallet"
+#echo $R1_POOL_ADDRESS
+#echo "Root2DEXWallet"
+#echo $R2_POOL_ADDRESS
 
 echo "----------------------------------- FULL SUCCESS -----------------------------------"
 

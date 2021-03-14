@@ -17,11 +17,10 @@ export DEX_REPO_PATH=$REPO_HOME/src/dex
 export TESTENV_PATH=$REPO_HOME/test
 
 LOCALNET=http://127.0.0.1
-OCEANNET=http://46.101.136.55
 DEVNET=https://net.ton.dev
 MAINNET=https://main.ton.dev
 
-export NETWORK=$OCEANNET
+export NETWORK=$DEVNET
 
 export AMOUNT_TONS=6000000000
 export GIVER_ADDRESS="0:841288ed3b55d9cdafa806807f02a0ae0c169aa5edfe88a789a6482429756a94"

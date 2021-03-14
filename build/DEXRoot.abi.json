@@ -31,8 +31,7 @@
 		{
 			"name": "importToken",
 			"inputs": [
-				{"name":"_rootAddr","type":"address"},
-				{"name":"symbol","type":"bytes"}
+				{"name":"_rootAddr","type":"address"}
 			],
 			"outputs": [
 			]
@@ -41,9 +40,7 @@
 			"name": "deployPool",
 			"inputs": [
 				{"name":"_tokenA","type":"address"},
-				{"name":"_tokenB","type":"address"},
-				{"name":"_walletA","type":"address"},
-				{"name":"_walletB","type":"address"}
+				{"name":"_tokenB","type":"address"}
 			],
 			"outputs": [
 				{"name":"poolAddress","type":"address"}
@@ -69,6 +66,14 @@
 			"name": "deployGovernance",
 			"inputs": [
 				{"name":"_govAddress","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onGetInfo",
+			"inputs": [
+				{"components":[{"name":"name","type":"bytes"},{"name":"symbol","type":"bytes"},{"name":"decimals","type":"uint8"},{"name":"code","type":"cell"},{"name":"totalSupply","type":"uint128"},{"name":"totalGranted","type":"uint128"}],"name":"details","type":"tuple"}
 			],
 			"outputs": [
 			]

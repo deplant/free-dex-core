@@ -7,32 +7,25 @@ pragma ton-solidity >= 0.38.2;
 /// @notice TIP3 Metadata Root Interface
 interface ITIP3RootMetadata {
 
-    /// @notice Returns the name of the token - e.g. “MyToken”.
-    function getName() external view returns (bytes name);
+    struct TokenDetails { 
+        bytes name;
+        bytes symbol;
+        uint8 decimals;        
+        TvmCell code;
+        uint128 totalSupply;
+        uint128 totalGranted; 
+    }        
 
-    /// @notice Returns the token symbol. E.g. “GRM”.
-    function getSymbol() external view returns (bytes symbol);
+    function getTokenInfo() external view returns (TokenDetails);
 
-    /// @notice Returns the number of decimals the token uses; e.g. 8, means to divide the token amount by 1,000,000,00 to get its user representation.
-    function getDecimals() external view returns (uint8 decimals);
+    function callTokenInfo() external responsible view returns (TokenDetails);
 
-    /// @notice Returns the RTW public key.
-    function getRootKey() external view returns (uint256 rootKey);
+    /// @notice Calculates wallet address with defined public key (getter)
+    function getWalletAddress(int8 workchainId, uint256 walletPubkey, address walletOwner) external view returns (address);
 
-    /// @notice Returns the RTW internal owner.
-    function getRootOwner() external view returns (address rootOwner);
+    /// @notice Calculates wallet address with defined public key (responsible)
+    function callWalletAddress(int8 workchainId, uint256 walletPubkey, address walletOwner) external responsible view returns (address);
 
-    /// @notice Returns the total number of minted tokens.
-    function getTotalSupply() external view returns (uint128 totalSupply);
-
-    /// @notice Returns the total number of granted tokens.
-    function getTotalGranted() external view returns (uint128 totalGranted);
-
-    /// @notice Returns code of token wallet (as tree of cells).
-    function getWalletCode() external view returns (TvmCell walletCode);
-
-    /// @notice Calculates wallet address with defined public key.
-    function getWalletAddress(int8 workchainId, uint256 walletPubkey, address walletOwner) external view returns (address walletAddress);
 }
 
 /// @notice TIP3 Fungible Tokens Root Interface
@@ -50,5 +43,4 @@ interface ITIP3RootFungible {
     /// @notice Called by an external message only; emits tokens and increases totalSupply.
     function mint(uint128 tokens) external;
 
-    function info() external responsible view returns (uint256 rootKey, address rootOwner, bytes name , bytes symbol, uint8 decimals, TvmCell code);
 }
